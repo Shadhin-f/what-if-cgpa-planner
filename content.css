@@ -1,0 +1,282 @@
+/* NSU CGPA Planner — scoped styles, prefixed to avoid clashing with page styles */
+
+#gpap-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  height: 52px;
+  padding: 0 20px 0 16px;
+  border-radius: 26px;
+  background: #d32f2f;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  z-index: 2147483000;
+  border: 2px solid #ffffff;
+  transition: transform 0.15s ease;
+}
+#gpap-fab:hover { transform: scale(1.05); }
+#gpap-fab svg { width: 22px; height: 22px; flex-shrink: 0; }
+#gpap-fab .gpap-fab-label {
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 14px;
+  font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+#gpap-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 420px;
+  max-width: 92vw;
+  height: 100vh;
+  background: #f5f7fa;
+  box-shadow: -6px 0 24px rgba(0,0,0,0.25);
+  z-index: 2147483001;
+  transform: translateX(100%);
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 13px;
+  color: #1e2733;
+}
+#gpap-panel.gpap-open { transform: translateX(0); }
+
+#gpap-panel * { box-sizing: border-box; }
+
+.gpap-header {
+  background: #1b3a63;
+  color: #fff;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.gpap-header h1 { font-size: 15px; margin: 0; font-weight: 600; }
+.gpap-close { cursor: pointer; background: none; border: none; color: #fff; font-size: 20px; line-height: 1; padding: 4px 8px; }
+.gpap-close:hover { opacity: 0.75; }
+
+/* ---------- Hero: always-visible stats + trend chart ---------- */
+.gpap-hero {
+  flex-shrink: 0;
+  background: linear-gradient(180deg, #1b3a63 0%, #dfe8f4 130%);
+  padding: 14px 16px 16px;
+  border-bottom: 1px solid #d7e0ec;
+}
+.gpap-hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.gpap-stat-pill {
+  background: rgba(255,255,255,0.94);
+  border-radius: 8px;
+  padding: 8px 8px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+.gpap-stat-pill .gpap-stat-label { display: block; font-size: 10.5px; color: #55627a; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 3px; }
+.gpap-stat-pill .gpap-stat-value { display: block; font-size: 17px; font-weight: 800; color: #1b3a63; line-height: 1.1; }
+.gpap-stat-pill .gpap-stat-delta { display: block; font-size: 10.5px; font-weight: 700; margin-top: 2px; }
+.gpap-stat-honor {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: 2px 6px;
+  border-radius: 8px;
+  margin-top: 4px;
+}
+.gpap-stat-honor:empty { display: none; margin-top: 0; }
+.gpap-stat-honor.gpap-honor-summa { background: #fdf1cf; color: #8a6d00; }
+.gpap-stat-honor.gpap-honor-magna { background: #eef1f6; color: #5a6472; }
+.gpap-stat-honor.gpap-honor-cum { background: #fbe6d8; color: #9a5324; }
+
+.gpap-hero-chart-box {
+  background: rgba(255,255,255,0.96);
+  border-radius: 8px;
+  padding: 8px 8px 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+.gpap-hero-chart-title { font-size: 10.5px; font-weight: 700; color: #55627a; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+.gpap-legend { display: flex; gap: 10px; font-weight: 500; text-transform: none; letter-spacing: 0; }
+.gpap-legend span { display: inline-flex; align-items: center; gap: 4px; }
+.gpap-legend i { width: 10px; height: 3px; border-radius: 2px; display: inline-block; }
+canvas#gpap-chart { width: 100%; height: 150px; display: block; }
+
+/* ---------- Tabs ---------- */
+.gpap-tabs {
+  display: flex;
+  border-bottom: 1px solid #d7e0ec;
+  flex-shrink: 0;
+  background: #fff;
+}
+.gpap-tab {
+  flex: 1;
+  padding: 10px 4px;
+  text-align: center;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  color: #55627a;
+  font-weight: 600;
+}
+.gpap-tab.gpap-active { color: #1b3a63; border-bottom-color: #1b3a63; }
+
+.gpap-body { flex: 1; overflow-y: auto; padding: 12px 16px 24px; }
+.gpap-view { display: none; }
+.gpap-view.gpap-active { display: block; }
+
+.gpap-section-title { font-weight: 700; margin: 16px 0 8px; color: #1b3a63; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.03em; }
+.gpap-section-title:first-child { margin-top: 0; }
+
+/* ---------- Semesters tab: clean table ---------- */
+table.gpap-sem-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+table.gpap-sem-table thead th {
+  background: #1b3a63;
+  color: #fff;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: 8px 10px;
+  text-align: left;
+}
+table.gpap-sem-table thead th.gpap-num { text-align: right; }
+table.gpap-sem-table tbody td {
+  padding: 8px 10px;
+  border-top: 1px solid #eef1f6;
+  font-size: 12.5px;
+}
+table.gpap-sem-table tbody td.gpap-num { text-align: right; font-variant-numeric: tabular-nums; }
+table.gpap-sem-table tbody tr:nth-child(even) { background: #fafbfd; }
+table.gpap-sem-table tbody tr.gpap-row-projected { background: #fff8ea; }
+table.gpap-sem-table tbody tr.gpap-row-projected td:first-child { font-style: italic; }
+table.gpap-sem-table tbody td.gpap-cgpa { font-weight: 700; color: #1b3a63; }
+
+/* ---------- Edit Grades tab ---------- */
+details.gpap-sem {
+  background: #fff;
+  border: 1px solid #e1e7f0;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+details.gpap-sem summary {
+  padding: 9px 10px;
+  cursor: pointer;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  background: #f8fafc;
+  list-style: none;
+  color: #1b3a63;
+}
+details.gpap-sem summary::-webkit-details-marker { display: none; }
+details.gpap-sem summary .gpap-sem-gpa { font-weight: 500; color: #55627a; }
+details.gpap-sem summary .gpap-sem-gpa-updated { font-weight: 800; color: #c98a12; }
+
+.gpap-course-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-top: 1px solid #eef1f6;
+}
+.gpap-course-info { flex: 1; min-width: 0; }
+.gpap-course-code { font-weight: 700; font-size: 12.5px; }
+.gpap-course-title { color: #8894a8; font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gpap-course-credit { color: #8894a8; font-size: 10.5px; }
+.gpap-retake-badge {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+.gpap-retake-badge.gpap-retake-counted { background: #e3f4ea; color: #1a8a4a; }
+.gpap-retake-badge.gpap-retake-excluded { background: #fdeceb; color: #c0392b; }
+
+.gpap-grade-field { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 56px; flex-shrink: 0; }
+.gpap-grade-field-label { font-size: 9px; text-transform: uppercase; color: #8894a8; font-weight: 700; letter-spacing: 0.02em; }
+.gpap-current-grade-pill {
+  display: inline-block;
+  min-width: 40px;
+  text-align: center;
+  padding: 3px 0;
+  border-radius: 5px;
+  background: #eef1f6;
+  color: #1e2733;
+  font-weight: 700;
+  font-size: 12px;
+}
+.gpap-grade-select {
+  width: 100%;
+  padding: 3px 2px;
+  border: 1px solid #cfd8e3;
+  border-radius: 5px;
+  background: #fff;
+  font-size: 12px;
+  text-align: center;
+  font-weight: 600;
+}
+.gpap-grade-select.gpap-overridden { border-color: #c98a12; background: #fff8ea; color: #c98a12; }
+
+/* ---------- Plan Ahead tab ---------- */
+.gpap-planned-sem { background: #fff; border: 1px solid #e1e7f0; border-radius: 8px; margin-bottom: 12px; padding: 10px; }
+.gpap-planned-sem-header { display: flex; gap: 6px; margin-bottom: 8px; }
+.gpap-planned-sem-header input[type=text] {
+  flex: 1; padding: 5px 7px; border: 1px solid #cfd8e3; border-radius: 4px; font-size: 12.5px; font-weight: 600;
+}
+.gpap-planned-course-row { display: grid; grid-template-columns: 1fr 60px 64px 22px; gap: 6px; margin-bottom: 6px; align-items: center; }
+.gpap-planned-course-row input[type=text], .gpap-planned-course-row input[type=number] {
+  padding: 4px 6px; border: 1px solid #cfd8e3; border-radius: 4px; font-size: 11.5px; width: 100%;
+}
+.gpap-planned-course-row input[title] { }
+
+.gpap-btn {
+  padding: 6px 10px;
+  border-radius: 5px;
+  border: 1px solid #1b3a63;
+  background: #1b3a63;
+  color: #fff;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+}
+.gpap-btn:hover { background: #234a7a; }
+.gpap-btn.gpap-btn-secondary { background: #fff; color: #1b3a63; }
+.gpap-btn.gpap-btn-danger { background: #fff; color: #c0392b; border-color: #c0392b; padding: 2px 8px; font-size: 14px; line-height: 1; }
+.gpap-btn.gpap-btn-small { padding: 3px 8px; font-size: 11.5px; }
+.gpap-row-actions { display: flex; gap: 8px; margin-top: 8px; }
+.gpap-empty-hint { color: #8894a8; font-style: italic; padding: 8px 0; }
+.gpap-footer-actions { padding: 10px 16px; border-top: 1px solid #d7e0ec; background: #fff; flex-shrink: 0; display: flex; gap: 8px; justify-content: flex-end; }
+
+.gpap-credit {
+  flex-shrink: 0;
+  text-align: center;
+  padding: 5px 8px;
+  background: #f5f7fa;
+  color: #a8b0bd;
+  font-size: 10px;
+}
+.gpap-credit a { color: #8894a8; text-decoration: none; font-weight: 600; }
+.gpap-credit a:hover { text-decoration: underline; }
