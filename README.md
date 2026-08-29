@@ -6,6 +6,15 @@ It only activates on `rds3.northsouth.edu/students/grade_history`. Everywhere el
 
 This is an **open-source, community project** — built for NSU students, by an NSU student. Contributions, bug reports, and feature ideas are very welcome. See [Contributing](#contributing) below.
 
+## Gallery
+
+| | |
+|---|---|
+| ![Floating Analyze CGPA button on the grade history page](screenshots/gallery-1-open-panel.png) | ![Semesters overview with the CGPA trend chart and honors badge](screenshots/gallery-2-semesters.png) |
+| The floating button appears only on the grade history page | Semesters tab — trend chart, honors badge, per-semester TGPA/CGPA |
+| ![Editing a grade and seeing the what-if line diverge](screenshots/gallery-3-edit-grades.png) | ![Planning a future semester](screenshots/gallery-4-plan-ahead.png) |
+| Edit Grades — change a grade, see the TGPA update and the what-if line appear on the chart | Plan Ahead — add a hypothetical future semester and course |
+
 ## Why
 
 The official grade history page shows you your CGPA, but it's static. Students constantly ask "what if I retake this course and get an A?" or "what CGPA do I need next semester to graduate with honors?" — and end up doing the math by hand or in a spreadsheet. This extension answers those questions right on the page you already use.
@@ -44,10 +53,15 @@ The math has been verified against real transcripts — recomputed CGPA and per-
 Since this isn't (yet) published on the Chrome Web Store, install it as an unpacked extension:
 
 1. Clone or download this repository.
-2. Open `chrome://extensions` in Chrome (or any Chromium-based browser).
-3. Enable **Developer mode** (top-right toggle).
-4. Click **Load unpacked** and select the project folder.
-5. Visit your grade history page at `rds3.northsouth.edu/students/grade_history` — the "Analyze CGPA" button will appear in the bottom-right corner.
+2. Click the puzzle-piece icon in Chrome's toolbar and choose **Manage extensions** to open `chrome://extensions`.
+
+   ![Opening Manage extensions from the toolbar](screenshots/setup-1-manage-extensions.png)
+
+3. Enable **Developer mode** (top-right toggle) and click **Load unpacked**, then select the project folder you cloned/downloaded. Once loaded, it'll show up in your extensions list like this:
+
+   ![Developer mode enabled and the extension loaded via Load unpacked](screenshots/setup-2-load-unpacked.png)
+
+4. Visit your grade history page at `rds3.northsouth.edu/students/grade_history` — the "Analyze CGPA" button will appear in the bottom-right corner.
 
 ## Privacy
 
