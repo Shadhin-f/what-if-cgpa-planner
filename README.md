@@ -1,5 +1,7 @@
 # What if CGPA Planner
 
+**[⬇ Download from Google Drive](https://drive.google.com/drive/folders/1yfn57tJHvAz9KQ7Gf3xl-qi3maBbbpqV)**
+
 A Chrome extension that overlays North South University's RDS **Grade History** page with a CGPA analysis and "what-if" planning tool — so you can explore hypothetical grade changes and plan future semesters without touching your real academic record.
 
 It only activates on `rds3.northsouth.edu/students/grade_history`. Everywhere else, it does nothing.
@@ -52,7 +54,7 @@ The math has been verified against real transcripts — recomputed CGPA and per-
 
 Since this isn't (yet) published on the Chrome Web Store, install it as an unpacked extension:
 
-1. Clone or download this repository.
+1. Get the extension files — either clone/download this repository, or [download the folder from Google Drive](https://drive.google.com/drive/folders/1yfn57tJHvAz9KQ7Gf3xl-qi3maBbbpqV).
 2. Click the puzzle-piece icon in Chrome's toolbar and choose **Manage extensions** to open `chrome://extensions`.
 
    ![Opening Manage extensions from the toolbar](screenshots/setup-1-manage-extensions.png)
