@@ -33,14 +33,30 @@
     return (code || '').trim().toUpperCase();
   }
 
-  function findTableByHeaders(required) {
-    const tables = document.querySelectorAll('table');
+  function findTableByHeaders(required, doc) {
+    const tables = (doc || document).querySelectorAll('table');
     for (const t of tables) {
       if (!t.rows.length) continue;
       const headers = [...t.rows[0].cells].map((c) => c.innerText.trim());
       if (required.every((h) => headers.includes(h))) return t;
     }
     return null;
+  }
+
+  const GRADE_HISTORY_PATH = '/students/grade_history';
+
+  // Lets the fab work on any rds3.northsouth.edu page: on the grade history
+  // page itself, parse the live DOM directly (no extra request); elsewhere,
+  // fetch that page's HTML in the background and parse it the same way.
+  async function getGradeHistoryDoc() {
+    if (location.pathname.startsWith(GRADE_HISTORY_PATH)) return document;
+    try {
+      const res = await fetch(`${location.origin}${GRADE_HISTORY_PATH}`, { credentials: 'same-origin' });
+      const html = await res.text();
+      return new DOMParser().parseFromString(html, 'text/html');
+    } catch (e) {
+      return null;
+    }
   }
 
   function parseGradeTable(table) {
@@ -176,13 +192,31 @@
       });
     });
 
-    return { timeline, finalCGPA: runCredit ? runQP / runCredit : null, finalCredit: runCredit, retakeInfo };
+    return { timeline, finalCGPA: runCredit ? runQP / runCredit : null, finalCredit: runCredit, finalQP: runQP, retakeInfo };
   }
+
+  const RETAKE_ELIGIBLE_MAX_POINTS = 3.3; // B+ and above cannot be retaken
 
   const COLOR_ACTUAL = '#1b3a63';
   const COLOR_WHATIF = '#c98a12';
 
-  function drawChart(canvas, actualTimeline, editedTimeline, showEdited) {
+  const GRADE_COLORS = {
+    'A': '#1a8a4a', 'A-': '#3aa563',
+    'B+': '#2f6fb8', 'B': '#4a86c9', 'B-': '#7aa8d8',
+    'C+': '#c98a12', 'C': '#d9a53f', 'C-': '#e6c179',
+    'D+': '#d9773f', 'D': '#e0955f',
+    'F': '#c0392b', 'W': '#8894a8', 'I': '#a8b0bd'
+  };
+
+  const GPA_TIERS = [
+    { min: 3.5, color: '#1a8a4a', label: 'Great (3.5+)' },
+    { min: 3.0, color: '#2f6fb8', label: 'Good (3.0–3.49)' },
+    { min: 2.5, color: '#c98a12', label: 'Fair (2.5–2.99)' },
+    { min: -Infinity, color: '#c0392b', label: 'Needs work (<2.5)' }
+  ];
+  function tierFor(gpa) { return GPA_TIERS.find((t) => gpa >= t.min); }
+
+  function drawTrendChart(canvas, actualTimeline, editedTimeline, showEdited) {
     const ctx = canvas.getContext('2d');
     const dpr = window.devicePixelRatio || 1;
     const w = canvas.clientWidth || canvas.parentElement.clientWidth || 360;
@@ -246,6 +280,110 @@
     if (showEdited && editedPoints.length) drawSeries(editedPoints, COLOR_WHATIF);
   }
 
+  function setupCanvas(canvas) {
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.clientWidth || canvas.parentElement.clientWidth || 360;
+    const h = canvas.clientHeight || 150;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    return { ctx, w, h };
+  }
+
+  function drawEmptyMessage(ctx, h, text) {
+    ctx.fillStyle = '#8894a8';
+    ctx.font = '12px sans-serif';
+    ctx.fillText(text, 10, h / 2);
+  }
+
+  function drawPieChart(canvas, dist) {
+    const { ctx, w, h } = setupCanvas(canvas);
+    const total = dist.reduce((s, d) => s + d.count, 0);
+    if (!total) { drawEmptyMessage(ctx, h, 'No graded courses yet'); return; }
+
+    const cx = w / 2, cy = h / 2 + 4, r = Math.min(cx, h / 2) - 12;
+    let start = -Math.PI / 2;
+    dist.forEach((d) => {
+      const angle = (d.count / total) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, r, start, start + angle);
+      ctx.closePath();
+      ctx.fillStyle = d.color;
+      ctx.fill();
+      start += angle;
+    });
+  }
+
+  function drawSemesterBarChart(canvas, bars) {
+    const { ctx, w, h } = setupCanvas(canvas);
+    const points = bars.filter((b) => b.value !== null);
+    if (!points.length) { drawEmptyMessage(ctx, h, 'No graded semesters yet'); return; }
+
+    const padL = 30, padR = 10, padT = 10, padB = 20;
+    const plotW = w - padL - padR, plotH = h - padT - padB;
+    const minY = 0, maxY = 4.0;
+    const yFor = (v) => padT + plotH * (1 - (Math.max(minY, Math.min(maxY, v)) - minY) / (maxY - minY));
+
+    ctx.strokeStyle = '#e1e7f0';
+    ctx.fillStyle = '#8894a8';
+    ctx.font = '9px sans-serif';
+    ctx.lineWidth = 1;
+    for (let g = 0; g <= 4.0; g += 1.0) {
+      const y = yFor(g);
+      ctx.beginPath();
+      ctx.moveTo(padL, y);
+      ctx.lineTo(w - padR, y);
+      ctx.stroke();
+      ctx.fillText(g.toFixed(1), 2, y + 3);
+    }
+
+    const gap = 6;
+    const barW = Math.max(4, (plotW - gap * (points.length - 1)) / points.length);
+    points.forEach((p, i) => {
+      const x = padL + i * (barW + gap);
+      const y = yFor(p.value);
+      ctx.globalAlpha = p.projected ? 0.55 : 1;
+      ctx.fillStyle = tierFor(p.value).color;
+      ctx.fillRect(x, y, barW, (padT + plotH) - y);
+      ctx.globalAlpha = 1;
+    });
+  }
+
+  function drawCreditBarChart(canvas, bars) {
+    const { ctx, w, h } = setupCanvas(canvas);
+    if (!bars.length) { drawEmptyMessage(ctx, h, 'No semesters yet'); return; }
+
+    const padL = 24, padR = 10, padT = 10, padB = 20;
+    const plotW = w - padL - padR, plotH = h - padT - padB;
+    const maxCredit = Math.max(4, ...bars.map((b) => b.value));
+    const yFor = (v) => padT + plotH * (1 - v / maxCredit);
+
+    ctx.strokeStyle = '#e1e7f0';
+    ctx.fillStyle = '#8894a8';
+    ctx.font = '9px sans-serif';
+    ctx.lineWidth = 1;
+    for (let g = 0; g <= maxCredit; g += Math.ceil(maxCredit / 4)) {
+      const y = yFor(g);
+      ctx.beginPath();
+      ctx.moveTo(padL, y);
+      ctx.lineTo(w - padR, y);
+      ctx.stroke();
+      ctx.fillText(String(g), 2, y + 3);
+    }
+
+    const gap = 6;
+    const barW = Math.max(4, (plotW - gap * (bars.length - 1)) / bars.length);
+    bars.forEach((p, i) => {
+      const x = padL + i * (barW + gap);
+      const y = yFor(p.value);
+      ctx.fillStyle = p.projected ? COLOR_WHATIF : COLOR_ACTUAL;
+      ctx.fillRect(x, y, barW, (padT + plotH) - y);
+    });
+  }
+
   function el(tag, props, children) {
     const e = document.createElement(tag);
     if (props) {
@@ -267,7 +405,58 @@
   }
 
   async function main() {
-    const gradeTable = findTableByHeaders(['Semester Name', 'Course Grade', 'Cr.Count']);
+    function semesterCredit(sem, si, proj, overrides) {
+      let credit = 0;
+      sem.courses.forEach((c, ci) => {
+        const key = `r:${si}:${ci}`;
+        const info = proj.retakeInfo[key];
+        const grade = Object.prototype.hasOwnProperty.call(overrides, key) ? overrides[key] : c.grade;
+        if (pointsFor(grade) !== null && info && info.isPrimary) credit += (c.crCount || c.credit);
+      });
+      return credit;
+    }
+
+    function plannedCredit(psem, pi, proj) {
+      let credit = 0;
+      (psem.courses || []).forEach((pc, ci) => {
+        const info = proj.retakeInfo[`p:${pi}:${ci}`];
+        if (pointsFor(pc.grade) !== null && info && info.isPrimary) credit += (parseFloat(pc.credit) || 0);
+      });
+      return credit;
+    }
+
+    function computeGradeDistribution(semesters, planned, proj, overrides) {
+      const counts = {};
+      semesters.forEach((sem, si) => {
+        sem.courses.forEach((c, ci) => {
+          const key = `r:${si}:${ci}`;
+          const info = proj.retakeInfo[key];
+          if (!info || !info.isPrimary) return;
+          const grade = Object.prototype.hasOwnProperty.call(overrides, key) ? overrides[key] : c.grade;
+          const g = (grade || '').trim().toUpperCase();
+          if (!g) return;
+          counts[g] = (counts[g] || 0) + 1;
+        });
+      });
+      planned.forEach((psem, pi) => {
+        (psem.courses || []).forEach((pc, ci) => {
+          const key = `p:${pi}:${ci}`;
+          const info = proj.retakeInfo[key];
+          if (!info || !info.isPrimary) return;
+          const g = (pc.grade || '').trim().toUpperCase();
+          if (!g) return;
+          counts[g] = (counts[g] || 0) + 1;
+        });
+      });
+      return Object.keys(counts)
+        .map((g) => ({ grade: g, count: counts[g], color: GRADE_COLORS[g] || '#8894a8' }))
+        .sort((a, b) => GRADE_OPTIONS.indexOf(a.grade) - GRADE_OPTIONS.indexOf(b.grade));
+    }
+
+    const gradeDoc = await getGradeHistoryDoc();
+    if (!gradeDoc) return;
+
+    const gradeTable = findTableByHeaders(['Semester Name', 'Course Grade', 'Cr.Count'], gradeDoc);
     if (!gradeTable) return;
 
     const semesters = parseGradeTable(gradeTable);
@@ -275,7 +464,7 @@
 
     track('page_view', { semester_count: semesters.length });
 
-    const bodyText = document.body.innerText;
+    const bodyText = gradeDoc.body.innerText;
     const idMatch = bodyText.match(/Grade History of\s+(\S+)/);
     const studentId = idMatch ? idMatch[1] : 'default';
     const storageKey = `gpap_${studentId}`;
@@ -342,16 +531,37 @@
     heroStats.appendChild(pillCurrent); heroStats.appendChild(pillProjected); heroStats.appendChild(pillCredits);
 
     const chartBox = el('div', { class: 'gpap-hero-chart-box' });
-    chartBox.appendChild(el('div', { class: 'gpap-hero-chart-title' }, [
-      el('span', { text: 'CGPA trend' }),
-      el('span', { class: 'gpap-legend' }, [
-        el('span', {}, [el('i', { style: 'background:#1b3a63' }), document.createTextNode(' Actual')]),
-        el('span', {}, [el('i', { style: 'background:#c98a12' }), document.createTextNode(' What-if')])
-      ])
-    ]));
+    const chartTitleLabel = el('span', { text: 'CGPA trend' });
+    const legendBox = el('span', { class: 'gpap-legend' });
+    chartBox.appendChild(el('div', { class: 'gpap-hero-chart-title' }, [chartTitleLabel]));
+
+    let chartType = 'trend';
+    const CHART_TYPES = [
+      { id: 'trend', label: 'Trend' },
+      { id: 'pie', label: 'Grades' },
+      { id: 'semester', label: 'Sem GPA' },
+      { id: 'credits', label: 'Credits' }
+    ];
+    const chartSwitcher = el('div', { class: 'gpap-chart-switcher' });
+    const chartTypeButtons = {};
+    CHART_TYPES.forEach((ct) => {
+      const btn = el('button', { class: 'gpap-chart-type-btn' + (ct.id === chartType ? ' gpap-active' : ''), text: ct.label });
+      btn.addEventListener('click', () => {
+        chartType = ct.id;
+        Object.values(chartTypeButtons).forEach((b) => b.classList.remove('gpap-active'));
+        btn.classList.add('gpap-active');
+        track('switch_chart', { chart_type: ct.id });
+        renderStatsAndChart();
+      });
+      chartTypeButtons[ct.id] = btn;
+      chartSwitcher.appendChild(btn);
+    });
+    chartBox.appendChild(chartSwitcher);
+
     const canvas = document.createElement('canvas');
     canvas.id = 'gpap-chart';
     chartBox.appendChild(canvas);
+    chartBox.appendChild(legendBox);
     hero.appendChild(heroStats);
     hero.appendChild(chartBox);
 
@@ -359,24 +569,27 @@
     const tabSem = el('div', { class: 'gpap-tab gpap-active', text: 'Semesters' });
     const tabEdit = el('div', { class: 'gpap-tab', text: 'Edit Grades' });
     const tabPlan = el('div', { class: 'gpap-tab', text: 'Plan Ahead' });
-    tabs.appendChild(tabSem); tabs.appendChild(tabEdit); tabs.appendChild(tabPlan);
+    const tabTarget = el('div', { class: 'gpap-tab', text: 'Target CGPA' });
+    tabs.appendChild(tabSem); tabs.appendChild(tabEdit); tabs.appendChild(tabPlan); tabs.appendChild(tabTarget);
 
     const body = el('div', { class: 'gpap-body' });
     const viewSem = el('div', { class: 'gpap-view gpap-active' });
     const viewEdit = el('div', { class: 'gpap-view' });
     const viewPlan = el('div', { class: 'gpap-view' });
-    body.appendChild(viewSem); body.appendChild(viewEdit); body.appendChild(viewPlan);
+    const viewTarget = el('div', { class: 'gpap-view' });
+    body.appendChild(viewSem); body.appendChild(viewEdit); body.appendChild(viewPlan); body.appendChild(viewTarget);
 
     function switchTab(tab) {
-      [tabSem, tabEdit, tabPlan].forEach((t) => t.classList.remove('gpap-active'));
-      [viewSem, viewEdit, viewPlan].forEach((v) => v.classList.remove('gpap-active'));
+      [tabSem, tabEdit, tabPlan, tabTarget].forEach((t) => t.classList.remove('gpap-active'));
+      [viewSem, viewEdit, viewPlan, viewTarget].forEach((v) => v.classList.remove('gpap-active'));
       tab.view.classList.add('gpap-active');
       tab.classList.add('gpap-active');
     }
-    tabSem.view = viewSem; tabEdit.view = viewEdit; tabPlan.view = viewPlan;
+    tabSem.view = viewSem; tabEdit.view = viewEdit; tabPlan.view = viewPlan; tabTarget.view = viewTarget;
     tabSem.addEventListener('click', () => { switchTab(tabSem); track('view_tab', { tab_name: 'semesters' }); });
     tabEdit.addEventListener('click', () => { switchTab(tabEdit); track('view_tab', { tab_name: 'edit_grades' }); });
     tabPlan.addEventListener('click', () => { switchTab(tabPlan); track('view_tab', { tab_name: 'plan_ahead' }); });
+    tabTarget.addEventListener('click', () => { switchTab(tabTarget); track('view_tab', { tab_name: 'target_cgpa' }); renderTarget(); });
 
     const footer = el('div', { class: 'gpap-footer-actions' });
     const resetBtn = el('button', { class: 'gpap-btn gpap-btn-secondary', text: 'Reset all what-ifs' });
@@ -412,6 +625,7 @@
     document.body.appendChild(panel);
 
     let lastProj = null;
+    let targetValue = null;
     const openSemesters = new Set([semesters.length - 1]);
 
     function rerenderKeepingScroll(renderFn) {
@@ -448,9 +662,47 @@
       return proj;
     }
 
+    const CHART_TITLES = {
+      trend: 'CGPA trend', pie: 'Grade distribution', semester: 'Semester GPA', credits: 'Credits per semester'
+    };
+
+    function updateChartLegend(proj) {
+      chartTitleLabel.textContent = CHART_TITLES[chartType];
+      legendBox.innerHTML = '';
+      if (chartType === 'trend') {
+        legendBox.appendChild(el('span', {}, [el('i', { style: `background:${COLOR_ACTUAL}` }), document.createTextNode(' Actual')]));
+        legendBox.appendChild(el('span', {}, [el('i', { style: `background:${COLOR_WHATIF}` }), document.createTextNode(' What-if')]));
+      } else if (chartType === 'pie') {
+        computeGradeDistribution(semesters, state.planned, proj, state.overrides).forEach((d) => {
+          legendBox.appendChild(el('span', {}, [el('i', { style: `background:${d.color}` }), document.createTextNode(` ${d.grade} (${d.count})`)]));
+        });
+      } else if (chartType === 'semester') {
+        GPA_TIERS.forEach((t) => {
+          legendBox.appendChild(el('span', {}, [el('i', { style: `background:${t.color}` }), document.createTextNode(` ${t.label}`)]));
+        });
+      } else if (chartType === 'credits') {
+        legendBox.appendChild(el('span', {}, [el('i', { style: `background:${COLOR_ACTUAL}` }), document.createTextNode(' Completed')]));
+        legendBox.appendChild(el('span', {}, [el('i', { style: `background:${COLOR_WHATIF}` }), document.createTextNode(' Planned')]));
+      }
+    }
+
     function renderChart(proj) {
       const showEdited = Object.keys(state.overrides).length > 0 || state.planned.length > 0;
-      requestAnimationFrame(() => drawChart(canvas, actualProjection.timeline, proj.timeline, showEdited));
+      updateChartLegend(proj);
+      requestAnimationFrame(() => {
+        if (chartType === 'trend') {
+          drawTrendChart(canvas, actualProjection.timeline, proj.timeline, showEdited);
+        } else if (chartType === 'pie') {
+          drawPieChart(canvas, computeGradeDistribution(semesters, state.planned, proj, state.overrides));
+        } else if (chartType === 'semester') {
+          const bars = proj.timeline.map((t) => ({ value: t.tgpa, projected: t.projected }));
+          drawSemesterBarChart(canvas, bars);
+        } else if (chartType === 'credits') {
+          const bars = semesters.map((sem, si) => ({ value: semesterCredit(sem, si, proj, state.overrides), projected: false }))
+            .concat(state.planned.map((psem, pi) => ({ value: plannedCredit(psem, pi, proj), projected: true })));
+          drawCreditBarChart(canvas, bars);
+        }
+      });
     }
 
     function renderSemesters(proj) {
@@ -480,21 +732,10 @@
       // fill in per-semester credit column using actual computed course credits (primary-only)
       const rows = tbody.querySelectorAll('tr');
       semesters.forEach((sem, si) => {
-        let credit = 0;
-        sem.courses.forEach((c, ci) => {
-          const info = proj.retakeInfo[`r:${si}:${ci}`];
-          const grade = Object.prototype.hasOwnProperty.call(state.overrides, `r:${si}:${ci}`) ? state.overrides[`r:${si}:${ci}`] : c.grade;
-          if (pointsFor(grade) !== null && info && info.isPrimary) credit += (c.crCount || c.credit);
-        });
-        rows[si].children[1].textContent = credit.toFixed(1);
+        rows[si].children[1].textContent = semesterCredit(sem, si, proj, state.overrides).toFixed(1);
       });
       state.planned.forEach((psem, pi) => {
-        let credit = 0;
-        (psem.courses || []).forEach((pc, ci) => {
-          const info = proj.retakeInfo[`p:${pi}:${ci}`];
-          if (pointsFor(pc.grade) !== null && info && info.isPrimary) credit += (parseFloat(pc.credit) || 0);
-        });
-        rows[semesters.length + pi].children[1].textContent = credit.toFixed(1);
+        rows[semesters.length + pi].children[1].textContent = plannedCredit(psem, pi, proj).toFixed(1);
       });
     }
 
@@ -515,10 +756,27 @@
           gpaLine.appendChild(document.createTextNode(' → '));
           gpaLine.appendChild(el('span', { class: 'gpap-sem-gpa-updated', text: updatedTgpa.toFixed(2) }));
         }
-        const summary = el('summary', {}, [
+        const chevron = el('span', { class: 'gpap-chevron' }, [
+          (() => {
+            const ns = 'http://www.w3.org/2000/svg';
+            const svg = document.createElementNS(ns, 'svg');
+            svg.setAttribute('viewBox', '0 0 24 24');
+            svg.setAttribute('fill', 'none');
+            const path = document.createElementNS(ns, 'path');
+            path.setAttribute('d', 'M9 6l6 6-6 6');
+            path.setAttribute('stroke', '#1b3a63');
+            path.setAttribute('stroke-width', '2.4');
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('stroke-linejoin', 'round');
+            svg.appendChild(path);
+            return svg;
+          })()
+        ]);
+        const summaryLeft = el('div', { class: 'gpap-sem-summary-left' }, [
           el('span', { text: sem.label }),
           gpaLine
         ]);
+        const summary = el('summary', { title: 'Click to collapse or expand this semester' }, [summaryLeft, chevron]);
         det.appendChild(summary);
         sem.courses.forEach((c, ci) => {
           const key = `r:${si}:${ci}`;
@@ -614,6 +872,113 @@
         track('add_planned_semester');
       });
       viewPlan.appendChild(addSemBtn);
+    }
+
+    // Only courses graded below B+ are retakeable; a retake doesn't change the
+    // credit count (same course, same slot), so the max achievable CGPA is just
+    // (current quality points + best-case gains) / current credits.
+    function retakeCandidates() {
+      const candidates = [];
+      semesters.forEach((sem, si) => {
+        sem.courses.forEach((c, ci) => {
+          const key = `r:${si}:${ci}`;
+          const info = actualProjection.retakeInfo[key];
+          const pts = pointsFor(c.grade);
+          if (info && info.isPrimary && pts !== null && pts < RETAKE_ELIGIBLE_MAX_POINTS) {
+            const credit = c.crCount || c.credit;
+            candidates.push({ code: c.code, title: c.title, grade: c.grade, credit, gain: credit * (4.0 - pts) });
+          }
+        });
+      });
+      candidates.sort((a, b) => b.gain - a.gain);
+      return candidates;
+    }
+
+    function evaluateTarget(target) {
+      const baseCredit = actualProjection.finalCredit;
+      const baseQP = actualProjection.finalQP;
+      const baseCGPA = actualProjection.finalCGPA;
+      if (!baseCredit) return { status: 'no-data' };
+      if (target <= baseCGPA + 1e-9) return { status: 'achieved', baseCGPA };
+
+      const candidates = retakeCandidates();
+      const maxQP = baseQP + candidates.reduce((s, c) => s + c.gain, 0);
+      const maxCGPA = maxQP / baseCredit;
+      if (target > maxCGPA + 1e-9) return { status: 'impossible', baseCGPA, maxCGPA, candidateCount: candidates.length };
+
+      let cumQP = baseQP;
+      const chosen = [];
+      for (const c of candidates) {
+        if (cumQP / baseCredit >= target - 1e-9) break;
+        chosen.push(c);
+        cumQP += c.gain;
+      }
+      return { status: 'possible', baseCGPA, chosen, resultCGPA: cumQP / baseCredit, remaining: candidates.length - chosen.length };
+    }
+
+    function renderTarget() {
+      viewTarget.innerHTML = '';
+      viewTarget.appendChild(el('div', { class: 'gpap-empty-hint', text: 'Only courses graded below B+ are eligible for retake — B+ and above already count at full value and can\'t be improved.' }));
+
+      const inputRow = el('div', { class: 'gpap-target-input-row' });
+      const input = el('input', { type: 'number', min: '0', max: '4', step: '0.01', placeholder: 'e.g. 3.50' });
+      if (targetValue !== null) input.value = targetValue;
+      inputRow.appendChild(el('span', { class: 'gpap-grade-field-label', text: 'Target CGPA' }));
+      inputRow.appendChild(input);
+      viewTarget.appendChild(inputRow);
+
+      const resultBox = el('div', { class: 'gpap-target-result' });
+      viewTarget.appendChild(resultBox);
+
+      function renderResult() {
+        resultBox.innerHTML = '';
+        if (targetValue === null || isNaN(targetValue)) {
+          resultBox.appendChild(el('div', { class: 'gpap-empty-hint', text: 'Enter a target CGPA to check feasibility.' }));
+          return;
+        }
+        const target = Math.max(0, Math.min(4, targetValue));
+        const res = evaluateTarget(target);
+
+        if (res.status === 'no-data') {
+          resultBox.appendChild(el('div', { class: 'gpap-empty-hint', text: 'No graded semesters yet.' }));
+          return;
+        }
+        if (res.status === 'achieved') {
+          resultBox.appendChild(el('div', { class: 'gpap-target-badge gpap-target-achieved', text: `Already there — current CGPA ${res.baseCGPA.toFixed(2)}` }));
+          return;
+        }
+        if (res.status === 'impossible') {
+          resultBox.appendChild(el('div', { class: 'gpap-target-badge gpap-target-impossible', text: 'Not possible with retakes alone' }));
+          resultBox.appendChild(el('div', { class: 'gpap-empty-hint', text: `Even at an A in every eligible retake (${res.candidateCount}), the max reachable CGPA is ${res.maxCGPA.toFixed(2)}.` }));
+          return;
+        }
+
+        resultBox.appendChild(el('div', { class: 'gpap-target-badge gpap-target-possible', text: `Possible — retake ${res.chosen.length} course${res.chosen.length === 1 ? '' : 's'} at A to reach ${res.resultCGPA.toFixed(2)}` }));
+        res.chosen.forEach((c) => {
+          resultBox.appendChild(el('div', { class: 'gpap-retake-item' }, [
+            el('span', { class: 'gpap-course-code', text: c.code || c.title }),
+            el('span', { class: 'gpap-retake-transition' }, [
+              el('span', { class: 'gpap-grade-from', text: c.grade }),
+              document.createTextNode(' → '),
+              el('span', { class: 'gpap-grade-to', text: 'A' })
+            ])
+          ]));
+        });
+        if (res.remaining > 0) {
+          resultBox.appendChild(el('div', { class: 'gpap-empty-hint', text: `${res.remaining} more eligible course(s) not needed to hit this target.` }));
+        }
+      }
+
+      input.addEventListener('input', () => {
+        const v = parseFloat(input.value);
+        targetValue = input.value === '' ? null : v;
+        renderResult();
+        if (targetValue !== null && !isNaN(targetValue)) {
+          track('check_target_cgpa', { target: Math.max(0, Math.min(4, targetValue)).toFixed(2) });
+        }
+      });
+
+      renderResult();
     }
 
     function renderStatsAndChart() {
