@@ -1,6 +1,12 @@
 (function () {
   'use strict';
 
+  function track(name, params) {
+    try {
+      chrome.runtime.sendMessage({ type: 'gpap_analytics_event', name, params: params || {} });
+    } catch (e) { /* analytics must never break the extension */ }
+  }
+
   const GRADE_POINTS = {
     'A': 4.0, 'A-': 3.7, 'B+': 3.3, 'B': 3.0, 'B-': 2.7,
     'C+': 2.3, 'C': 2.0, 'C-': 1.7, 'D+': 1.3, 'D': 1.0, 'F': 0.0
@@ -267,6 +273,8 @@
     const semesters = parseGradeTable(gradeTable);
     if (!semesters.length) return;
 
+    track('page_view', { semester_count: semesters.length });
+
     const bodyText = document.body.innerText;
     const idMatch = bodyText.match(/Grade History of\s+(\S+)/);
     const studentId = idMatch ? idMatch[1] : 'default';
@@ -366,9 +374,9 @@
       tab.classList.add('gpap-active');
     }
     tabSem.view = viewSem; tabEdit.view = viewEdit; tabPlan.view = viewPlan;
-    tabSem.addEventListener('click', () => switchTab(tabSem));
-    tabEdit.addEventListener('click', () => switchTab(tabEdit));
-    tabPlan.addEventListener('click', () => switchTab(tabPlan));
+    tabSem.addEventListener('click', () => { switchTab(tabSem); track('view_tab', { tab_name: 'semesters' }); });
+    tabEdit.addEventListener('click', () => { switchTab(tabEdit); track('view_tab', { tab_name: 'edit_grades' }); });
+    tabPlan.addEventListener('click', () => { switchTab(tabPlan); track('view_tab', { tab_name: 'plan_ahead' }); });
 
     const footer = el('div', { class: 'gpap-footer-actions' });
     const resetBtn = el('button', { class: 'gpap-btn gpap-btn-secondary', text: 'Reset all what-ifs' });
@@ -377,6 +385,7 @@
       state.planned = [];
       persist();
       renderAll();
+      track('reset_whatifs');
     });
     footer.appendChild(resetBtn);
 
@@ -396,6 +405,7 @@
     fab.addEventListener('click', () => {
       panel.classList.add('gpap-open');
       renderStatsAndChart();
+      track('open_panel');
     });
 
     document.body.appendChild(fab);
@@ -538,6 +548,7 @@
             if (whatIfSelect.value) state.overrides[key] = whatIfSelect.value; else delete state.overrides[key];
             persist();
             rerenderKeepingScroll(renderAll);
+            track('edit_grade', { grade: whatIfSelect.value || 'cleared' });
           });
           const whatIfField = el('div', { class: 'gpap-grade-field' }, [
             el('span', { class: 'gpap-grade-field-label', text: 'What-if' }),
@@ -562,7 +573,7 @@
         const nameInput = el('input', { type: 'text', value: psem.label || '', placeholder: 'e.g. Summer 2026' });
         nameInput.addEventListener('input', () => { psem.label = nameInput.value; persist(); renderStatsAndChart(); });
         const delSemBtn = el('button', { class: 'gpap-btn gpap-btn-danger', text: '×' });
-        delSemBtn.addEventListener('click', () => { state.planned.splice(pi, 1); persist(); renderAll(); });
+        delSemBtn.addEventListener('click', () => { state.planned.splice(pi, 1); persist(); renderAll(); track('remove_planned_semester'); });
         headerRow.appendChild(nameInput);
         headerRow.appendChild(delSemBtn);
         box.appendChild(headerRow);
@@ -578,7 +589,7 @@
           gradeSel.value = pc.grade || 'A';
           gradeSel.addEventListener('change', () => { pc.grade = gradeSel.value; persist(); renderStatsAndChart(); });
           const delBtn = el('button', { class: 'gpap-btn gpap-btn-danger', text: '×' });
-          delBtn.addEventListener('click', () => { psem.courses.splice(ci, 1); persist(); renderAll(); });
+          delBtn.addEventListener('click', () => { psem.courses.splice(ci, 1); persist(); renderAll(); track('remove_planned_course'); });
           row.appendChild(codeInput); row.appendChild(creditInput); row.appendChild(gradeSel); row.appendChild(delBtn);
           box.appendChild(row);
         });
@@ -589,6 +600,7 @@
           psem.courses.push({ code: '', credit: 3, grade: 'A' });
           persist();
           renderPlan();
+          track('add_planned_course');
         });
         box.appendChild(el('div', { class: 'gpap-row-actions' }, [addCourseBtn]));
         viewPlan.appendChild(box);
@@ -599,6 +611,7 @@
         state.planned.push({ label: '', courses: [{ code: '', credit: 3, grade: 'A' }] });
         persist();
         renderPlan();
+        track('add_planned_semester');
       });
       viewPlan.appendChild(addSemBtn);
     }
@@ -620,5 +633,5 @@
     renderAll();
   }
 
-  main();
+  main().catch((err) => track('extension_error', { message: String(err).slice(0, 100), source: 'content_script' }));
 })();

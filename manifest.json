@@ -1,9 +1,12 @@
 {
   "manifest_version": 3,
   "name": "What if CGPA Planner",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Edit, analyze, and plan your semesters directly on the NSU RDS grade history page.",
   "permissions": ["storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": ["https://rds3.northsouth.edu/students/grade_history*"],
