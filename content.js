@@ -469,7 +469,7 @@
     const studentId = idMatch ? idMatch[1] : 'default';
     const storageKey = `gpap_${studentId}`;
 
-    let state = { overrides: {}, planned: [] };
+    let state = { overrides: {}, planned: [], chartCollapsed: false };
     try {
       const stored = await chrome.storage.local.get([storageKey]);
       if (stored[storageKey]) state = Object.assign(state, stored[storageKey]);
@@ -533,7 +533,26 @@
     const chartBox = el('div', { class: 'gpap-hero-chart-box' });
     const chartTitleLabel = el('span', { text: 'CGPA trend' });
     const legendBox = el('span', { class: 'gpap-legend' });
-    chartBox.appendChild(el('div', { class: 'gpap-hero-chart-title' }, [chartTitleLabel]));
+    const chartToggleChevron = el('span', { class: 'gpap-chevron gpap-chart-toggle-chevron' }, [
+      (() => {
+        const ns = 'http://www.w3.org/2000/svg';
+        const svg = document.createElementNS(ns, 'svg');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('fill', 'none');
+        const path = document.createElementNS(ns, 'path');
+        path.setAttribute('d', 'M6 9l6 6 6-6');
+        path.setAttribute('stroke', '#8c8072');
+        path.setAttribute('stroke-width', '2.4');
+        path.setAttribute('stroke-linecap', 'round');
+        path.setAttribute('stroke-linejoin', 'round');
+        svg.appendChild(path);
+        return svg;
+      })()
+    ]);
+    const chartTitleRow = el('div', { class: 'gpap-hero-chart-title gpap-chart-toggle-row', title: 'Collapse or expand the chart' }, [chartTitleLabel, chartToggleChevron]);
+    chartBox.appendChild(chartTitleRow);
+
+    const chartContent = el('div', { class: 'gpap-chart-content' });
 
     let chartType = 'trend';
     const CHART_TYPES = [
@@ -556,14 +575,28 @@
       chartTypeButtons[ct.id] = btn;
       chartSwitcher.appendChild(btn);
     });
-    chartBox.appendChild(chartSwitcher);
+    chartContent.appendChild(chartSwitcher);
 
     const canvas = document.createElement('canvas');
     canvas.id = 'gpap-chart';
-    chartBox.appendChild(canvas);
-    chartBox.appendChild(legendBox);
+    chartContent.appendChild(canvas);
+    chartContent.appendChild(legendBox);
+    chartBox.appendChild(chartContent);
     hero.appendChild(heroStats);
     hero.appendChild(chartBox);
+
+    function setChartCollapsed(collapsed) {
+      state.chartCollapsed = collapsed;
+      chartBox.classList.toggle('gpap-chart-collapsed', collapsed);
+    }
+    chartTitleRow.addEventListener('click', () => {
+      const collapsed = !state.chartCollapsed;
+      setChartCollapsed(collapsed);
+      persist();
+      track('toggle_chart', { collapsed });
+      if (!collapsed) requestAnimationFrame(() => renderChart(lastProj));
+    });
+    setChartCollapsed(!!state.chartCollapsed);
 
     const tabs = el('div', { class: 'gpap-tabs' });
     const tabSem = el('div', { class: 'gpap-tab gpap-active', text: 'Semesters' });

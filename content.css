@@ -154,6 +154,13 @@
   box-shadow: var(--gpap-shadow-sm);
 }
 .gpap-hero-chart-title { font-size: 10.5px; font-weight: 700; color: var(--gpap-ink-soft); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.gpap-chart-toggle-row { cursor: pointer; user-select: none; margin: -2px -2px 6px; padding: 2px; border-radius: 6px; transition: background 0.15s ease; }
+.gpap-chart-toggle-row:hover { background: var(--gpap-surface-2); }
+.gpap-chart-toggle-chevron svg { width: 14px; height: 14px; display: block; transition: transform 0.2s ease; }
+.gpap-hero-chart-box.gpap-chart-collapsed { padding-bottom: 8px; }
+.gpap-hero-chart-box.gpap-chart-collapsed .gpap-chart-toggle-row { margin-bottom: 0; }
+.gpap-hero-chart-box.gpap-chart-collapsed .gpap-chart-toggle-chevron svg { transform: rotate(-90deg); }
+.gpap-hero-chart-box.gpap-chart-collapsed .gpap-chart-content { display: none; }
 .gpap-legend { display: flex; flex-wrap: wrap; gap: 6px 12px; font-weight: 500; text-transform: none; letter-spacing: 0; margin-top: 8px; color: var(--gpap-ink-soft); }
 .gpap-legend span { display: inline-flex; align-items: center; gap: 5px; }
 .gpap-legend i { width: 9px; height: 9px; border-radius: 999px; display: inline-block; }
