@@ -635,6 +635,12 @@
     });
     footer.appendChild(resetBtn);
 
+    const communityLink = el('a', { href: 'https://t.me/nsu_advising_helper_bot_channel', target: '_blank', rel: 'noopener noreferrer', class: 'gpap-pill-link', text: 'Join Community' });
+    communityLink.addEventListener('click', () => track('click_community_link'));
+    const rds2Link = el('a', { href: 'https://rds2-bff.vercel.app/', target: '_blank', rel: 'noopener noreferrer', class: 'gpap-pill-link', text: 'Visit RDS2, from the future' });
+    rds2Link.addEventListener('click', () => track('click_rds2_link'));
+    const linksRow = el('div', { class: 'gpap-links-row' }, [communityLink, rds2Link]);
+
     const creditLink = el('a', { href: 'https://www.facebook.com/tahshanjamil.shadhin', target: '_blank', rel: 'noopener noreferrer', text: 'Tahshan Jamil Shadhin' });
     const credit = el('div', { class: 'gpap-credit' }, [
       document.createTextNode('Made for NSUers by '),
@@ -646,6 +652,7 @@
     panel.appendChild(tabs);
     panel.appendChild(body);
     panel.appendChild(footer);
+    panel.appendChild(linksRow);
     panel.appendChild(credit);
 
     fab.addEventListener('click', () => {

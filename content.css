@@ -381,6 +381,30 @@ details.gpap-sem[open] .gpap-chevron { transform: rotate(90deg); }
 .gpap-empty-hint { color: var(--gpap-ink-soft); font-style: italic; padding: 8px 0; }
 .gpap-footer-actions { padding: 12px 16px; border-top: 1px solid var(--gpap-border); background: var(--gpap-bg); flex-shrink: 0; display: flex; gap: 8px; justify-content: flex-end; }
 
+.gpap-links-row {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 12px 0;
+  background: var(--gpap-bg);
+}
+.gpap-pill-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: var(--gpap-surface-2);
+  border: 1px solid var(--gpap-border);
+  color: var(--gpap-ink-soft);
+  font-size: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.gpap-pill-link:hover { background: var(--gpap-accent-soft); color: var(--gpap-accent-dark); border-color: var(--gpap-accent-soft); }
+
 .gpap-credit {
   flex-shrink: 0;
   text-align: center;
