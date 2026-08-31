@@ -1,10 +1,10 @@
 # What if CGPA Planner
 
-**[⬇ Download from Google Drive](https://drive.google.com/drive/folders/1yfn57tJHvAz9KQ7Gf3xl-qi3maBbbpqV)**
+**[⬇ Get it on the Chrome Web Store](https://chromewebstore.google.com/detail/koekeocjmjcbinjpfpijockklageaknd?utm_source=item-share-cb)**
 
 A Chrome extension that overlays North South University's RDS **Grade History** page with a CGPA analysis and "what-if" planning tool — so you can explore hypothetical grade changes and plan future semesters without touching your real academic record.
 
-It only activates on `rds3.northsouth.edu/students/grade_history`. Everywhere else, it does nothing.
+It only activates on NSU RDS3 pages — the CGPA planner on `rds3.northsouth.edu/students/grade_history`, and the Mini-RDS3 widget on that page plus the `landing` page. Everywhere else, it does nothing.
 
 This is an **open-source, community project** — built for NSU students, by an NSU student. Contributions, bug reports, and feature ideas are very welcome. See [Contributing](#contributing) below.
 
@@ -29,32 +29,38 @@ The official grade history page shows you your CGPA, but it's static. Students c
 - **Plan Ahead** — add hypothetical future semesters and courses (with expected grades) to project where your CGPA is headed.
 - **Retake handling** — if the same course code appears more than once (a retake), only the best-grade attempt counts toward CGPA and credits, matching how retakes actually work.
 - **Latin honors tracking** — shows whether your current or projected CGPA qualifies for Cum Laude (3.50–3.64), Magna Cum Laude (3.65–3.79), or Summa Cum Laude (3.80–4.00).
-- **100% local** — no servers, no accounts, no network calls. Your what-if edits and planned semesters are saved with `chrome.storage.local`, scoped to your student ID, and never leave your browser.
+- **100% local** — no servers, no accounts. Your what-if edits and planned semesters are saved with `chrome.storage.local`, scoped to your student ID, and never leave your browser.
+- **Mini-RDS3 widget** — a second floating button (on the landing page and the grade history page) that shows today's class routine, your full weekly schedule, and last-class attendance status per course, without digging through RDS3's own pages.
 
 ## How it works
 
-The extension is a single content script (`content.js` + `content.css`) injected only into the grade history page (declared in `manifest.json`). It:
+The extension is made up of two independent content scripts, both declared in `manifest.json`:
 
-1. Parses the existing HTML grade table directly from the DOM (no API calls, no scraping elsewhere).
-2. Recomputes TGPA/CGPA using NSU's official grading scale:
+- **CGPA Planner** (`content.js` + `content.css`), injected only into the grade history page. It:
+  1. Parses the existing HTML grade table directly from the DOM (no API calls, no scraping elsewhere).
+  2. Recomputes TGPA/CGPA using NSU's official grading scale:
 
-   | Grade | Points | Grade | Points | Grade | Points |
-   |-------|--------|-------|--------|-------|--------|
-   | A     | 4.0    | B     | 3.0    | C-    | 1.7    |
-   | A-    | 3.7    | B-    | 2.7    | D+    | 1.3    |
-   | B+    | 3.3    | C+    | 2.3    | D     | 1.0    |
-   |       |        | C     | 2.0    | F     | 0.0    |
+     | Grade | Points | Grade | Points | Grade | Points |
+     |-------|--------|-------|--------|-------|--------|
+     | A     | 4.0    | B     | 3.0    | C-    | 1.7    |
+     | A-    | 3.7    | B-    | 2.7    | D+    | 1.3    |
+     | B+    | 3.3    | C+    | 2.3    | D     | 1.0    |
+     |       |        | C     | 2.0    | F     | 0.0    |
 
-   (`W` and `I` are excluded from GPA calculations, as they are officially.)
-3. Renders a floating panel with the trend chart, a per-semester breakdown, the grade editor, and the semester planner.
+     (`W` and `I` are excluded from GPA calculations, as they are officially.)
+  3. Renders a floating panel with the trend chart, a per-semester breakdown, the grade editor, and the semester planner.
 
-The math has been verified against real transcripts — recomputed CGPA and per-semester TGPA match the official values exactly.
+  The math has been verified against real transcripts — recomputed CGPA and per-semester TGPA match the official values exactly.
+
+- **Mini-RDS3** (`mini-rds3.js` + `mini-rds3.css`), injected into both the landing page and the grade history page. It detects your current semester, fetches your registered courses and per-course attendance directly from your own RDS3 session (same-origin requests only, cached for a few minutes), and renders them as a floating "Today" / "Full Routine" widget.
 
 ## Installation
 
-Since this isn't (yet) published on the Chrome Web Store, install it as an unpacked extension:
+**[Install it from the Chrome Web Store](https://chromewebstore.google.com/detail/koekeocjmjcbinjpfpijockklageaknd?utm_source=item-share-cb)** — this is the recommended way to get the extension.
 
-1. Get the extension files — either clone/download this repository, or [download the folder from Google Drive](https://drive.google.com/drive/folders/1yfn57tJHvAz9KQ7Gf3xl-qi3maBbbpqV).
+To run a development build instead (e.g. to test a change before it's published), load it unpacked:
+
+1. Clone or download this repository.
 2. Click the puzzle-piece icon in Chrome's toolbar and choose **Manage extensions** to open `chrome://extensions`.
 
    ![Opening Manage extensions from the toolbar](screenshots/setup-1-manage-extensions.png)
@@ -67,7 +73,8 @@ Since this isn't (yet) published on the Chrome Web Store, install it as an unpac
 
 ## Privacy
 
-- No data is sent anywhere. There is no backend, no analytics, no third-party requests.
+- There is no backend and no third-party data sharing. The CGPA Planner and Mini-RDS3 only ever talk to `rds3.northsouth.edu` — your own logged-in session — to read your grades, routine, and attendance.
+- The extension sends anonymous, aggregated usage events (e.g. which panel/tab was opened) to Google Analytics via a write-only Measurement Protocol key, purely to understand feature usage. No grades, course data, or personally identifying information are included in these events.
 - Your what-if grade edits and planned semesters are stored only in your own browser (`chrome.storage.local`), keyed to your student ID so multiple students on a shared computer don't see each other's plans.
 - Uninstalling the extension or clearing site data removes all stored data.
 
@@ -75,12 +82,11 @@ Since this isn't (yet) published on the Chrome Web Store, install it as an unpac
 
 Pull requests, issues, and ideas are all welcome — this is meant to be a community tool for NSU students. Some ideas if you're looking for a place to start:
 
-- An extension icon set
 - Export/print the what-if plan
 - Support for waiver/transfer credits in the CGPA math
-- A packaged release for the Chrome Web Store / Firefox
+- A Firefox port
 
-To contribute: fork the repo, make your changes to `content.js` / `content.css` / `manifest.json`, test by loading it unpacked, and open a PR.
+To contribute: fork the repo, make your changes to the content scripts (`content.js`/`content.css` for the CGPA Planner, `mini-rds3.js`/`mini-rds3.css` for Mini-RDS3) or `manifest.json`, test by loading it unpacked, and open a PR.
 
 ## License
 
