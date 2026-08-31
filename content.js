@@ -625,7 +625,7 @@
     tabTarget.addEventListener('click', () => { switchTab(tabTarget); track('view_tab', { tab_name: 'target_cgpa' }); renderTarget(); });
 
     const footer = el('div', { class: 'gpap-footer-actions' });
-    const resetBtn = el('button', { class: 'gpap-btn gpap-btn-secondary', text: 'Reset all what-ifs' });
+    const resetBtn = el('button', { class: 'gpap-btn gpap-btn-secondary gpap-btn-small', text: 'Reset all what-ifs' });
     resetBtn.addEventListener('click', () => {
       state.overrides = {};
       state.planned = [];
