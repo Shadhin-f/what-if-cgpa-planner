@@ -134,9 +134,14 @@
 .gpap-stat-delta.gpap-delta-neg { color: var(--gpap-rust); }
 .gpap-stat-delta.gpap-delta-zero { color: var(--gpap-ink-soft); }
 .gpap-stat-honor {
-  display: inline-block;
+  /* display:table = block-level (always starts its own line, unlike
+     inline-block which can overflow onto the value's line when there's
+     no whitespace between the appended DOM nodes) but shrink-to-fit
+     width (unlike display:block, which would stretch to the full pill
+     width) — lets margin:auto center just the badge itself. */
+  display: table;
   max-width: 100%;
-  margin-top: 3px;
+  margin: 3px auto 0;
   font-size: 6.5px;
   font-weight: 700;
   text-transform: uppercase;
@@ -146,7 +151,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  vertical-align: top;
+  box-sizing: border-box;
 }
 .gpap-stat-honor:empty { display: none; margin-top: 0; }
 .gpap-stat-honor.gpap-honor-summa { background: var(--gpap-gold-soft); color: #8a6a26; }
