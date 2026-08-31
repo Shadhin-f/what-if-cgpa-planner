@@ -121,25 +121,32 @@
 .gpap-stat-pill {
   background: var(--gpap-surface);
   border: 1px solid var(--gpap-border);
-  border-radius: 999px;
-  padding: 5px 6px 4px;
+  border-radius: var(--gpap-radius-md);
+  padding: 6px 4px 5px;
   text-align: center;
+  min-width: 0;
+  overflow: hidden;
 }
-.gpap-stat-pill .gpap-stat-label { display: block; font-size: 7.5px; color: var(--gpap-ink-soft); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 1px; font-weight: 600; }
+.gpap-stat-pill .gpap-stat-label { display: block; font-size: 7.5px; color: var(--gpap-ink-soft); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 1px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .gpap-stat-pill .gpap-stat-value { display: inline-block; font-size: 13px; font-weight: 800; color: var(--gpap-ink); line-height: 1.05; }
 .gpap-stat-pill .gpap-stat-delta { display: inline-block; font-size: 8.5px; font-weight: 700; margin-left: 2px; }
 .gpap-stat-delta.gpap-delta-pos { color: var(--gpap-sage); }
 .gpap-stat-delta.gpap-delta-neg { color: var(--gpap-rust); }
 .gpap-stat-delta.gpap-delta-zero { color: var(--gpap-ink-soft); }
 .gpap-stat-honor {
-  display: block;
+  display: inline-block;
+  max-width: 100%;
+  margin-top: 3px;
   font-size: 6.5px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.01em;
-  padding: 1px 4px;
+  padding: 1px 5px;
   border-radius: 999px;
-  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: top;
 }
 .gpap-stat-honor:empty { display: none; margin-top: 0; }
 .gpap-stat-honor.gpap-honor-summa { background: var(--gpap-gold-soft); color: #8a6a26; }
@@ -415,3 +422,20 @@ details.gpap-sem[open] .gpap-chevron { transform: rotate(90deg); }
 }
 .gpap-credit a { color: var(--gpap-ink-soft); text-decoration: none; font-weight: 600; }
 .gpap-credit a:hover { color: var(--gpap-accent-dark); text-decoration: underline; }
+
+/* ---------- Narrow viewports: tighten spacing so content fits without clipping ---------- */
+@media (max-width: 460px) {
+  .gpap-header { padding: 12px 14px 10px; }
+  .gpap-hero { padding-left: 12px; padding-right: 12px; }
+  .gpap-hero-stats { gap: 4px; }
+  .gpap-stat-pill { padding: 5px 2px 4px; }
+  .gpap-stat-pill .gpap-stat-label { font-size: 7px; letter-spacing: 0.01em; }
+  .gpap-stat-pill .gpap-stat-value { font-size: 11.5px; }
+  .gpap-stat-pill .gpap-stat-delta { font-size: 7.5px; margin-left: 1px; }
+  .gpap-stat-honor { font-size: 6px; padding: 1px 4px; }
+  .gpap-tabs { margin-left: 12px; margin-right: 12px; }
+  .gpap-tab { padding: 7px 2px; font-size: 11px; }
+  .gpap-body { padding-left: 12px; padding-right: 12px; }
+  .gpap-links-row { padding-left: 8px; padding-right: 8px; }
+  .gpap-footer-actions { padding-left: 12px; padding-right: 12px; }
+}
