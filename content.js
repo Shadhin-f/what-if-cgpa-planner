@@ -197,22 +197,22 @@
 
   const RETAKE_ELIGIBLE_MAX_POINTS = 3.3; // B+ and above cannot be retaken
 
-  const COLOR_ACTUAL = '#1b3a63';
-  const COLOR_WHATIF = '#c98a12';
+  const COLOR_ACTUAL = '#5f6c85';
+  const COLOR_WHATIF = '#c1953f';
 
   const GRADE_COLORS = {
-    'A': '#1a8a4a', 'A-': '#3aa563',
-    'B+': '#2f6fb8', 'B': '#4a86c9', 'B-': '#7aa8d8',
-    'C+': '#c98a12', 'C': '#d9a53f', 'C-': '#e6c179',
-    'D+': '#d9773f', 'D': '#e0955f',
-    'F': '#c0392b', 'W': '#8894a8', 'I': '#a8b0bd'
+    'A': '#74915f', 'A-': '#8fa87c',
+    'B+': '#5f6c85', 'B': '#7c88a0', 'B-': '#a3aec2',
+    'C+': '#c1953f', 'C': '#d0ab61', 'C-': '#dfc38c',
+    'D+': '#c1774c', 'D': '#d0946f',
+    'F': '#b0574b', 'W': '#8c8072', 'I': '#ab9f8f'
   };
 
   const GPA_TIERS = [
-    { min: 3.5, color: '#1a8a4a', label: 'Great (3.5+)' },
-    { min: 3.0, color: '#2f6fb8', label: 'Good (3.0–3.49)' },
-    { min: 2.5, color: '#c98a12', label: 'Fair (2.5–2.99)' },
-    { min: -Infinity, color: '#c0392b', label: 'Needs work (<2.5)' }
+    { min: 3.5, color: '#74915f', label: 'Great (3.5+)' },
+    { min: 3.0, color: '#5f6c85', label: 'Good (3.0–3.49)' },
+    { min: 2.5, color: '#c1953f', label: 'Fair (2.5–2.99)' },
+    { min: -Infinity, color: '#b0574b', label: 'Needs work (<2.5)' }
   ];
   function tierFor(gpa) { return GPA_TIERS.find((t) => gpa >= t.min); }
 
@@ -230,7 +230,7 @@
     const editedPoints = showEdited ? editedTimeline.filter((t) => t.cgpa !== null) : [];
     const totalCount = Math.max(actualPoints.length, editedPoints.length);
     if (totalCount < 1) {
-      ctx.fillStyle = '#8894a8';
+      ctx.fillStyle = '#8c8072';
       ctx.font = '12px sans-serif';
       ctx.fillText('No graded semesters yet', 10, h / 2);
       return;
@@ -242,8 +242,8 @@
     const yFor = (v) => padT + plotH * (1 - (Math.max(minY, Math.min(maxY, v)) - minY) / (maxY - minY));
     const xFor = (i) => padL + (totalCount === 1 ? plotW / 2 : (plotW * i) / (totalCount - 1));
 
-    ctx.strokeStyle = '#e1e7f0';
-    ctx.fillStyle = '#8894a8';
+    ctx.strokeStyle = '#e7dbc7';
+    ctx.fillStyle = '#8c8072';
     ctx.font = '9px sans-serif';
     ctx.lineWidth = 1;
     for (let g = 2.0; g <= 4.0; g += 0.5) {
@@ -293,7 +293,7 @@
   }
 
   function drawEmptyMessage(ctx, h, text) {
-    ctx.fillStyle = '#8894a8';
+    ctx.fillStyle = '#8c8072';
     ctx.font = '12px sans-serif';
     ctx.fillText(text, 10, h / 2);
   }
@@ -327,8 +327,8 @@
     const minY = 0, maxY = 4.0;
     const yFor = (v) => padT + plotH * (1 - (Math.max(minY, Math.min(maxY, v)) - minY) / (maxY - minY));
 
-    ctx.strokeStyle = '#e1e7f0';
-    ctx.fillStyle = '#8894a8';
+    ctx.strokeStyle = '#e7dbc7';
+    ctx.fillStyle = '#8c8072';
     ctx.font = '9px sans-serif';
     ctx.lineWidth = 1;
     for (let g = 0; g <= 4.0; g += 1.0) {
@@ -361,8 +361,8 @@
     const maxCredit = Math.max(4, ...bars.map((b) => b.value));
     const yFor = (v) => padT + plotH * (1 - v / maxCredit);
 
-    ctx.strokeStyle = '#e1e7f0';
-    ctx.fillStyle = '#8894a8';
+    ctx.strokeStyle = '#e7dbc7';
+    ctx.fillStyle = '#8c8072';
     ctx.font = '9px sans-serif';
     ctx.lineWidth = 1;
     for (let g = 0; g <= maxCredit; g += Math.ceil(maxCredit / 4)) {
@@ -449,7 +449,7 @@
         });
       });
       return Object.keys(counts)
-        .map((g) => ({ grade: g, count: counts[g], color: GRADE_COLORS[g] || '#8894a8' }))
+        .map((g) => ({ grade: g, count: counts[g], color: GRADE_COLORS[g] || '#8c8072' }))
         .sort((a, b) => GRADE_OPTIONS.indexOf(a.grade) - GRADE_OPTIONS.indexOf(b.grade));
     }
 
@@ -707,36 +707,32 @@
 
     function renderSemesters(proj) {
       viewSem.innerHTML = '';
-      const table = el('table', { class: 'gpap-sem-table' });
-      const thead = el('thead', {}, [el('tr', {}, [
-        el('th', { text: 'Semester' }),
-        el('th', { class: 'gpap-num', text: 'Credits' }),
-        el('th', { class: 'gpap-num', text: 'TGPA' }),
-        el('th', { class: 'gpap-num', text: 'CGPA' })
-      ])]);
-      table.appendChild(thead);
-      const tbody = el('tbody');
+      const list = el('div', { class: 'gpap-sem-cards' });
 
-      proj.timeline.forEach((t) => {
-        const tr = el('tr', { class: t.projected ? 'gpap-row-projected' : '' }, [
-          el('td', { text: t.label }),
-          el('td', { class: 'gpap-num' }),
-          el('td', { class: 'gpap-num', text: t.tgpa !== null ? t.tgpa.toFixed(2) : '—' }),
-          el('td', { class: 'gpap-num gpap-cgpa', text: t.cgpa !== null ? t.cgpa.toFixed(2) : '—' })
+      function numBlock(cls, label, value) {
+        return el('div', { class: `gpap-sem-card-num ${cls}` }, [
+          el('span', { class: 'gpap-num-label', text: label }),
+          el('span', { class: 'gpap-num-value', text: value })
         ]);
-        tbody.appendChild(tr);
-      });
-      table.appendChild(tbody);
-      viewSem.appendChild(table);
+      }
 
-      // fill in per-semester credit column using actual computed course credits (primary-only)
-      const rows = tbody.querySelectorAll('tr');
-      semesters.forEach((sem, si) => {
-        rows[si].children[1].textContent = semesterCredit(sem, si, proj, state.overrides).toFixed(1);
+      proj.timeline.forEach((t, i) => {
+        const credit = i < semesters.length
+          ? semesterCredit(semesters[i], i, proj, state.overrides)
+          : plannedCredit(state.planned[i - semesters.length], i - semesters.length, proj);
+        const card = el('div', { class: 'gpap-sem-card' + (t.projected ? ' gpap-row-projected' : '') }, [
+          el('div', { class: 'gpap-sem-card-label' }, [
+            el('div', { class: 'gpap-sem-card-name', text: t.label }),
+            el('div', { class: 'gpap-sem-card-meta', text: `${credit.toFixed(1)} credits` })
+          ]),
+          el('div', { class: 'gpap-sem-card-nums' }, [
+            numBlock('gpap-tgpa', 'TGPA', t.tgpa !== null ? t.tgpa.toFixed(2) : '—'),
+            numBlock('gpap-cgpa', 'CGPA', t.cgpa !== null ? t.cgpa.toFixed(2) : '—')
+          ])
+        ]);
+        list.appendChild(card);
       });
-      state.planned.forEach((psem, pi) => {
-        rows[semesters.length + pi].children[1].textContent = plannedCredit(psem, pi, proj).toFixed(1);
-      });
+      viewSem.appendChild(list);
     }
 
     function renderEdit() {
@@ -764,7 +760,7 @@
             svg.setAttribute('fill', 'none');
             const path = document.createElementNS(ns, 'path');
             path.setAttribute('d', 'M9 6l6 6-6 6');
-            path.setAttribute('stroke', '#1b3a63');
+            path.setAttribute('stroke', '#8c8072');
             path.setAttribute('stroke-width', '2.4');
             path.setAttribute('stroke-linecap', 'round');
             path.setAttribute('stroke-linejoin', 'round');
