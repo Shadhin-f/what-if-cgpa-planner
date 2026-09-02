@@ -8,10 +8,10 @@
   }
 
   const KEY = 'gpap_newtab_sections_v1';
-  const SECTIONS = ['cgpa', 'today', 'attendance', 'routine', 'todo', 'pomodoro', 'links', 'weekly'];
+  const SECTIONS = ['cgpa', 'today', 'attendance', 'routine', 'todo', 'pomodoro', 'links', 'favorites', 'weekly'];
 
   function defaults() {
-    return { cgpa: true, today: true, attendance: true, routine: true, todo: true, pomodoro: true, links: true, weekly: true };
+    return { cgpa: true, today: true, attendance: true, routine: true, todo: true, pomodoro: true, links: true, favorites: true, weekly: true };
   }
 
   chrome.storage.local.get(KEY).then((result) => {

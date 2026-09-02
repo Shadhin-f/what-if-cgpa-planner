@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <title>New Tab</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@600;700&family=Playfair+Display:wght@700&family=Space+Mono:wght@700&family=Caveat:wght@600&display=swap" />
 <link rel="stylesheet" href="newtab.css" />
 </head>
 <body>
@@ -12,6 +14,15 @@
       <p class="nt-date" id="nt-date"></p>
       <div class="nt-header-links" id="nt-section-links">
         <div id="nt-links-body"></div>
+      </div>
+      <div class="nt-header-favs" id="nt-section-favorites">
+        <div class="nt-favs-wrap" id="nt-favs-body"></div>
+        <form id="nt-fav-form" class="nt-fav-form" hidden>
+          <input id="nt-fav-title" type="text" placeholder="Title" autocomplete="off" maxlength="40" required />
+          <input id="nt-fav-url" type="url" placeholder="https://…" autocomplete="off" required />
+          <button type="submit" class="nt-btn">Save</button>
+          <button type="button" class="nt-btn nt-btn-secondary" id="nt-fav-cancel">Cancel</button>
+        </form>
       </div>
     </header>
 
@@ -129,6 +140,42 @@
       <span class="nt-beta-tag">Beta</span>
       <a id="nt-review-link" class="nt-review-link" href="https://chromewebstore.google.com/detail/koekeocjmjcbinjpfpijockklageaknd?utm_source=item-share-cb" target="_blank" rel="noopener noreferrer">Enjoying it? Leave a review →</a>
     </footer>
+
+    <button id="nt-fab-settings" class="nt-fab" type="button" title="Customize" aria-label="Customize new tab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+    </button>
+    <div id="nt-settings-overlay" class="nt-settings-overlay" hidden></div>
+    <div id="nt-settings-panel" class="nt-settings-panel" hidden>
+      <div class="nt-settings-head">
+        <h2>Customize</h2>
+        <button type="button" id="nt-settings-close" class="nt-settings-close" aria-label="Close">×</button>
+      </div>
+      <div class="nt-settings-section">
+        <h3>Theme</h3>
+        <div class="nt-settings-swatches" id="nt-settings-swatches"></div>
+      </div>
+      <div class="nt-settings-section">
+        <h3>Clock Font</h3>
+        <div class="nt-settings-fonts" id="nt-settings-fonts"></div>
+      </div>
+      <div class="nt-settings-section">
+        <h3>New Tab Sections</h3>
+        <div class="nt-settings-list" id="nt-settings-sections"></div>
+      </div>
+      <div class="nt-settings-section">
+        <h3>Reorder Cards</h3>
+        <div class="nt-settings-list" id="nt-settings-order"></div>
+      </div>
+    </div>
+
+    <div id="nt-confirm-overlay" class="nt-confirm-overlay" hidden></div>
+    <div id="nt-confirm-modal" class="nt-confirm-modal" hidden>
+      <p id="nt-confirm-message" class="nt-confirm-message"></p>
+      <div class="nt-confirm-actions">
+        <button type="button" class="nt-btn nt-btn-secondary" id="nt-confirm-cancel">Cancel</button>
+        <button type="button" class="nt-btn nt-btn-danger" id="nt-confirm-ok">Remove</button>
+      </div>
+    </div>
   </div>
   <script src="newtab.js"></script>
 </body>

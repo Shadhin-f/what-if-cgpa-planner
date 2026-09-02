@@ -13,6 +13,8 @@
   const WEEKLY_TODO_KEY = 'gpap_newtab_weekly_todos_v1';
   const POMO_KEY = 'gpap_newtab_pomodoro_v1';
   const SECTIONS_KEY = 'gpap_newtab_sections_v1';
+  const CARD_ORDER_KEY = 'gpap_newtab_card_order_v1';
+  const GRID_CARD_KEYS = ['today', 'attendance', 'routine', 'todo', 'pomodoro'];
   const SECTION_IDS = {
     cgpa: 'nt-section-cgpa',
     today: 'nt-section-today',
@@ -21,6 +23,7 @@
     todo: 'nt-section-todo',
     pomodoro: 'nt-section-pomodoro',
     links: 'nt-section-links',
+    favorites: 'nt-section-favorites',
     weekly: 'nt-section-weekly'
   };
   const DAY_CODES = ['S', 'M', 'T', 'W', 'R', 'F', 'A'];
@@ -33,37 +36,37 @@
   const GPAP_THEMES = {
     cream: {
       bg: '#faf5ee', bgAlt: '#f1e6d6', surface: '#fffbf6', surface2: '#f6efe4', border: '#e7dbc7',
-      ink: '#3d362f', inkSoft: '#8c8072', accent: '#c1774c', accentDark: '#a6613b', accentSoft: '#f3e2d0',
+      ink: '#3d362f', inkSoft: '#8c8072', accent: '#c1774c', accentDark: '#a6613b', accentSoft: '#f3e2d0', accentInk: '#fffbf6',
       sage: '#74915f', sageSoft: '#e6ebdc', rust: '#b0574b', rustSoft: '#f3ddd8', gold: '#c1953f', goldSoft: '#f5ead2'
     },
     midnight: {
       bg: '#1e1b18', bgAlt: '#26221d', surface: '#2a2521', surface2: '#322c26', border: '#453e35',
-      ink: '#f3ece1', inkSoft: '#a89c8c', accent: '#e2905f', accentDark: '#f0a878', accentSoft: '#3d2a20',
+      ink: '#f3ece1', inkSoft: '#a89c8c', accent: '#e2905f', accentDark: '#f0a878', accentSoft: '#3d2a20', accentInk: '#fffbf6',
       sage: '#8fae78', sageSoft: '#263323', rust: '#d97b6c', rustSoft: '#3a2320', gold: '#d9ae5e', goldSoft: '#3a2f1c'
     },
     ocean: {
       bg: '#f2f7f8', bgAlt: '#e3eef0', surface: '#ffffff', surface2: '#eaf2f3', border: '#cfe1e3',
-      ink: '#223338', inkSoft: '#6f8489', accent: '#2f7f8c', accentDark: '#23636e', accentSoft: '#dcedef',
+      ink: '#223338', inkSoft: '#6f8489', accent: '#2f7f8c', accentDark: '#23636e', accentSoft: '#dcedef', accentInk: '#fffbf6',
       sage: '#5f9e7a', sageSoft: '#e1f0e6', rust: '#c2604f', rustSoft: '#f6ded9', gold: '#c99a3f', goldSoft: '#f6ebd3'
     },
     forest: {
       bg: '#f5f7ee', bgAlt: '#e9edda', surface: '#ffffff', surface2: '#eef1e2', border: '#d8ddc3',
-      ink: '#2f3626', inkSoft: '#7c8468', accent: '#6b8f3f', accentDark: '#556f30', accentSoft: '#e4ecd4',
+      ink: '#2f3626', inkSoft: '#7c8468', accent: '#6b8f3f', accentDark: '#556f30', accentSoft: '#e4ecd4', accentInk: '#fffbf6',
       sage: '#4f8f5e', sageSoft: '#dcefe0', rust: '#b6604a', rustSoft: '#f2ded6', gold: '#bd9a3c', goldSoft: '#f2ead0'
     },
     plum: {
       bg: '#f8f3f6', bgAlt: '#efe1e9', surface: '#fffbfd', surface2: '#f4e9ef', border: '#e3cdd9',
-      ink: '#372733', inkSoft: '#8c7686', accent: '#9a5b84', accentDark: '#7c4568', accentSoft: '#f0dce9',
+      ink: '#372733', inkSoft: '#8c7686', accent: '#9a5b84', accentDark: '#7c4568', accentSoft: '#f0dce9', accentInk: '#fffbf6',
       sage: '#6f9a6e', sageSoft: '#e2eee0', rust: '#b95a5f', rustSoft: '#f4dcdd', gold: '#bb8f45', goldSoft: '#f2e6cf'
     },
     white: {
       bg: '#ffffff', bgAlt: '#f4f4f4', surface: '#ffffff', surface2: '#f0f0f0', border: '#d4d4d4',
-      ink: '#111111', inkSoft: '#666666', accent: '#111111', accentDark: '#000000', accentSoft: '#e2e2e2',
+      ink: '#111111', inkSoft: '#666666', accent: '#111111', accentDark: '#000000', accentSoft: '#e2e2e2', accentInk: '#fffbf6',
       sage: '#3f7d4f', sageSoft: '#e3efe4', rust: '#b23b3b', rustSoft: '#f4dede', gold: '#a3821f', goldSoft: '#f2e9d0'
     },
     dark: {
       bg: '#000000', bgAlt: '#0a0a0a', surface: '#121212', surface2: '#1c1c1c', border: '#333333',
-      ink: '#f5f5f5', inkSoft: '#999999', accent: '#d8d8d8', accentDark: '#efefef', accentSoft: '#262626',
+      ink: '#f5f5f5', inkSoft: '#999999', accent: '#d8d8d8', accentDark: '#efefef', accentSoft: '#262626', accentInk: '#141414',
       sage: '#6fae7a', sageSoft: '#16241a', rust: '#d97a7a', rustSoft: '#2a1616', gold: '#d8b962', goldSoft: '#2a2213'
     }
   };
@@ -71,7 +74,8 @@
   const NT_THEME_VARS = {
     bg: '--gpap-bg', bgAlt: '--gpap-bg-alt', surface: '--gpap-surface', surface2: '--gpap-surface-2',
     border: '--gpap-border', ink: '--gpap-ink', inkSoft: '--gpap-ink-soft', accent: '--gpap-accent',
-    accentDark: '--gpap-accent-dark', accentSoft: '--gpap-accent-soft', sage: '--gpap-sage', sageSoft: '--gpap-sage-soft',
+    accentDark: '--gpap-accent-dark', accentSoft: '--gpap-accent-soft', accentInk: '--gpap-accent-ink',
+    sage: '--gpap-sage', sageSoft: '--gpap-sage-soft',
     rust: '--gpap-rust', rustSoft: '--gpap-rust-soft', gold: '--gpap-gold', goldSoft: '--gpap-gold-soft'
   };
   const DARK_THEMES = new Set(['midnight', 'dark']);
@@ -88,6 +92,29 @@
     chrome.storage.local.get(THEME_KEY).then((r) => applyTheme(r[THEME_KEY] || 'cream'));
   }
 
+  // ---- Clock font ----
+  const CLOCK_FONT_KEY = 'gpap_newtab_clock_font_v1';
+  const CLOCK_FONTS = {
+    default: { label: 'Default', family: 'var(--gpap-font)', tracking: 'normal' },
+    playfair: { label: 'Playfair', family: "'Playfair Display', serif", tracking: 'normal' },
+    bebas: { label: 'Bebas', family: "'Bebas Neue', sans-serif", tracking: '0.03em' },
+    orbitron: { label: 'Orbitron', family: "'Orbitron', sans-serif", tracking: '0.02em' },
+    mono: { label: 'Mono', family: "'Space Mono', monospace", tracking: 'normal' },
+    caveat: { label: 'Script', family: "'Caveat', cursive", tracking: 'normal' }
+  };
+
+  function applyClockFont(fontId) {
+    const font = CLOCK_FONTS[fontId] || CLOCK_FONTS.default;
+    const root = document.documentElement;
+    root.style.setProperty('--gpap-clock-font', font.family);
+    root.style.setProperty('--gpap-clock-tracking', font.tracking);
+    root.dataset.gpapClockFont = fontId in CLOCK_FONTS ? fontId : 'default';
+  }
+
+  function initClockFont() {
+    chrome.storage.local.get(CLOCK_FONT_KEY).then((r) => applyClockFont(r[CLOCK_FONT_KEY] || 'default'));
+  }
+
   function el(tag, props, children) {
     const e = document.createElement(tag);
     if (props) {
@@ -99,6 +126,37 @@
     }
     (children || []).forEach((c) => c && e.appendChild(c));
     return e;
+  }
+
+  // ---- Confirm dialog (themed replacement for window.confirm) ----
+  function confirmDialog(message) {
+    return new Promise((resolve) => {
+      const overlay = document.getElementById('nt-confirm-overlay');
+      const modal = document.getElementById('nt-confirm-modal');
+      const msgEl = document.getElementById('nt-confirm-message');
+      const okBtn = document.getElementById('nt-confirm-ok');
+      const cancelBtn = document.getElementById('nt-confirm-cancel');
+      if (!overlay || !modal || !msgEl || !okBtn || !cancelBtn) { resolve(true); return; }
+
+      msgEl.textContent = message;
+      overlay.hidden = false;
+      modal.hidden = false;
+
+      function cleanup(result) {
+        overlay.hidden = true;
+        modal.hidden = true;
+        okBtn.removeEventListener('click', onOk);
+        cancelBtn.removeEventListener('click', onCancel);
+        overlay.removeEventListener('click', onCancel);
+        resolve(result);
+      }
+      function onOk() { cleanup(true); }
+      function onCancel() { cleanup(false); }
+
+      okBtn.addEventListener('click', onOk);
+      cancelBtn.addEventListener('click', onCancel);
+      overlay.addEventListener('click', onCancel);
+    });
   }
 
   function timeAgo(ts) {
@@ -116,7 +174,7 @@
   // ---- Clock ----
   function tickClock() {
     const now = new Date();
-    document.getElementById('nt-clock').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('nt-clock').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     document.getElementById('nt-date').textContent = now.toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   }
 
@@ -603,6 +661,30 @@
     applySectionVisibility(result[SECTIONS_KEY] || {});
   }
 
+  // ---- Card order (grid cards only — the CGPA and Weekly To-do hero
+  // banners stay fixed at the top/bottom of the page) ----
+  function normalizeCardOrder(saved) {
+    const order = (saved || []).filter((key) => GRID_CARD_KEYS.includes(key));
+    GRID_CARD_KEYS.forEach((key) => { if (!order.includes(key)) order.push(key); });
+    return order;
+  }
+  async function loadCardOrder() {
+    const r = await chrome.storage.local.get(CARD_ORDER_KEY);
+    return normalizeCardOrder(r[CARD_ORDER_KEY]);
+  }
+  async function saveCardOrder(order) {
+    await chrome.storage.local.set({ [CARD_ORDER_KEY]: order });
+  }
+  function applyCardOrder(order) {
+    normalizeCardOrder(order).forEach((key, index) => {
+      const node = document.getElementById(SECTION_IDS[key]);
+      if (node) node.style.order = index;
+    });
+  }
+  async function initCardOrder() {
+    applyCardOrder(await loadCardOrder());
+  }
+
   // ---- Portal login-state gate ----
   // Until either grades or attendance/routine data has been synced from
   // RDS3, hide the four data-dependent cards and show one combined prompt
@@ -658,6 +740,242 @@
     body.replaceChildren(wrap);
   }
 
+  // ---- Favorite Links card (user-editable, pinned like a browser new tab) ----
+  const FAV_KEY = 'gpap_newtab_favorites_v1';
+  const DEFAULT_FAVORITES = [
+    { id: 'demo-gcal', title: 'Google Calendar', href: 'https://calendar.google.com/' },
+    { id: 'demo-gmail', title: 'Gmail', href: 'https://mail.google.com/' },
+    { id: 'demo-youtube', title: 'YouTube', href: 'https://www.youtube.com/' }
+  ];
+  const FALLBACK_FAV_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238c8072' stroke-width='2'><circle cx='12' cy='12' r='9'/><path d='M3 12h18M12 3a15 15 0 010 18 15 15 0 010-18z'/></svg>";
+
+  async function loadFavorites() {
+    const r = await chrome.storage.local.get(FAV_KEY);
+    if (FAV_KEY in r) return r[FAV_KEY];
+    await chrome.storage.local.set({ [FAV_KEY]: DEFAULT_FAVORITES });
+    return DEFAULT_FAVORITES;
+  }
+  async function saveFavorites(favs) {
+    await chrome.storage.local.set({ [FAV_KEY]: favs });
+  }
+
+  function faviconFor(href) {
+    try {
+      const hostname = new URL(href).hostname;
+      return `https://www.google.com/s2/favicons?sz=32&domain=${hostname}`;
+    } catch (e) {
+      return FALLBACK_FAV_ICON;
+    }
+  }
+
+  function toggleFavForm(show) {
+    const form = document.getElementById('nt-fav-form');
+    if (!form) return;
+    form.hidden = show === undefined ? !form.hidden : !show;
+    if (!form.hidden) document.getElementById('nt-fav-title').focus();
+  }
+
+  async function renderFavorites() {
+    const body = document.getElementById('nt-favs-body');
+    if (!body) return;
+    const favs = await loadFavorites();
+
+    const nodes = favs.map((fav) => {
+      const icon = el('img', { class: 'nt-fav-icon', src: faviconFor(fav.href), alt: '' });
+      icon.addEventListener('error', () => { icon.src = FALLBACK_FAV_ICON; });
+
+      const anchor = el('a', {
+        class: 'nt-fav-link',
+        href: fav.href,
+        target: '_blank',
+        rel: 'noopener noreferrer'
+      }, [icon, el('span', { text: fav.title })]);
+      anchor.addEventListener('click', () => track('newtab_click_favorite', { label: fav.title }));
+
+      const del = el('button', { class: 'nt-fav-del', type: 'button', text: '×', title: 'Remove' });
+      del.addEventListener('click', async () => {
+        const ok = await confirmDialog(`Remove "${fav.title}" from your favorites?`);
+        if (!ok) return;
+        const current = await loadFavorites();
+        await saveFavorites(current.filter((x) => x.id !== fav.id));
+        track('newtab_fav_delete');
+        renderFavorites();
+      });
+
+      return el('span', { class: 'nt-fav-pill' }, [anchor, del]);
+    });
+
+    const add = el('button', { class: 'nt-fav-add', type: 'button', title: 'Add favorite', text: '+' });
+    add.addEventListener('click', () => toggleFavForm());
+    nodes.push(add);
+
+    body.replaceChildren(...nodes);
+  }
+
+  function initFavoritesForm() {
+    const form = document.getElementById('nt-fav-form');
+    const titleInput = document.getElementById('nt-fav-title');
+    const urlInput = document.getElementById('nt-fav-url');
+    const cancel = document.getElementById('nt-fav-cancel');
+    if (!form) return;
+
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const title = titleInput.value.trim();
+      let href = urlInput.value.trim();
+      if (!title || !href) return;
+      if (!/^https?:\/\//i.test(href)) href = `https://${href}`;
+      try { new URL(href); } catch (e) { return; }
+
+      const favs = await loadFavorites();
+      favs.push({ id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, title, href });
+      await saveFavorites(favs);
+      track('newtab_fav_add');
+
+      titleInput.value = '';
+      urlInput.value = '';
+      toggleFavForm(false);
+      renderFavorites();
+    });
+
+    cancel.addEventListener('click', () => {
+      titleInput.value = '';
+      urlInput.value = '';
+      toggleFavForm(false);
+    });
+  }
+
+  // ---- Floating customize button (mirrors the popup's theme + section controls) ----
+  const SECTION_LABELS = {
+    cgpa: 'CGPA', today: "Today's Classes", attendance: 'Attendance', routine: 'Routine',
+    todo: 'To-do', pomodoro: 'Focus Timer', links: 'Quick Links', favorites: 'Favorite Links', weekly: 'Weekly To-do'
+  };
+
+  function renderSettingsSwatches(activeTheme) {
+    const wrap = document.getElementById('nt-settings-swatches');
+    if (!wrap) return;
+    wrap.replaceChildren(...Object.keys(GPAP_THEMES).map((id) => {
+      const theme = GPAP_THEMES[id];
+      const btn = el('button', {
+        class: `nt-set-swatch${id === activeTheme ? ' nt-set-swatch-active' : ''}`,
+        type: 'button',
+        title: id.charAt(0).toUpperCase() + id.slice(1),
+        style: `--sw-a:${theme.bg};--sw-b:${theme.accent}`
+      });
+      btn.addEventListener('click', async () => {
+        await chrome.storage.local.set({ [THEME_KEY]: id });
+        track('newtab_fab_theme_change', { theme: id });
+        renderSettingsSwatches(id);
+      });
+      return btn;
+    }));
+  }
+
+  function renderSettingsFonts(activeFont) {
+    const wrap = document.getElementById('nt-settings-fonts');
+    if (!wrap) return;
+    wrap.replaceChildren(...Object.keys(CLOCK_FONTS).map((id) => {
+      const font = CLOCK_FONTS[id];
+      const btn = el('button', {
+        class: `nt-set-font${id === activeFont ? ' nt-set-font-active' : ''}`,
+        type: 'button',
+        title: font.label
+      }, [
+        el('span', { class: 'nt-set-font-preview', text: 'Aa', style: `font-family:${font.family}` }),
+        el('span', { class: 'nt-set-font-name', text: font.label })
+      ]);
+      btn.addEventListener('click', async () => {
+        await chrome.storage.local.set({ [CLOCK_FONT_KEY]: id });
+        track('newtab_fab_clock_font_change', { font: id });
+        renderSettingsFonts(id);
+      });
+      return btn;
+    }));
+  }
+
+  async function renderSettingsSections() {
+    const wrap = document.getElementById('nt-settings-sections');
+    if (!wrap) return;
+    const result = await chrome.storage.local.get(SECTIONS_KEY);
+    const state = result[SECTIONS_KEY] || {};
+    wrap.replaceChildren(...Object.keys(SECTION_IDS).map((key) => {
+      const checkbox = el('input', { type: 'checkbox' });
+      checkbox.checked = state[key] !== false;
+      checkbox.addEventListener('change', async () => {
+        const current = await chrome.storage.local.get(SECTIONS_KEY);
+        const next = Object.assign({}, current[SECTIONS_KEY] || {}, { [key]: checkbox.checked });
+        await chrome.storage.local.set({ [SECTIONS_KEY]: next });
+        track('newtab_fab_section_toggle', { section: key, enabled: checkbox.checked });
+      });
+      const label = el('label', { class: 'nt-switch' }, [checkbox, el('span', { class: 'nt-switch-track' })]);
+      return el('div', { class: 'nt-settings-row' }, [
+        el('span', { class: 'nt-settings-row-label', text: SECTION_LABELS[key] || key }),
+        label
+      ]);
+    }));
+  }
+
+  async function renderSettingsOrder() {
+    const wrap = document.getElementById('nt-settings-order');
+    if (!wrap) return;
+    const order = await loadCardOrder();
+
+    async function move(key, dir) {
+      const current = await loadCardOrder();
+      const i = current.indexOf(key);
+      const j = i + dir;
+      if (i < 0 || j < 0 || j >= current.length) return;
+      [current[i], current[j]] = [current[j], current[i]];
+      await saveCardOrder(current);
+      applyCardOrder(current);
+      track('newtab_fab_card_reorder', { section: key, direction: dir > 0 ? 'down' : 'up' });
+      renderSettingsOrder();
+    }
+
+    wrap.replaceChildren(...order.map((key, index) => {
+      const up = el('button', { class: 'nt-order-btn', type: 'button', title: 'Move up', text: '↑' });
+      up.disabled = index === 0;
+      up.addEventListener('click', () => move(key, -1));
+
+      const down = el('button', { class: 'nt-order-btn', type: 'button', title: 'Move down', text: '↓' });
+      down.disabled = index === order.length - 1;
+      down.addEventListener('click', () => move(key, 1));
+
+      return el('div', { class: 'nt-settings-row' }, [
+        el('span', { class: 'nt-settings-row-label', text: SECTION_LABELS[key] || key }),
+        el('div', { class: 'nt-order-btns' }, [up, down])
+      ]);
+    }));
+  }
+
+  function initSettingsPanel() {
+    const fab = document.getElementById('nt-fab-settings');
+    const panel = document.getElementById('nt-settings-panel');
+    const overlay = document.getElementById('nt-settings-overlay');
+    const closeBtn = document.getElementById('nt-settings-close');
+    if (!fab || !panel) return;
+
+    async function open() {
+      const themeRes = await chrome.storage.local.get(THEME_KEY);
+      renderSettingsSwatches(themeRes[THEME_KEY] || 'cream');
+      const fontRes = await chrome.storage.local.get(CLOCK_FONT_KEY);
+      renderSettingsFonts(fontRes[CLOCK_FONT_KEY] || 'default');
+      await renderSettingsSections();
+      await renderSettingsOrder();
+      panel.hidden = false;
+      overlay.hidden = false;
+      track('newtab_fab_open');
+    }
+    function close() {
+      panel.hidden = true;
+      overlay.hidden = true;
+    }
+
+    fab.addEventListener('click', () => { if (panel.hidden) open(); else close(); });
+    closeBtn.addEventListener('click', close);
+    overlay.addEventListener('click', close);
+  }
+
   function initReviewLink() {
     const link = document.getElementById('nt-review-link');
     if (link) link.addEventListener('click', () => track('newtab_click_review_link'));
@@ -671,6 +989,7 @@
   // ---- Boot ----
   track('newtab_page_view');
   initTheme();
+  initClockFont();
   tickClock();
   setInterval(tickClock, 15000);
   renderGrades();
@@ -680,11 +999,15 @@
   renderTodos();
   renderWeeklyTodos();
   renderQuickLinks();
+  renderFavorites();
   initReviewLink();
   initLoginPromptLink();
   initTodoForm();
+  initFavoritesForm();
   initPomodoro();
   initSectionVisibility();
+  initCardOrder();
+  initSettingsPanel();
   applyPortalDataState();
 
   chrome.storage.onChanged.addListener((changes, area) => {
@@ -693,7 +1016,10 @@
     if (changes[MRDS_KEY]) { renderTodayClasses(); renderAttendance(); renderRoutine(); applyPortalDataState(); }
     if (changes[TODO_KEY]) renderTodos();
     if (changes[WEEKLY_TODO_KEY]) renderWeeklyTodos();
+    if (changes[FAV_KEY]) renderFavorites();
     if (changes[SECTIONS_KEY]) { applySectionVisibility(changes[SECTIONS_KEY].newValue || {}); applyPortalDataState(); }
+    if (changes[CARD_ORDER_KEY]) applyCardOrder(changes[CARD_ORDER_KEY].newValue || []);
     if (changes[THEME_KEY]) { applyTheme(changes[THEME_KEY].newValue || 'cream'); renderGrades(); }
+    if (changes[CLOCK_FONT_KEY]) applyClockFont(changes[CLOCK_FONT_KEY].newValue || 'default');
   });
 })();
