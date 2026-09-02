@@ -45,6 +45,80 @@
 
   const GRADE_HISTORY_PATH = '/students/grade_history';
 
+  const NEWTAB_GRADES_KEY = 'gpap_newtab_grades_v1';
+  function cacheGradesForNewTab(summary) {
+    try { chrome.storage.local.set({ [NEWTAB_GRADES_KEY]: summary }); } catch (e) { /* ignore */ }
+  }
+
+  // Shared, five-way palette — kept in sync with the identical table in
+  // mini-rds3.js and newtab.js, all keyed by the same 'gpap_theme_v1' value
+  // so picking a theme in the popup re-themes every surface at once.
+  const GPAP_THEMES = {
+    cream: {
+      bg: '#faf5ee', bgAlt: '#f1e6d6', surface: '#fffbf6', surface2: '#f6efe4', border: '#e7dbc7',
+      ink: '#3d362f', inkSoft: '#8c8072', accent: '#c1774c', accentDark: '#a6613b', accentSoft: '#f3e2d0',
+      indigo: '#5f6c85', indigoSoft: '#e6e9f0', sage: '#74915f', sageSoft: '#e6ebdc',
+      rust: '#b0574b', rustSoft: '#f3ddd8', gold: '#c1953f', goldSoft: '#f5ead2'
+    },
+    midnight: {
+      bg: '#1e1b18', bgAlt: '#26221d', surface: '#2a2521', surface2: '#322c26', border: '#453e35',
+      ink: '#f3ece1', inkSoft: '#a89c8c', accent: '#e2905f', accentDark: '#f0a878', accentSoft: '#3d2a20',
+      indigo: '#8b97b3', indigoSoft: '#2b3040', sage: '#8fae78', sageSoft: '#263323',
+      rust: '#d97b6c', rustSoft: '#3a2320', gold: '#d9ae5e', goldSoft: '#3a2f1c'
+    },
+    ocean: {
+      bg: '#f2f7f8', bgAlt: '#e3eef0', surface: '#ffffff', surface2: '#eaf2f3', border: '#cfe1e3',
+      ink: '#223338', inkSoft: '#6f8489', accent: '#2f7f8c', accentDark: '#23636e', accentSoft: '#dcedef',
+      indigo: '#5f6c85', indigoSoft: '#e6e9f0', sage: '#5f9e7a', sageSoft: '#e1f0e6',
+      rust: '#c2604f', rustSoft: '#f6ded9', gold: '#c99a3f', goldSoft: '#f6ebd3'
+    },
+    forest: {
+      bg: '#f5f7ee', bgAlt: '#e9edda', surface: '#ffffff', surface2: '#eef1e2', border: '#d8ddc3',
+      ink: '#2f3626', inkSoft: '#7c8468', accent: '#6b8f3f', accentDark: '#556f30', accentSoft: '#e4ecd4',
+      indigo: '#5f6c85', indigoSoft: '#e6e9f0', sage: '#4f8f5e', sageSoft: '#dcefe0',
+      rust: '#b6604a', rustSoft: '#f2ded6', gold: '#bd9a3c', goldSoft: '#f2ead0'
+    },
+    plum: {
+      bg: '#f8f3f6', bgAlt: '#efe1e9', surface: '#fffbfd', surface2: '#f4e9ef', border: '#e3cdd9',
+      ink: '#372733', inkSoft: '#8c7686', accent: '#9a5b84', accentDark: '#7c4568', accentSoft: '#f0dce9',
+      indigo: '#5f6c85', indigoSoft: '#e6e9f0', sage: '#6f9a6e', sageSoft: '#e2eee0',
+      rust: '#b95a5f', rustSoft: '#f4dcdd', gold: '#bb8f45', goldSoft: '#f2e6cf'
+    },
+    white: {
+      bg: '#ffffff', bgAlt: '#f4f4f4', surface: '#ffffff', surface2: '#f0f0f0', border: '#d4d4d4',
+      ink: '#111111', inkSoft: '#666666', accent: '#111111', accentDark: '#000000', accentSoft: '#e2e2e2',
+      indigo: '#5f6c85', indigoSoft: '#e6e9f0', sage: '#3f7d4f', sageSoft: '#e3efe4',
+      rust: '#b23b3b', rustSoft: '#f4dede', gold: '#a3821f', goldSoft: '#f2e9d0'
+    },
+    dark: {
+      bg: '#000000', bgAlt: '#0a0a0a', surface: '#121212', surface2: '#1c1c1c', border: '#333333',
+      ink: '#f5f5f5', inkSoft: '#999999', accent: '#d8d8d8', accentDark: '#efefef', accentSoft: '#262626',
+      indigo: '#8b97b3', indigoSoft: '#2b3040', sage: '#6fae7a', sageSoft: '#16241a',
+      rust: '#d97a7a', rustSoft: '#2a1616', gold: '#d8b962', goldSoft: '#2a2213'
+    }
+  };
+  const GPAP_THEME_KEY = 'gpap_theme_v1';
+  const GPAP_THEME_VARS = {
+    bg: '--gpap-bg', bgAlt: '--gpap-bg-alt', surface: '--gpap-surface', surface2: '--gpap-surface-2',
+    border: '--gpap-border', ink: '--gpap-ink', inkSoft: '--gpap-ink-soft', accent: '--gpap-accent',
+    accentDark: '--gpap-accent-dark', accentSoft: '--gpap-accent-soft', indigo: '--gpap-indigo',
+    indigoSoft: '--gpap-indigo-soft', sage: '--gpap-sage', sageSoft: '--gpap-sage-soft',
+    rust: '--gpap-rust', rustSoft: '--gpap-rust-soft', gold: '--gpap-gold', goldSoft: '--gpap-gold-soft'
+  };
+  function applyGpapTheme(themeId, targets) {
+    const theme = GPAP_THEMES[themeId] || GPAP_THEMES.cream;
+    targets.forEach((node) => {
+      if (!node) return;
+      Object.keys(GPAP_THEME_VARS).forEach((key) => node.style.setProperty(GPAP_THEME_VARS[key], theme[key]));
+    });
+  }
+  function initGpapTheme(targets) {
+    chrome.storage.local.get(GPAP_THEME_KEY).then((r) => applyGpapTheme(r[GPAP_THEME_KEY] || 'cream', targets));
+    chrome.storage.onChanged.addListener((changes, area) => {
+      if (area === 'local' && changes[GPAP_THEME_KEY]) applyGpapTheme(changes[GPAP_THEME_KEY].newValue || 'cream', targets);
+    });
+  }
+
   // Lets the fab work on any rds3.northsouth.edu page: on the grade history
   // page itself, parse the live DOM directly (no extra request); elsewhere,
   // fetch that page's HTML in the background and parse it the same way.
@@ -486,6 +560,27 @@
     const actualProjection = computeProjection(semesters, {}, []);
     const actualCGPA = actualProjection.finalCGPA;
 
+    // Motivational "potential" curve for the new-tab dashboard: every
+    // retake-eligible course (below B+) assumed retaken with an A.
+    const potentialOverrides = {};
+    semesters.forEach((sem, si) => {
+      sem.courses.forEach((c, ci) => {
+        const pts = pointsFor(c.grade);
+        if (pts !== null && pts < RETAKE_ELIGIBLE_MAX_POINTS) potentialOverrides[`r:${si}:${ci}`] = 'A';
+      });
+    });
+    const potentialProjection = computeProjection(semesters, potentialOverrides, []);
+
+    cacheGradesForNewTab({
+      studentId,
+      cgpa: actualCGPA,
+      credits: actualProjection.finalCredit,
+      honor: (honorFor(actualCGPA) || {}).name || null,
+      timeline: actualProjection.timeline.map((t) => ({ label: t.label, cgpa: t.cgpa })),
+      potentialTimeline: potentialProjection.timeline.map((t) => ({ label: t.label, cgpa: t.cgpa })),
+      updatedAt: Date.now()
+    });
+
     const fab = el('div', { id: 'gpap-fab', title: 'What if CGPA Planner' }, [
       (() => {
         const ns = 'http://www.w3.org/2000/svg';
@@ -663,6 +758,7 @@
 
     document.body.appendChild(fab);
     document.body.appendChild(panel);
+    initGpapTheme([fab, panel]);
 
     let lastProj = null;
     let targetValue = null;
