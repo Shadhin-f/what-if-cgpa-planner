@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>What if CGPA Planner</title>
+<style>
+  :root {
+    --gpap-bg: #faf5ee;
+    --gpap-surface-2: #f6efe4;
+    --gpap-border: #e7dbc7;
+    --gpap-ink: #3d362f;
+    --gpap-ink-soft: #8c8072;
+    --gpap-accent: #c1774c;
+    --gpap-accent-dark: #a6613b;
+    --gpap-accent-soft: #f3e2d0;
+    --gpap-radius-md: 14px;
+    --gpap-radius-sm: 10px;
+    --gpap-font: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  body {
+    margin: 0;
+    width: 280px;
+    font-family: var(--gpap-font);
+    background: var(--gpap-bg);
+    color: var(--gpap-ink);
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .gpap-pop { padding: 16px; }
+  .gpap-section + .gpap-section { margin-top: 18px; }
+  .gpap-pop h1 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--gpap-ink-soft); margin: 0 0 4px; }
+  .gpap-pop p.gpap-sub { font-size: 11px; color: var(--gpap-ink-soft); margin: 0 0 10px; }
+  .gpap-list { display: flex; flex-direction: column; gap: 8px; }
+  .gpap-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--gpap-surface-2);
+    border: 1px solid var(--gpap-border);
+    border-radius: var(--gpap-radius-md);
+    padding: 9px 12px;
+  }
+  .gpap-row-label { font-size: 12.5px; font-weight: 600; }
+  .gpap-switch { position: relative; width: 36px; height: 20px; flex: none; }
+  .gpap-switch input { opacity: 0; width: 0; height: 0; }
+  .gpap-switch-track {
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    border: 1px solid var(--gpap-border);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+  }
+  .gpap-switch-track::before {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    left: 2px;
+    top: 2px;
+    background: var(--gpap-ink-soft);
+    border-radius: 50%;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .gpap-switch input:checked + .gpap-switch-track { border-color: var(--gpap-accent); }
+  .gpap-switch input:checked + .gpap-switch-track::before { transform: translateX(16px); background: var(--gpap-accent); }
+  .gpap-note { font-size: 10.5px; color: var(--gpap-ink-soft); margin-top: 12px; line-height: 1.4; }
+
+  .gpap-swatches { display: flex; gap: 8px; flex-wrap: wrap; }
+  .gpap-swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background: linear-gradient(135deg, var(--sw-a) 50%, var(--sw-b) 50%);
+    cursor: pointer;
+    padding: 0;
+    flex: none;
+  }
+  .gpap-swatch-active { border-color: var(--gpap-ink); box-shadow: 0 0 0 2px var(--gpap-bg); }
+</style>
+</head>
+<body>
+  <div class="gpap-pop">
+    <div class="gpap-section">
+      <h1>Theme</h1>
+      <p class="gpap-sub">Applies to the CGPA panel, Mini-RDS3, and your new tab.</p>
+      <div class="gpap-swatches" id="gpap-swatches">
+        <button class="gpap-swatch" data-theme="cream" title="Cream" style="--sw-a:#faf5ee;--sw-b:#c1774c"></button>
+        <button class="gpap-swatch" data-theme="midnight" title="Midnight" style="--sw-a:#1e1b18;--sw-b:#e2905f"></button>
+        <button class="gpap-swatch" data-theme="ocean" title="Ocean" style="--sw-a:#f2f7f8;--sw-b:#2f7f8c"></button>
+        <button class="gpap-swatch" data-theme="forest" title="Forest" style="--sw-a:#f5f7ee;--sw-b:#6b8f3f"></button>
+        <button class="gpap-swatch" data-theme="plum" title="Plum" style="--sw-a:#f8f3f6;--sw-b:#9a5b84"></button>
+        <button class="gpap-swatch" data-theme="white" title="White" style="--sw-a:#ffffff;--sw-b:#111111"></button>
+        <button class="gpap-swatch" data-theme="dark" title="Dark" style="--sw-a:#000000;--sw-b:#efefef"></button>
+      </div>
+    </div>
+
+    <div class="gpap-section">
+      <h1>New Tab Sections</h1>
+      <p class="gpap-sub">Choose what shows on your new tab page.</p>
+      <div class="gpap-list">
+        <div class="gpap-row">
+          <span class="gpap-row-label">CGPA</span>
+          <label class="gpap-switch">
+            <input type="checkbox" id="gpap-toggle-cgpa" />
+            <span class="gpap-switch-track"></span>
+          </label>
+        </div>
+        <div class="gpap-row">
+          <span class="gpap-row-label">Today's Classes</span>
+          <label class="gpap-switch">
+            <input type="checkbox" id="gpap-toggle-today" />
+            <span class="gpap-switch-track"></span>
+          </label>
+        </div>
+        <div class="gpap-row">
+          <span class="gpap-row-label">Attendance</span>
+          <label class="gpap-switch">
+            <input type="checkbox" id="gpap-toggle-attendance" />
+            <span class="gpap-switch-track"></span>
+          </label>
+        </div>
+        <div class="gpap-row">
+          <span class="gpap-row-label">Routine</span>
+          <label class="gpap-switch">
+            <input type="checkbox" id="gpap-toggle-routine" />
+            <span class="gpap-switch-track"></span>
+          </label>
+        </div>
+        <div class="gpap-row">
+          <span class="gpap-row-label">To-do</span>
+          <label class="gpap-switch">
+            <input type="checkbox" id="gpap-toggle-todo" />
+            <span class="gpap-switch-track"></span>
+          </label>
+        </div>
+        <div class="gpap-row">
+          <span class="gpap-row-label">Focus Timer</span>
+          <label class="gpap-switch">
+            <input type="checkbox" id="gpap-toggle-pomodoro" />
+            <span class="gpap-switch-track"></span>
+          </label>
+        </div>
+        <div class="gpap-row">
+          <span class="gpap-row-label">Quick Links</span>
+          <label class="gpap-switch">
+            <input type="checkbox" id="gpap-toggle-links" />
+            <span class="gpap-switch-track"></span>
+          </label>
+        </div>
+        <div class="gpap-row">
+          <span class="gpap-row-label">Favorite Links</span>
+          <label class="gpap-switch">
+            <input type="checkbox" id="gpap-toggle-favorites" />
+            <span class="gpap-switch-track"></span>
+          </label>
+        </div>
+        <div class="gpap-row">
+          <span class="gpap-row-label">Weekly To-do</span>
+          <label class="gpap-switch">
+            <input type="checkbox" id="gpap-toggle-weekly" />
+            <span class="gpap-switch-track"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <p class="gpap-note">Changes apply immediately to any open new tab.</p>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -11,6 +11,7 @@
   --gpap-accent: #c1774c;
   --gpap-accent-dark: #a6613b;
   --gpap-accent-soft: #f3e2d0;
+  --gpap-accent-ink: #fffbf6;
   --gpap-indigo: #5f6c85;
   --gpap-indigo-soft: #e6e9f0;
   --gpap-sage: #74915f;
@@ -48,7 +49,7 @@
 #gpap-fab:hover { transform: translateY(-2px) scale(1.03); background: var(--gpap-accent-dark); }
 #gpap-fab svg { width: 20px; height: 20px; flex-shrink: 0; }
 #gpap-fab .gpap-fab-label {
-  color: #fffaf4;
+  color: var(--gpap-accent-ink);
   font-weight: 700;
   font-size: 13.5px;
   font-family: var(--gpap-font);
@@ -377,7 +378,7 @@ details.gpap-sem[open] .gpap-chevron { transform: rotate(90deg); }
   border-radius: var(--gpap-radius-sm);
   border: 1px solid var(--gpap-accent);
   background: var(--gpap-accent);
-  color: #fffaf4;
+  color: var(--gpap-accent-ink);
   cursor: pointer;
   font-size: 12px;
   font-weight: 600;

@@ -14,6 +14,66 @@
   const CACHE_TTL_MS = 3 * 60 * 1000;
   const SEMESTER_PROBE_LIMIT = 6;
 
+  // Kept identical to the table in content.js and newtab.js — all three read
+  // the same 'gpap_theme_v1' storage key so one pick re-themes every surface.
+  const GPAP_THEMES = {
+    cream: {
+      bg: '#faf5ee', surface: '#fffbf6', surface2: '#f6efe4', border: '#e7dbc7',
+      ink: '#3d362f', inkSoft: '#8c8072', accent: '#c1774c', accentDark: '#a6613b', accentSoft: '#f3e2d0',
+      indigo: '#5f6c85', sage: '#74915f', sageSoft: '#e6ebdc', rust: '#b0574b', rustSoft: '#f3ddd8'
+    },
+    midnight: {
+      bg: '#1e1b18', surface: '#2a2521', surface2: '#322c26', border: '#453e35',
+      ink: '#f3ece1', inkSoft: '#a89c8c', accent: '#e2905f', accentDark: '#f0a878', accentSoft: '#3d2a20',
+      indigo: '#8b97b3', sage: '#8fae78', sageSoft: '#263323', rust: '#d97b6c', rustSoft: '#3a2320'
+    },
+    ocean: {
+      bg: '#f2f7f8', surface: '#ffffff', surface2: '#eaf2f3', border: '#cfe1e3',
+      ink: '#223338', inkSoft: '#6f8489', accent: '#2f7f8c', accentDark: '#23636e', accentSoft: '#dcedef',
+      indigo: '#5f6c85', sage: '#5f9e7a', sageSoft: '#e1f0e6', rust: '#c2604f', rustSoft: '#f6ded9'
+    },
+    forest: {
+      bg: '#f5f7ee', surface: '#ffffff', surface2: '#eef1e2', border: '#d8ddc3',
+      ink: '#2f3626', inkSoft: '#7c8468', accent: '#6b8f3f', accentDark: '#556f30', accentSoft: '#e4ecd4',
+      indigo: '#5f6c85', sage: '#4f8f5e', sageSoft: '#dcefe0', rust: '#b6604a', rustSoft: '#f2ded6'
+    },
+    plum: {
+      bg: '#f8f3f6', surface: '#fffbfd', surface2: '#f4e9ef', border: '#e3cdd9',
+      ink: '#372733', inkSoft: '#8c7686', accent: '#9a5b84', accentDark: '#7c4568', accentSoft: '#f0dce9',
+      indigo: '#5f6c85', sage: '#6f9a6e', sageSoft: '#e2eee0', rust: '#b95a5f', rustSoft: '#f4dcdd'
+    },
+    white: {
+      bg: '#ffffff', surface: '#ffffff', surface2: '#f0f0f0', border: '#d4d4d4',
+      ink: '#111111', inkSoft: '#666666', accent: '#111111', accentDark: '#000000', accentSoft: '#e2e2e2',
+      indigo: '#5f6c85', sage: '#3f7d4f', sageSoft: '#e3efe4', rust: '#b23b3b', rustSoft: '#f4dede'
+    },
+    dark: {
+      bg: '#000000', surface: '#121212', surface2: '#1c1c1c', border: '#333333',
+      ink: '#f5f5f5', inkSoft: '#999999', accent: '#d8d8d8', accentDark: '#efefef', accentSoft: '#262626',
+      indigo: '#8b97b3', sage: '#6fae7a', sageSoft: '#16241a', rust: '#d97a7a', rustSoft: '#2a1616'
+    }
+  };
+  const GPAP_THEME_KEY = 'gpap_theme_v1';
+  const MRDS_THEME_VARS = {
+    bg: '--mrds-bg', surface: '--mrds-surface', surface2: '--mrds-surface-2', border: '--mrds-border',
+    ink: '--mrds-ink', inkSoft: '--mrds-ink-soft', accent: '--mrds-accent', accentDark: '--mrds-accent-dark',
+    accentSoft: '--mrds-accent-soft', indigo: '--mrds-indigo', sage: '--mrds-sage', sageSoft: '--mrds-sage-soft',
+    rust: '--mrds-rust', rustSoft: '--mrds-rust-soft'
+  };
+  function applyGpapTheme(themeId, targets) {
+    const theme = GPAP_THEMES[themeId] || GPAP_THEMES.cream;
+    targets.forEach((node) => {
+      if (!node) return;
+      Object.keys(MRDS_THEME_VARS).forEach((key) => node.style.setProperty(MRDS_THEME_VARS[key], theme[key]));
+    });
+  }
+  function initGpapTheme(targets) {
+    chrome.storage.local.get(GPAP_THEME_KEY).then((r) => applyGpapTheme(r[GPAP_THEME_KEY] || 'cream', targets));
+    chrome.storage.onChanged.addListener((changes, area) => {
+      if (area === 'local' && changes[GPAP_THEME_KEY]) applyGpapTheme(changes[GPAP_THEME_KEY].newValue || 'cream', targets);
+    });
+  }
+
   const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const DAY_CODES = ['S', 'M', 'T', 'W', 'R', 'F', 'A']; // NSU convention: Sun..Thu, Fri, Sat(A)
 
@@ -466,9 +526,14 @@
     document.body.appendChild(fab);
     document.body.appendChild(panel);
     adjustFabPosition();
+    initGpapTheme([fab, panel]);
 
     const mo = new MutationObserver(adjustFabPosition);
     mo.observe(document.body, { childList: true });
+
+    // Populate the cache for the new-tab dashboard even if the user never
+    // opens this panel — previously only a fab click triggered a fetch.
+    refresh(false);
   }
 
   if (document.body) main();
