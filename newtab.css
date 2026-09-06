@@ -21,9 +21,16 @@
   --gpap-radius-lg: 20px;
   --gpap-font: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --gpap-clock-font: var(--gpap-font);
+  --gpap-clock-size: 40px;
+  --gpap-bg-overlay: rgba(0, 0, 0, 0.32);
 }
 
 * { box-sizing: border-box; }
+
+/* Hide the page scrollbar itself — scrolling (wheel, trackpad, keyboard)
+   still works, there's just no visible track/thumb. */
+html { scrollbar-width: none; -ms-overflow-style: none; }
+html::-webkit-scrollbar { display: none; }
 
 body {
   margin: 0;
@@ -35,21 +42,73 @@ body {
   transition: background 0.2s ease, color 0.2s ease;
 }
 
-.nt-shell { max-width: 1080px; margin: 0 auto; }
+.nt-shell { max-width: 1080px; margin: 0 auto; position: relative; z-index: 1; }
+
+/* New Tab Dashboard master toggle set to "off" — just clock, date, search
+   and Favorite Links, sitting a little above dead-center; everything else
+   stays hidden except the footer (version tag + review link), which stays
+   pinned to the bottom of the page. */
+body.nt-minimal-mode { padding: 24px; }
+body.nt-minimal-mode .nt-shell {
+  min-height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+}
+body.nt-minimal-mode .nt-header {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 20vh;
+  margin-bottom: 0;
+}
+
+/* Custom background image */
+body.nt-has-bg-image {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+body.nt-has-bg-image::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: var(--gpap-bg-overlay);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* See-through cards over a custom photo, with a light blur so text
+   stays legible no matter what colors sit behind it. */
+body.nt-has-bg-image .nt-card {
+  background: color-mix(in srgb, var(--gpap-surface) 74%, transparent);
+  backdrop-filter: blur(10px) saturate(1.15);
+  -webkit-backdrop-filter: blur(10px) saturate(1.15);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
+}
+body.nt-has-bg-image .nt-settings-panel {
+  background: color-mix(in srgb, var(--gpap-surface) 88%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
 
 .nt-header { text-align: center; margin-bottom: 24px; }
-.nt-clock { font-family: var(--gpap-clock-font); font-size: 40px; font-weight: 600; margin: 0; line-height: 1.1; letter-spacing: var(--gpap-clock-tracking, normal); }
+.nt-clock { font-family: var(--gpap-clock-font); font-size: var(--gpap-clock-size, 40px); font-weight: 600; margin: 0; line-height: 1.1; letter-spacing: var(--gpap-clock-tracking, normal); }
 .nt-date { font-size: 13px; color: var(--gpap-ink-soft); margin: 6px 0 0; }
 .nt-header-links { margin-top: 16px; }
 .nt-header-links[hidden] { display: none; }
 .nt-header-favs { margin-top: 10px; }
 .nt-header-favs[hidden] { display: none; }
+.nt-header-search { margin-top: 14px; display: flex; justify-content: center; }
+.nt-header-search[hidden] { display: none; }
 
 .nt-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
 }
+.nt-grid[hidden] { display: none; }
 @media (max-width: 900px) {
   .nt-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -256,6 +315,105 @@ body {
 .nt-pomo-time { font-size: 40px; font-weight: 800; letter-spacing: 0.02em; margin-bottom: 14px; }
 .nt-pomo-actions { display: flex; justify-content: center; gap: 8px; }
 
+/* Google Search bar — shared layout; look is picked via a
+   nt-search-style-* modifier class (Customize > Search Bar Style). */
+.nt-search-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: min(var(--gpap-search-width, 420px), 100%);
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  background: transparent;
+  box-shadow: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+/* Boxed (default) — a filled pill, like a search engine's home box. */
+.nt-search-form.nt-search-style-pill {
+  border-radius: 999px;
+  background: var(--gpap-surface);
+  border-color: var(--gpap-border);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+.nt-search-form.nt-search-style-pill:focus-within { border-color: var(--gpap-accent); box-shadow: 0 0 0 3px var(--gpap-accent-soft); }
+
+/* Underline — no fill, just a baseline rule under the text. */
+.nt-search-form.nt-search-style-underline {
+  border-radius: 0;
+  padding: 8px 4px 9px;
+  border-width: 0 0 2px 0;
+  border-color: var(--gpap-border);
+}
+.nt-search-form.nt-search-style-underline:focus-within { border-color: var(--gpap-accent); }
+
+/* Minimal — invisible until hovered or focused, so it sits quietly on the page. */
+.nt-search-form.nt-search-style-minimal {
+  border-radius: 999px;
+  border-color: transparent;
+}
+.nt-search-form.nt-search-style-minimal:hover { background: var(--gpap-surface-2); }
+.nt-search-form.nt-search-style-minimal:focus-within {
+  background: var(--gpap-surface);
+  border-color: var(--gpap-border);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+/* Card — a squarer, more elevated block. */
+.nt-search-form.nt-search-style-card {
+  border-radius: 14px;
+  padding: 12px 18px;
+  background: var(--gpap-surface-2);
+  border-color: var(--gpap-border);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+.nt-search-form.nt-search-style-card:focus-within { border-color: var(--gpap-accent); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16); }
+
+.nt-search-btn {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--gpap-ink-soft);
+  transition: color 0.15s ease;
+}
+.nt-search-btn:hover, .nt-search-btn:focus-visible { color: var(--gpap-accent); }
+.nt-search-icon { flex: none; width: 16px; height: 16px; color: inherit; }
+.nt-search-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  font-size: 14px;
+  color: var(--gpap-ink);
+}
+.nt-search-input::placeholder { color: var(--gpap-ink-soft); }
+
+/* Over a photo background, match the frosted-glass treatment used by the
+   quick-link and favorite pills so the bar reads as a highlight, not a
+   flat card fighting the wallpaper. */
+body.nt-has-bg-image .nt-search-form.nt-search-style-pill,
+body.nt-has-bg-image .nt-search-form.nt-search-style-card {
+  background: color-mix(in srgb, var(--gpap-surface) 62%, transparent);
+  backdrop-filter: blur(8px) saturate(1.15);
+  -webkit-backdrop-filter: blur(8px) saturate(1.15);
+  border-color: var(--gpap-border);
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.25);
+}
+body.nt-has-bg-image .nt-search-form.nt-search-style-minimal:hover,
+body.nt-has-bg-image .nt-search-form.nt-search-style-minimal:focus-within {
+  background: color-mix(in srgb, var(--gpap-surface) 62%, transparent);
+  backdrop-filter: blur(8px) saturate(1.15);
+  -webkit-backdrop-filter: blur(8px) saturate(1.15);
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.25);
+}
+
 /* Quick Links card */
 .nt-links-wrap { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
 .nt-link-pill {
@@ -273,6 +431,22 @@ body {
 .nt-link-pill:hover { background: var(--gpap-accent); color: var(--gpap-accent-ink); }
 .nt-link-pill:active { transform: scale(0.97); }
 
+/* Quick Links and Favorites sit straight on the wallpaper (no card behind
+   them), and --gpap-accent-soft isn't part of a preset's palette — so over
+   an image-based theme, swap both pill kinds to a frosted glass chip built
+   from vars a preset DOES drive (ink/surface/border), with a lifted shadow
+   so they read as a highlight instead of blending into the photo. */
+body.nt-has-bg-image .nt-link-pill {
+  background: color-mix(in srgb, var(--gpap-surface) 62%, transparent);
+  backdrop-filter: blur(8px) saturate(1.15);
+  -webkit-backdrop-filter: blur(8px) saturate(1.15);
+  color: var(--gpap-ink);
+  font-weight: 800;
+  border: 1px solid var(--gpap-border);
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.25);
+}
+body.nt-has-bg-image .nt-link-pill:hover { background: var(--gpap-accent); color: var(--gpap-accent-ink); }
+
 /* Favorite Links */
 .nt-favs-wrap { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
 .nt-fav-pill {
@@ -289,6 +463,16 @@ body {
   transition: background 0.15s ease, transform 0.1s ease;
 }
 .nt-fav-pill:hover { background: var(--gpap-surface); transform: translateY(-1px); }
+body.nt-has-bg-image .nt-fav-pill {
+  color: var(--gpap-ink);
+  font-weight: 800;
+  background: color-mix(in srgb, var(--gpap-surface) 62%, transparent);
+  backdrop-filter: blur(8px) saturate(1.15);
+  -webkit-backdrop-filter: blur(8px) saturate(1.15);
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.22);
+}
+body.nt-has-bg-image .nt-fav-pill:hover { background: color-mix(in srgb, var(--gpap-surface) 80%, transparent); }
+body.nt-has-bg-image .nt-fav-add { color: var(--gpap-ink); border-color: var(--gpap-border); }
 .nt-fav-link { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: inherit; }
 .nt-fav-icon {
   width: 14px;
@@ -518,6 +702,144 @@ body {
 .nt-set-font:hover { border-color: var(--gpap-accent); }
 .nt-set-font-active { border-color: var(--gpap-accent); background: var(--gpap-accent-soft); }
 .nt-set-font-active .nt-set-font-name { color: var(--gpap-accent-dark); }
+
+.nt-settings-sizes { display: flex; flex-wrap: wrap; gap: 8px; }
+.nt-set-size {
+  padding: 7px 12px;
+  border: 1.5px solid var(--gpap-border);
+  background: var(--gpap-surface-2);
+  color: var(--gpap-ink);
+  border-radius: var(--gpap-radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.nt-set-size:hover { border-color: var(--gpap-accent); }
+.nt-set-size-active { border-color: var(--gpap-accent); background: var(--gpap-accent-soft); color: var(--gpap-accent-dark); }
+
+.nt-settings-searchstyles { display: flex; flex-wrap: wrap; gap: 8px; }
+.nt-set-searchstyle {
+  padding: 7px 12px;
+  border: 1.5px solid var(--gpap-border);
+  background: var(--gpap-surface-2);
+  color: var(--gpap-ink);
+  border-radius: var(--gpap-radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.nt-set-searchstyle:hover { border-color: var(--gpap-accent); }
+.nt-set-searchstyle-active { border-color: var(--gpap-accent); background: var(--gpap-accent-soft); color: var(--gpap-accent-dark); }
+.nt-bg-modes { display: flex; gap: 8px; flex-wrap: wrap; }
+.nt-bg-mode-btn {
+  padding: 7px 12px;
+  border: 1.5px solid var(--gpap-border);
+  background: var(--gpap-surface-2);
+  color: var(--gpap-ink);
+  border-radius: var(--gpap-radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.nt-bg-mode-btn:hover { border-color: var(--gpap-accent); }
+.nt-bg-mode-active { border-color: var(--gpap-accent); background: var(--gpap-accent-soft); color: var(--gpap-accent-dark); }
+
+.nt-bg-shuffle-btn {
+  padding: 7px 12px;
+  border: 1.5px solid var(--gpap-border);
+  background: var(--gpap-surface-2);
+  color: var(--gpap-ink);
+  border-radius: var(--gpap-radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.nt-bg-shuffle-btn:hover { border-color: var(--gpap-accent); }
+.nt-bg-shuffle-btn-active { border-color: var(--gpap-accent); background: var(--gpap-accent-soft); color: var(--gpap-accent-dark); }
+.nt-bg-status { font-size: 11px; color: var(--gpap-ink-soft); margin: 6px 0 0; min-height: 14px; }
+.nt-bg-sub { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.nt-bg-sub[hidden] { display: none; }
+.nt-bg-sub input[type="url"],
+.nt-bg-sub input[type="file"] {
+  padding: 8px 10px;
+  border: 1px solid var(--gpap-border);
+  border-radius: var(--gpap-radius-sm);
+  font-size: 12.5px;
+  background: var(--gpap-surface-2);
+  color: var(--gpap-ink);
+  font-family: inherit;
+  width: 100%;
+}
+.nt-bg-sub input:focus { outline: 2px solid var(--gpap-accent-soft); outline-offset: 1px; }
+.nt-bg-hint { font-size: 10.5px; color: var(--gpap-ink-soft); margin: 0; line-height: 1.4; }
+.nt-bg-hint a { color: var(--gpap-accent-dark); }
+.nt-bg-url-form { display: flex; gap: 8px; }
+.nt-bg-url-form input { flex: 1; min-width: 0; }
+
+.nt-bg-color-row { display: flex; align-items: center; gap: 10px; }
+.nt-bg-color-row input[type="color"] {
+  width: 34px;
+  height: 30px;
+  padding: 2px;
+  border: 1px solid var(--gpap-border);
+  border-radius: var(--gpap-radius-sm);
+  background: var(--gpap-surface-2);
+  cursor: pointer;
+  flex: none;
+}
+.nt-bg-color-label { font-size: 12.5px; color: var(--gpap-ink); flex: 1; }
+
+.nt-bg-presets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.nt-bg-preset {
+  position: relative;
+  height: 64px;
+  border-radius: var(--gpap-radius-sm);
+  border: 2px solid transparent;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  padding: 0;
+  overflow: hidden;
+}
+.nt-bg-preset::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.55) 100%);
+}
+.nt-bg-preset-name {
+  position: absolute;
+  left: 8px;
+  bottom: 5px;
+  z-index: 1;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fffbf6;
+}
+.nt-bg-preset:hover { border-color: var(--gpap-accent); }
+.nt-bg-preset-active { border-color: var(--gpap-accent); box-shadow: 0 0 0 2px var(--gpap-accent-soft); }
+
+.nt-bg-presets-more {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 7px 10px;
+  border: 1.5px dashed var(--gpap-border);
+  background: transparent;
+  color: var(--gpap-ink-soft);
+  border-radius: var(--gpap-radius-sm);
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.nt-bg-presets-more:hover { border-color: var(--gpap-accent); color: var(--gpap-accent-dark); }
+.nt-bg-presets-more[hidden] { display: none; }
+
 .nt-settings-list { display: flex; flex-direction: column; gap: 8px; }
 .nt-settings-row {
   display: flex;

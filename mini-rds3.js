@@ -51,6 +51,41 @@
       bg: '#000000', surface: '#121212', surface2: '#1c1c1c', border: '#333333',
       ink: '#f5f5f5', inkSoft: '#999999', accent: '#d8d8d8', accentDark: '#efefef', accentSoft: '#262626',
       indigo: '#8b97b3', sage: '#6fae7a', sageSoft: '#16241a', rust: '#d97a7a', rustSoft: '#2a1616'
+    },
+    rose: {
+      bg: '#fbf3f2', surface: '#fffbfa', surface2: '#f9ebe9', border: '#edd6d3',
+      ink: '#3d2a28', inkSoft: '#8c7370', accent: '#c76b6f', accentDark: '#a8494e', accentSoft: '#f3dcda',
+      indigo: '#6d5f85', sage: '#74915f', sageSoft: '#e6ebdc', rust: '#b0574b', rustSoft: '#f3ddd8'
+    },
+    slate: {
+      bg: '#f3f5f7', surface: '#ffffff', surface2: '#eef1f4', border: '#d6dde3',
+      ink: '#2b333b', inkSoft: '#707c87', accent: '#52708c', accentDark: '#3d5670', accentSoft: '#dee7ee',
+      indigo: '#4a5a8c', sage: '#5f9e7a', sageSoft: '#e1f0e6', rust: '#c2604f', rustSoft: '#f6ded9'
+    },
+    sand: {
+      bg: '#faf1e6', surface: '#fffaf2', surface2: '#f6ead9', border: '#e6d2b8',
+      ink: '#3f2f21', inkSoft: '#8f7a63', accent: '#c17840', accentDark: '#9c5b2b', accentSoft: '#f0dcc4',
+      indigo: '#5f6c85', sage: '#74915f', sageSoft: '#e6ebdc', rust: '#b0574b', rustSoft: '#f3ddd8'
+    },
+    sage: {
+      bg: '#f4f6f0', surface: '#fdfdf9', surface2: '#eef1e6', border: '#dde3d0',
+      ink: '#313a2b', inkSoft: '#7c8874', accent: '#7a9169', accentDark: '#5c7350', accentSoft: '#e3ead9',
+      indigo: '#5f6c85', sage: '#74915f', sageSoft: '#e6ebdc', rust: '#b0574b', rustSoft: '#f3ddd8'
+    },
+    neon: {
+      bg: '#0a0a0c', surface: '#17171a', surface2: '#1e1e22', border: '#2c2c31',
+      ink: '#f3f6f2', inkSoft: '#9aa39a', accent: '#39e07a', accentDark: '#1fb85f', accentSoft: '#14301f',
+      indigo: '#7c8cff', sage: '#39e07a', sageSoft: '#14301f', rust: '#ff5c5c', rustSoft: '#3a1414'
+    },
+    crimson: {
+      bg: '#0c0808', surface: '#1a1313', surface2: '#221818', border: '#3a2626',
+      ink: '#f7ecec', inkSoft: '#b08e8e', accent: '#e0333f', accentDark: '#b31f29', accentSoft: '#3a1418',
+      indigo: '#7c8cff', sage: '#4fae6f', sageSoft: '#142a1c', rust: '#e0333f', rustSoft: '#3a1418'
+    },
+    signal: {
+      bg: '#ffffff', surface: '#ffffff', surface2: '#ececec', border: '#cfcfcf',
+      ink: '#050505', inkSoft: '#4d4d4d', accent: '#e8590c', accentDark: '#b8430a', accentSoft: '#fde3d1',
+      indigo: '#364fc7', sage: '#2f9e44', sageSoft: '#d3f9d8', rust: '#e03131', rustSoft: '#ffe3e3'
     }
   };
   const GPAP_THEME_KEY = 'gpap_theme_v1';

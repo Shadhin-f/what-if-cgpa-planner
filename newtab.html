@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <title>New Tab</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@600;700&family=Playfair+Display:wght@700&family=Space+Mono:wght@700&family=Caveat:wght@600&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@600;700&family=Playfair+Display:wght@700&family=Space+Mono:wght@700&family=Caveat:wght@600&family=Poppins:wght@700&family=Oswald:wght@700&family=Righteous&family=Abril+Fatface&family=Pacifico&family=Press+Start+2P&display=swap" />
 <link rel="stylesheet" href="newtab.css" />
 </head>
 <body>
@@ -22,6 +22,14 @@
           <input id="nt-fav-url" type="url" placeholder="https://…" autocomplete="off" required />
           <button type="submit" class="nt-btn">Save</button>
           <button type="button" class="nt-btn nt-btn-secondary" id="nt-fav-cancel">Cancel</button>
+        </form>
+      </div>
+      <div class="nt-header-search" id="nt-section-search" hidden>
+        <form id="nt-search-form" class="nt-search-form nt-search-style-pill" action="https://www.google.com/search" method="GET" target="_self">
+          <button type="submit" class="nt-search-btn" aria-label="Search">
+            <svg class="nt-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          </button>
+          <input id="nt-search-input" name="q" type="text" class="nt-search-input" placeholder="Search Google" autocomplete="off" />
         </form>
       </div>
     </header>
@@ -48,7 +56,7 @@
       <div id="nt-grades-body"></div>
     </section>
 
-    <main class="nt-grid">
+    <main class="nt-grid" id="nt-main-grid">
       <section class="nt-card nt-card-today" id="nt-section-today">
         <div class="nt-card-head">
           <div class="nt-card-title">
@@ -136,8 +144,8 @@
       <div class="nt-weekly-grid" id="nt-weekly-grid"></div>
     </section>
 
-    <footer class="nt-footer">
-      <span class="nt-beta-tag">Beta</span>
+    <footer class="nt-footer" id="nt-footer">
+      <span class="nt-beta-tag" id="nt-beta-tag"></span>
       <a id="nt-review-link" class="nt-review-link" href="https://chromewebstore.google.com/detail/koekeocjmjcbinjpfpijockklageaknd?utm_source=item-share-cb" target="_blank" rel="noopener noreferrer">Enjoying it? Leave a review →</a>
     </footer>
 
@@ -159,8 +167,71 @@
         <div class="nt-settings-fonts" id="nt-settings-fonts"></div>
       </div>
       <div class="nt-settings-section">
+        <h3>Clock Size</h3>
+        <div class="nt-settings-sizes" id="nt-settings-sizes"></div>
+      </div>
+      <div class="nt-settings-section">
+        <h3>Background</h3>
+        <div class="nt-bg-modes" id="nt-bg-modes">
+          <button type="button" class="nt-bg-mode-btn" data-mode="none">None</button>
+          <button type="button" class="nt-bg-mode-btn" data-mode="preset">Themes</button>
+          <button type="button" class="nt-bg-mode-btn" data-mode="shuffle">Shuffle</button>
+          <button type="button" class="nt-bg-mode-btn" data-mode="url">Link</button>
+        </div>
+        <p class="nt-bg-status" id="nt-bg-status"></p>
+
+        <div class="nt-bg-sub" id="nt-bg-sub-preset" hidden>
+          <div class="nt-bg-presets" id="nt-bg-presets"></div>
+          <button type="button" class="nt-bg-presets-more" id="nt-bg-presets-more"></button>
+        </div>
+
+        <div class="nt-bg-sub" id="nt-bg-sub-shuffle" hidden>
+          <div class="nt-bg-modes" id="nt-bg-shuffle-modes">
+            <button type="button" class="nt-bg-shuffle-btn" data-shuffle="newtab">Every new tab</button>
+            <button type="button" class="nt-bg-shuffle-btn" data-shuffle="hourly">Hourly</button>
+            <button type="button" class="nt-bg-shuffle-btn" data-shuffle="daily">Daily</button>
+          </div>
+          <p class="nt-bg-hint" id="nt-bg-shuffle-status"></p>
+        </div>
+
+        <div class="nt-bg-sub" id="nt-bg-sub-url" hidden>
+          <form id="nt-bg-url-form" class="nt-bg-url-form">
+            <input id="nt-bg-url-input" type="url" placeholder="https://…/image.jpg" autocomplete="off" />
+            <button type="submit" class="nt-btn nt-btn-small">Apply</button>
+          </form>
+        </div>
+
+        <div class="nt-bg-sub" id="nt-bg-sub-color" hidden>
+          <div class="nt-bg-color-row">
+            <input id="nt-bg-color-input" type="color" value="#ffffff" />
+            <span class="nt-bg-color-label">Font color</span>
+            <button type="button" class="nt-btn nt-btn-small" id="nt-bg-color-reset">Auto</button>
+          </div>
+          <p class="nt-bg-hint">Pick a text color that stays readable over your photo.</p>
+        </div>
+      </div>
+      <div class="nt-settings-section">
+        <h3>New Tab Dashboard</h3>
+        <div class="nt-settings-row">
+          <span class="nt-settings-row-label">Full dashboard</span>
+          <label class="nt-switch">
+            <input type="checkbox" id="nt-master-mode-toggle" />
+            <span class="nt-switch-track"></span>
+          </label>
+        </div>
+        <p class="nt-bg-hint">Off keeps just the clock, search bar, and Quick Links on new tabs. Mini RDS3 and What if keep working either way.</p>
+      </div>
+      <div class="nt-settings-section">
         <h3>New Tab Sections</h3>
         <div class="nt-settings-list" id="nt-settings-sections"></div>
+      </div>
+      <div class="nt-settings-section">
+        <h3>Search Bar Style</h3>
+        <div class="nt-settings-searchstyles" id="nt-settings-searchstyles"></div>
+      </div>
+      <div class="nt-settings-section">
+        <h3>Search Bar Width</h3>
+        <div class="nt-settings-searchstyles" id="nt-settings-searchwidths"></div>
       </div>
       <div class="nt-settings-section">
         <h3>Reorder Cards</h3>

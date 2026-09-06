@@ -95,6 +95,48 @@
       ink: '#f5f5f5', inkSoft: '#999999', accent: '#d8d8d8', accentDark: '#efefef', accentSoft: '#262626', accentInk: '#141414',
       indigo: '#8b97b3', indigoSoft: '#2b3040', sage: '#6fae7a', sageSoft: '#16241a',
       rust: '#d97a7a', rustSoft: '#2a1616', gold: '#d8b962', goldSoft: '#2a2213'
+    },
+    rose: {
+      bg: '#fbf3f2', bgAlt: '#f5e3e1', surface: '#fffbfa', surface2: '#f9ebe9', border: '#edd6d3',
+      ink: '#3d2a28', inkSoft: '#8c7370', accent: '#c76b6f', accentDark: '#a8494e', accentSoft: '#f3dcda', accentInk: '#fffbf6',
+      indigo: '#6d5f85', indigoSoft: '#eee7f0', sage: '#74915f', sageSoft: '#e6ebdc',
+      rust: '#b0574b', rustSoft: '#f3ddd8', gold: '#c1953f', goldSoft: '#f5ead2'
+    },
+    slate: {
+      bg: '#f3f5f7', bgAlt: '#e5e9ed', surface: '#ffffff', surface2: '#eef1f4', border: '#d6dde3',
+      ink: '#2b333b', inkSoft: '#707c87', accent: '#52708c', accentDark: '#3d5670', accentSoft: '#dee7ee', accentInk: '#fffbf6',
+      indigo: '#4a5a8c', indigoSoft: '#e2e6f0', sage: '#5f9e7a', sageSoft: '#e1f0e6',
+      rust: '#c2604f', rustSoft: '#f6ded9', gold: '#c99a3f', goldSoft: '#f6ebd3'
+    },
+    sand: {
+      bg: '#faf1e6', bgAlt: '#f0decb', surface: '#fffaf2', surface2: '#f6ead9', border: '#e6d2b8',
+      ink: '#3f2f21', inkSoft: '#8f7a63', accent: '#c17840', accentDark: '#9c5b2b', accentSoft: '#f0dcc4', accentInk: '#fffbf6',
+      indigo: '#5f6c85', indigoSoft: '#e6e9f0', sage: '#74915f', sageSoft: '#e6ebdc',
+      rust: '#b0574b', rustSoft: '#f3ddd8', gold: '#c1953f', goldSoft: '#f5ead2'
+    },
+    sage: {
+      bg: '#f4f6f0', bgAlt: '#e6ebdd', surface: '#fdfdf9', surface2: '#eef1e6', border: '#dde3d0',
+      ink: '#313a2b', inkSoft: '#7c8874', accent: '#7a9169', accentDark: '#5c7350', accentSoft: '#e3ead9', accentInk: '#fffbf6',
+      indigo: '#5f6c85', indigoSoft: '#e6e9f0', sage: '#74915f', sageSoft: '#e6ebdc',
+      rust: '#b0574b', rustSoft: '#f3ddd8', gold: '#c1953f', goldSoft: '#f5ead2'
+    },
+    neon: {
+      bg: '#0a0a0c', bgAlt: '#121215', surface: '#17171a', surface2: '#1e1e22', border: '#2c2c31',
+      ink: '#f3f6f2', inkSoft: '#9aa39a', accent: '#39e07a', accentDark: '#1fb85f', accentSoft: '#14301f', accentInk: '#06170d',
+      indigo: '#7c8cff', indigoSoft: '#1c1f3a', sage: '#39e07a', sageSoft: '#14301f',
+      rust: '#ff5c5c', rustSoft: '#3a1414', gold: '#f5d442', goldSoft: '#332a0a'
+    },
+    crimson: {
+      bg: '#0c0808', bgAlt: '#150f0f', surface: '#1a1313', surface2: '#221818', border: '#3a2626',
+      ink: '#f7ecec', inkSoft: '#b08e8e', accent: '#e0333f', accentDark: '#b31f29', accentSoft: '#3a1418', accentInk: '#fdf4f4',
+      indigo: '#7c8cff', indigoSoft: '#1c1f3a', sage: '#4fae6f', sageSoft: '#142a1c',
+      rust: '#e0333f', rustSoft: '#3a1418', gold: '#f0b23e', goldSoft: '#332510'
+    },
+    signal: {
+      bg: '#ffffff', bgAlt: '#f2f2f2', surface: '#ffffff', surface2: '#ececec', border: '#cfcfcf',
+      ink: '#050505', inkSoft: '#4d4d4d', accent: '#e8590c', accentDark: '#b8430a', accentSoft: '#fde3d1', accentInk: '#fffbf6',
+      indigo: '#364fc7', indigoSoft: '#dbe4fd', sage: '#2f9e44', sageSoft: '#d3f9d8',
+      rust: '#e03131', rustSoft: '#ffe3e3', gold: '#f08c00', goldSoft: '#fff3bf'
     }
   };
   const GPAP_THEME_KEY = 'gpap_theme_v1';

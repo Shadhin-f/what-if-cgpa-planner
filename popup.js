@@ -7,6 +7,20 @@
     } catch (e) { /* analytics must never break the extension */ }
   }
 
+  // ---- New Tab Dashboard master toggle ----
+  const MASTER_MODE_KEY = 'gpap_newtab_master_mode_v1';
+  const masterToggle = document.getElementById('gpap-toggle-master-mode');
+  if (masterToggle) {
+    chrome.storage.local.get(MASTER_MODE_KEY).then((result) => {
+      masterToggle.checked = (result[MASTER_MODE_KEY] || 'full') !== 'minimal';
+    });
+    masterToggle.addEventListener('change', async () => {
+      const mode = masterToggle.checked ? 'full' : 'minimal';
+      await chrome.storage.local.set({ [MASTER_MODE_KEY]: mode });
+      track('popup_master_mode_change', { mode });
+    });
+  }
+
   const KEY = 'gpap_newtab_sections_v1';
   const SECTIONS = ['cgpa', 'today', 'attendance', 'routine', 'todo', 'pomodoro', 'links', 'favorites', 'weekly'];
 
@@ -61,6 +75,34 @@
     dark: {
       bg: '#000000', surface2: '#1c1c1c', border: '#333333', ink: '#f5f5f5', inkSoft: '#999999',
       accent: '#d8d8d8', accentDark: '#efefef', accentSoft: '#262626'
+    },
+    rose: {
+      bg: '#fbf3f2', surface2: '#f9ebe9', border: '#edd6d3', ink: '#3d2a28', inkSoft: '#8c7370',
+      accent: '#c76b6f', accentDark: '#a8494e', accentSoft: '#f3dcda'
+    },
+    slate: {
+      bg: '#f3f5f7', surface2: '#eef1f4', border: '#d6dde3', ink: '#2b333b', inkSoft: '#707c87',
+      accent: '#52708c', accentDark: '#3d5670', accentSoft: '#dee7ee'
+    },
+    sand: {
+      bg: '#faf1e6', surface2: '#f6ead9', border: '#e6d2b8', ink: '#3f2f21', inkSoft: '#8f7a63',
+      accent: '#c17840', accentDark: '#9c5b2b', accentSoft: '#f0dcc4'
+    },
+    sage: {
+      bg: '#f4f6f0', surface2: '#eef1e6', border: '#dde3d0', ink: '#313a2b', inkSoft: '#7c8874',
+      accent: '#7a9169', accentDark: '#5c7350', accentSoft: '#e3ead9'
+    },
+    neon: {
+      bg: '#0a0a0c', surface2: '#1e1e22', border: '#2c2c31', ink: '#f3f6f2', inkSoft: '#9aa39a',
+      accent: '#39e07a', accentDark: '#1fb85f', accentSoft: '#14301f'
+    },
+    crimson: {
+      bg: '#0c0808', surface2: '#221818', border: '#3a2626', ink: '#f7ecec', inkSoft: '#b08e8e',
+      accent: '#e0333f', accentDark: '#b31f29', accentSoft: '#3a1418'
+    },
+    signal: {
+      bg: '#ffffff', surface2: '#ececec', border: '#cfcfcf', ink: '#050505', inkSoft: '#4d4d4d',
+      accent: '#e8590c', accentDark: '#b8430a', accentSoft: '#fde3d1'
     }
   };
   const THEME_VARS = {

@@ -22,6 +22,7 @@
     routine: 'nt-section-routine',
     todo: 'nt-section-todo',
     pomodoro: 'nt-section-pomodoro',
+    search: 'nt-section-search',
     links: 'nt-section-links',
     favorites: 'nt-section-favorites',
     weekly: 'nt-section-weekly'
@@ -68,6 +69,41 @@
       bg: '#000000', bgAlt: '#0a0a0a', surface: '#121212', surface2: '#1c1c1c', border: '#333333',
       ink: '#f5f5f5', inkSoft: '#999999', accent: '#d8d8d8', accentDark: '#efefef', accentSoft: '#262626', accentInk: '#141414',
       sage: '#6fae7a', sageSoft: '#16241a', rust: '#d97a7a', rustSoft: '#2a1616', gold: '#d8b962', goldSoft: '#2a2213'
+    },
+    rose: {
+      bg: '#fbf3f2', bgAlt: '#f5e3e1', surface: '#fffbfa', surface2: '#f9ebe9', border: '#edd6d3',
+      ink: '#3d2a28', inkSoft: '#8c7370', accent: '#c76b6f', accentDark: '#a8494e', accentSoft: '#f3dcda', accentInk: '#fffbf6',
+      sage: '#74915f', sageSoft: '#e6ebdc', rust: '#b0574b', rustSoft: '#f3ddd8', gold: '#c1953f', goldSoft: '#f5ead2'
+    },
+    slate: {
+      bg: '#f3f5f7', bgAlt: '#e5e9ed', surface: '#ffffff', surface2: '#eef1f4', border: '#d6dde3',
+      ink: '#2b333b', inkSoft: '#707c87', accent: '#52708c', accentDark: '#3d5670', accentSoft: '#dee7ee', accentInk: '#fffbf6',
+      sage: '#5f9e7a', sageSoft: '#e1f0e6', rust: '#c2604f', rustSoft: '#f6ded9', gold: '#c99a3f', goldSoft: '#f6ebd3'
+    },
+    sand: {
+      bg: '#faf1e6', bgAlt: '#f0decb', surface: '#fffaf2', surface2: '#f6ead9', border: '#e6d2b8',
+      ink: '#3f2f21', inkSoft: '#8f7a63', accent: '#c17840', accentDark: '#9c5b2b', accentSoft: '#f0dcc4', accentInk: '#fffbf6',
+      sage: '#74915f', sageSoft: '#e6ebdc', rust: '#b0574b', rustSoft: '#f3ddd8', gold: '#c1953f', goldSoft: '#f5ead2'
+    },
+    sage: {
+      bg: '#f4f6f0', bgAlt: '#e6ebdd', surface: '#fdfdf9', surface2: '#eef1e6', border: '#dde3d0',
+      ink: '#313a2b', inkSoft: '#7c8874', accent: '#7a9169', accentDark: '#5c7350', accentSoft: '#e3ead9', accentInk: '#fffbf6',
+      sage: '#74915f', sageSoft: '#e6ebdc', rust: '#b0574b', rustSoft: '#f3ddd8', gold: '#c1953f', goldSoft: '#f5ead2'
+    },
+    neon: {
+      bg: '#0a0a0c', bgAlt: '#121215', surface: '#17171a', surface2: '#1e1e22', border: '#2c2c31',
+      ink: '#f3f6f2', inkSoft: '#9aa39a', accent: '#39e07a', accentDark: '#1fb85f', accentSoft: '#14301f', accentInk: '#06170d',
+      sage: '#39e07a', sageSoft: '#14301f', rust: '#ff5c5c', rustSoft: '#3a1414', gold: '#f5d442', goldSoft: '#332a0a'
+    },
+    crimson: {
+      bg: '#0c0808', bgAlt: '#150f0f', surface: '#1a1313', surface2: '#221818', border: '#3a2626',
+      ink: '#f7ecec', inkSoft: '#b08e8e', accent: '#e0333f', accentDark: '#b31f29', accentSoft: '#3a1418', accentInk: '#fdf4f4',
+      sage: '#4fae6f', sageSoft: '#142a1c', rust: '#e0333f', rustSoft: '#3a1418', gold: '#f0b23e', goldSoft: '#332510'
+    },
+    signal: {
+      bg: '#ffffff', bgAlt: '#f2f2f2', surface: '#ffffff', surface2: '#ececec', border: '#cfcfcf',
+      ink: '#050505', inkSoft: '#4d4d4d', accent: '#e8590c', accentDark: '#b8430a', accentSoft: '#fde3d1', accentInk: '#fffbf6',
+      sage: '#2f9e44', sageSoft: '#d3f9d8', rust: '#e03131', rustSoft: '#ffe3e3', gold: '#f08c00', goldSoft: '#fff3bf'
     }
   };
   const THEME_KEY = 'gpap_theme_v1';
@@ -78,7 +114,7 @@
     sage: '--gpap-sage', sageSoft: '--gpap-sage-soft',
     rust: '--gpap-rust', rustSoft: '--gpap-rust-soft', gold: '--gpap-gold', goldSoft: '--gpap-gold-soft'
   };
-  const DARK_THEMES = new Set(['midnight', 'dark']);
+  const DARK_THEMES = new Set(['midnight', 'dark', 'neon', 'crimson']);
 
   function applyTheme(themeId) {
     const theme = GPAP_THEMES[themeId] || GPAP_THEMES.cream;
@@ -100,7 +136,13 @@
     bebas: { label: 'Bebas', family: "'Bebas Neue', sans-serif", tracking: '0.03em' },
     orbitron: { label: 'Orbitron', family: "'Orbitron', sans-serif", tracking: '0.02em' },
     mono: { label: 'Mono', family: "'Space Mono', monospace", tracking: 'normal' },
-    caveat: { label: 'Script', family: "'Caveat', cursive", tracking: 'normal' }
+    caveat: { label: 'Script', family: "'Caveat', cursive", tracking: 'normal' },
+    poppins: { label: 'Poppins', family: "'Poppins', sans-serif", tracking: 'normal' },
+    oswald: { label: 'Oswald', family: "'Oswald', sans-serif", tracking: '0.02em' },
+    righteous: { label: 'Righteous', family: "'Righteous', cursive", tracking: 'normal' },
+    abril: { label: 'Abril', family: "'Abril Fatface', serif", tracking: 'normal' },
+    pacifico: { label: 'Pacifico', family: "'Pacifico', cursive", tracking: 'normal' },
+    pixel: { label: 'Pixel', family: "'Press Start 2P', monospace", tracking: '0.01em' }
   };
 
   function applyClockFont(fontId) {
@@ -113,6 +155,63 @@
 
   function initClockFont() {
     chrome.storage.local.get(CLOCK_FONT_KEY).then((r) => applyClockFont(r[CLOCK_FONT_KEY] || 'default'));
+  }
+
+  // ---- Clock size ----
+  const CLOCK_SIZE_KEY = 'gpap_newtab_clock_size_v1';
+  const CLOCK_SIZES = {
+    small: { label: 'Small', size: '40px' },
+    medium: { label: 'Medium', size: '52px' },
+    large: { label: 'Large', size: '66px' },
+    xlarge: { label: 'Extra Large', size: '82px' }
+  };
+
+  function applyClockSize(sizeId) {
+    const size = CLOCK_SIZES[sizeId] || CLOCK_SIZES.small;
+    document.documentElement.style.setProperty('--gpap-clock-size', size.size);
+  }
+
+  function initClockSize() {
+    chrome.storage.local.get(CLOCK_SIZE_KEY).then((r) => applyClockSize(r[CLOCK_SIZE_KEY] || 'small'));
+  }
+
+  // ---- Search bar style ----
+  const SEARCH_STYLE_KEY = 'gpap_newtab_search_style_v1';
+  const SEARCH_STYLES = {
+    pill: { label: 'Boxed' },
+    underline: { label: 'Underline' },
+    minimal: { label: 'Minimal' },
+    card: { label: 'Card' }
+  };
+
+  function applySearchStyle(styleId) {
+    const form = document.getElementById('nt-search-form');
+    if (!form) return;
+    const id = SEARCH_STYLES[styleId] ? styleId : 'pill';
+    Object.keys(SEARCH_STYLES).forEach((key) => form.classList.remove(`nt-search-style-${key}`));
+    form.classList.add(`nt-search-style-${id}`);
+  }
+
+  function initSearchStyle() {
+    chrome.storage.local.get(SEARCH_STYLE_KEY).then((r) => applySearchStyle(r[SEARCH_STYLE_KEY] || 'pill'));
+  }
+
+  // ---- Search bar width ----
+  const SEARCH_WIDTH_KEY = 'gpap_newtab_search_width_v1';
+  const SEARCH_WIDTHS = {
+    small: { label: 'Small', width: '320px' },
+    default: { label: 'Default', width: '420px' },
+    medium: { label: 'Medium', width: '560px' },
+    large: { label: 'Large', width: '680px' }
+  };
+
+  function applySearchWidth(widthId) {
+    const width = (SEARCH_WIDTHS[widthId] || SEARCH_WIDTHS.default).width;
+    document.documentElement.style.setProperty('--gpap-search-width', width);
+  }
+
+  function initSearchWidth() {
+    chrome.storage.local.get(SEARCH_WIDTH_KEY).then((r) => applySearchWidth(r[SEARCH_WIDTH_KEY] || 'default'));
   }
 
   function el(tag, props, children) {
@@ -648,17 +747,682 @@
     setInterval(tick, 1000);
   }
 
+  // ---- Background image ----
+  const BG_KEY = 'gpap_newtab_background_v1';
+
+  // Fixed wallpaper themes. Each photo's own palette (sampled and tuned for
+  // legibility against the frosted card blur) drives a coordinated ink/accent/
+  // surface set, so picking one re-themes the whole page to match the photo —
+  // not just the picture behind it.
+  const BG_PRESETS = [
+    {
+      id: 'tidal',
+      name: 'Tidal',
+      url: 'https://images.unsplash.com/photo-1751220170218-e57d53bd4aa8?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1751220170218-e57d53bd4aa8?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#f2ede3', accent: '#cc8752', accentDark: '#945a34', accentInk: '#241407',
+        surface: '#102024', surface2: '#1b2c30', border: 'rgba(255,255,255,0.16)'
+      }
+    },
+    {
+      id: 'highland',
+      name: 'Highland',
+      url: 'https://images.unsplash.com/photo-1787238347813-480a7ae6e71b?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1787238347813-480a7ae6e71b?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#f4ede1', accent: '#c2935d', accentDark: '#8c6238', accentInk: '#1d130a',
+        surface: '#211a13', surface2: '#2e251e', border: 'rgba(255,255,255,0.15)'
+      }
+    },
+    {
+      id: 'canopy',
+      name: 'Canopy',
+      url: 'https://images.unsplash.com/photo-1493673272479-a20888bcee10?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1493673272479-a20888bcee10?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#eef2ec', accent: '#5c9e7d', accentDark: '#2e664c', accentInk: '#0d1f17',
+        surface: '#0f1714', surface2: '#17211d', border: 'rgba(255,255,255,0.14)'
+      }
+    },
+    {
+      id: 'basalt',
+      name: 'Basalt',
+      url: 'https://images.unsplash.com/photo-1786708740641-ac9d56d008f9?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1786708740641-ac9d56d008f9?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#eef0f0', accent: '#79ad6c', accentDark: '#48753d', accentInk: '#12210e',
+        surface: '#1f2224', surface2: '#2c2e30', border: 'rgba(255,255,255,0.16)'
+      }
+    },
+    {
+      id: 'meadow',
+      name: 'Meadow',
+      url: 'https://images.unsplash.com/photo-1784231882494-5450ad619de9?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1784231882494-5450ad619de9?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#33281c', accent: '#8c753f', accentDark: '#614c22', accentInk: '#fbf5e9',
+        surface: '#f5e7d3', surface2: '#e6d7c1', border: 'rgba(0,0,0,0.12)', overlay: 'rgba(0,0,0,0.10)'
+      }
+    },
+    {
+      id: 'reverie',
+      name: 'Reverie',
+      url: 'https://images.unsplash.com/photo-1758513207242-98d050b7eae4?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1758513207242-98d050b7eae4?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#f1eef0', accent: '#cc858b', accentDark: '#8c4d58', accentInk: '#2a1013',
+        surface: '#1a1415', surface2: '#251f20', border: 'rgba(255,255,255,0.15)'
+      }
+    },
+    {
+      // Busy, high-frequency mural pattern — leans on a darker overlay
+      // than usual to keep the card blur legible over it.
+      id: 'carnival',
+      name: 'Carnival',
+      url: 'https://images.unsplash.com/photo-1786723221986-f8ae8410f6a1?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1786723221986-f8ae8410f6a1?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#faf6f2', accent: '#d96845', accentDark: '#8c3827', accentInk: '#2a0d05',
+        surface: '#1a1411', surface2: '#251e1b', border: 'rgba(255,255,255,0.15)', overlay: 'rgba(0,0,0,0.40)'
+      }
+    },
+    {
+      // Pale, low-saturation render — another "dark ink on light glass"
+      // preset, with a lighter overlay so it stays airy rather than muddy.
+      id: 'prism',
+      name: 'Prism',
+      url: 'https://images.unsplash.com/photo-1746796451267-4f83956bf84d?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1746796451267-4f83956bf84d?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#1f242b', accent: '#51748c', accentDark: '#29475c', accentInk: '#f0f5f8',
+        surface: '#e1e9f0', surface2: '#ced7e0', border: 'rgba(0,0,0,0.12)', overlay: 'rgba(0,0,0,0.14)'
+      }
+    },
+    {
+      id: 'monochrome',
+      name: 'Monochrome',
+      url: 'https://images.unsplash.com/photo-1786200319214-24cf1172bb4b?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1786200319214-24cf1172bb4b?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#f2f0ec', accent: '#b29568', accentDark: '#755b35', accentInk: '#241a0d',
+        surface: '#1c1c1c', surface2: '#292929', border: 'rgba(255,255,255,0.15)'
+      }
+    },
+    {
+      id: 'ember',
+      name: 'Ember',
+      url: 'https://images.unsplash.com/photo-1786543691566-a69b03a4f06c?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1786543691566-a69b03a4f06c?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#f4ecdd', accent: '#c7945a', accentDark: '#855a2e', accentInk: '#241505',
+        surface: '#1c1712', surface2: '#28221c', border: 'rgba(255,255,255,0.15)'
+      }
+    },
+    {
+      id: 'moorland',
+      name: 'Moorland',
+      url: 'https://images.unsplash.com/photo-1786464765447-d177ccf45ea6?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1786464765447-d177ccf45ea6?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#f2ede0', accent: '#b8a15c', accentDark: '#7a6631', accentInk: '#211a08',
+        surface: '#211f1b', surface2: '#2e2c27', border: 'rgba(255,255,255,0.15)'
+      }
+    },
+    {
+      id: 'nocturne',
+      name: 'Nocturne',
+      url: 'https://images.unsplash.com/photo-1785963671545-73bcd2ea8664?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1785963671545-73bcd2ea8664?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#f3ece5', accent: '#b86353', accentDark: '#7a352b', accentInk: '#230d08',
+        surface: '#1a1312', surface2: '#251e1c', border: 'rgba(255,255,255,0.15)'
+      }
+    },
+    {
+      id: 'nightflora',
+      name: 'Nightflora',
+      url: 'https://images.unsplash.com/photo-1786130987650-534fea40faf8?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1786130987650-534fea40faf8?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#eef0e6', accent: '#888c54', accentDark: '#585c2e', accentInk: '#1c1f0a',
+        surface: '#191a14', surface2: '#24251e', border: 'rgba(255,255,255,0.15)'
+      }
+    },
+    {
+      // Bright near-white photo — dark ink on light glass, minimal overlay.
+      id: 'orchid',
+      name: 'Orchid',
+      url: 'https://images.unsplash.com/photo-1745570647583-08120794d68d?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1745570647583-08120794d68d?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#33212a', accent: '#994c6c', accentDark: '#6b2b48', accentInk: '#fdf3f6',
+        surface: '#f2e4ea', surface2: '#e3d1d8', border: 'rgba(0,0,0,0.12)', overlay: 'rgba(0,0,0,0.10)'
+      }
+    },
+    {
+      id: 'raven',
+      name: 'Raven',
+      url: 'https://images.unsplash.com/photo-1780787175530-3cefaac55826?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1780787175530-3cefaac55826?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#eef0f4', accent: '#546599', accentDark: '#2e3c66', accentInk: '#10141f',
+        surface: '#15171c', surface2: '#202228', border: 'rgba(255,255,255,0.15)'
+      }
+    },
+    {
+      id: 'summit',
+      name: 'Summit',
+      url: 'https://images.unsplash.com/photo-1780498178879-4064b19e6517?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1780498178879-4064b19e6517?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#f6ece2', accent: '#c7825a', accentDark: '#85482e', accentInk: '#230f04',
+        surface: '#1f1815', surface2: '#2a2320', border: 'rgba(255,255,255,0.15)'
+      }
+    },
+    {
+      id: 'verdant',
+      name: 'Verdant',
+      url: 'https://images.unsplash.com/photo-1780736941954-8d7b29ce3c10?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1780736941954-8d7b29ce3c10?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#eef2ec', accent: '#53a656', accentDark: '#2b6b2f', accentInk: '#0f2010',
+        surface: '#121a12', surface2: '#1c251c', border: 'rgba(255,255,255,0.15)'
+      }
+    },
+    {
+      id: 'glimmer',
+      name: 'Glimmer',
+      url: 'https://images.unsplash.com/photo-1780583287735-8e4d680dd0ca?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1780583287735-8e4d680dd0ca?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#f0ece2', accent: '#cca752', accentDark: '#8a672c', accentInk: '#241804',
+        surface: '#141a1c', surface2: '#1e2528', border: 'rgba(255,255,255,0.15)'
+      }
+    },
+    {
+      id: 'chamomile',
+      name: 'Chamomile',
+      url: 'https://images.unsplash.com/photo-1779781238799-7194caec2b28?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1779781238799-7194caec2b28?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#f1f2e8', accent: '#c7b750', accentDark: '#857228', accentInk: '#221c04',
+        surface: '#181a12', surface2: '#24251d', border: 'rgba(255,255,255,0.15)'
+      }
+    },
+    {
+      id: 'companion',
+      name: 'Companion',
+      url: 'https://images.unsplash.com/photo-1611250282006-4484dd3fba6b?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1611250282006-4484dd3fba6b?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#f5ece0', accent: '#c7975a', accentDark: '#855a2e', accentInk: '#241606',
+        surface: '#1c1814', surface2: '#28231e', border: 'rgba(255,255,255,0.15)'
+      }
+    },
+    {
+      id: 'cheers',
+      name: 'Cheers',
+      url: 'https://images.unsplash.com/vector-1787880218469-d3ab1581c0e2?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/vector-1787880218469-d3ab1581c0e2?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#f5f2e6', accent: '#bf56a0', accentDark: '#802d69', accentInk: '#29081f',
+        surface: '#1b1f15', surface2: '#262a20', border: 'rgba(255,255,255,0.15)', overlay: 'rgba(0,0,0,0.36)'
+      }
+    },
+    {
+      id: 'wildleaf',
+      name: 'Wildleaf',
+      url: 'https://images.unsplash.com/vector-1776323044727-0ac0e24f52e1?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/vector-1776323044727-0ac0e24f52e1?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#f2f0e2', accent: '#b8535b', accentDark: '#7a2b35', accentInk: '#290a0d',
+        surface: '#141c15', surface2: '#1e2820', border: 'rgba(255,255,255,0.15)', overlay: 'rgba(0,0,0,0.36)'
+      }
+    },
+    {
+      id: 'blush',
+      name: 'Blush',
+      url: 'https://images.unsplash.com/vector-1738239254988-8cbcffd01abb?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/vector-1738239254988-8cbcffd01abb?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#331f1c', accent: '#9e5b47', accentDark: '#6b3325', accentInk: '#fdf3ef',
+        surface: '#f2d0d6', surface2: '#e3bfc5', border: 'rgba(0,0,0,0.12)', overlay: 'rgba(0,0,0,0.12)'
+      }
+    },
+    {
+      id: 'bluebell',
+      name: 'Bluebell',
+      url: 'https://images.unsplash.com/vector-1786138175242-db3bd9cf6c73?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/vector-1786138175242-db3bd9cf6c73?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#1f2938', accent: '#436694', accentDark: '#244066', accentInk: '#f4f8fc',
+        surface: '#e6edf5', surface2: '#d3dce6', border: 'rgba(0,0,0,0.10)', overlay: 'rgba(0,0,0,0.10)'
+      }
+    },
+    {
+      id: 'sherbet',
+      name: 'Sherbet',
+      url: 'https://images.unsplash.com/vector-1783428892437-0c7af1f43132?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/vector-1783428892437-0c7af1f43132?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#38271f', accent: '#9e5c3f', accentDark: '#6b3422', accentInk: '#fef8f0',
+        surface: '#f5e1ce', surface2: '#e6cfb8', border: 'rgba(0,0,0,0.10)', overlay: 'rgba(0,0,0,0.10)'
+      }
+    },
+    {
+      id: 'sunflower',
+      name: 'Sunflower',
+      url: 'https://images.unsplash.com/vector-1785676067269-9e97fe38357a?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/vector-1785676067269-9e97fe38357a?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#382e1c', accent: '#997836', accentDark: '#6b4e1b', accentInk: '#fdf7e8',
+        surface: '#f5ecd3', surface2: '#e6dabc', border: 'rgba(0,0,0,0.10)', overlay: 'rgba(0,0,0,0.12)'
+      }
+    },
+    {
+      id: 'posy',
+      name: 'Posy',
+      url: 'https://images.unsplash.com/vector-1752297634103-efe9f8356bc2?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/vector-1752297634103-efe9f8356bc2?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#33212d', accent: '#8c4d87', accentDark: '#612c5c', accentInk: '#faf3f8',
+        surface: '#f5e4d7', surface2: '#e6d0c1', border: 'rgba(0,0,0,0.10)', overlay: 'rgba(0,0,0,0.12)'
+      }
+    },
+    {
+      id: 'cherrypop',
+      name: 'Cherrypop',
+      url: 'https://images.unsplash.com/vector-1776547292902-bb38eaa3ebcd?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/vector-1776547292902-bb38eaa3ebcd?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#291f33', accent: '#a63a3e', accentDark: '#731d22', accentInk: '#fdf1f1',
+        surface: '#d2c7ed', surface2: '#beb1de', border: 'rgba(0,0,0,0.12)', overlay: 'rgba(0,0,0,0.16)'
+      }
+    },
+    {
+      id: 'cabana',
+      name: 'Cabana',
+      url: 'https://images.unsplash.com/vector-1776882156106-3c402a478504?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/vector-1776882156106-3c402a478504?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#eef2f8', accent: '#5986b2', accentDark: '#2f5075', accentInk: '#0c1822',
+        surface: '#141a24', surface2: '#1d242f', border: 'rgba(255,255,255,0.15)'
+      }
+    },
+    {
+      id: 'savanna',
+      name: 'Savanna',
+      url: 'https://images.unsplash.com/vector-1783428602319-8e6b589eefbe?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/vector-1783428602319-8e6b589eefbe?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#332a1a', accent: '#9e7f37', accentDark: '#6b501b', accentInk: '#fdf6e4',
+        surface: '#f2e7c7', surface2: '#e3d6b1', border: 'rgba(0,0,0,0.10)', overlay: 'rgba(0,0,0,0.12)'
+      }
+    },
+    {
+      id: 'monarch',
+      name: 'Monarch',
+      url: 'https://images.unsplash.com/vector-1776441066617-28e6a5fecc8c?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/vector-1776441066617-28e6a5fecc8c?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#33281a', accent: '#8c6b3f', accentDark: '#5c4020', accentInk: '#fdf6ec',
+        surface: '#f5e0c4', surface2: '#e6cfae', border: 'rgba(0,0,0,0.10)', overlay: 'rgba(0,0,0,0.12)'
+      }
+    }
+  ];
+  const NT_BG_OVERRIDE_VARS = {
+    ink: '--gpap-ink', accent: '--gpap-accent', accentDark: '--gpap-accent-dark', accentInk: '--gpap-accent-ink',
+    surface: '--gpap-surface', surface2: '--gpap-surface-2', border: '--gpap-border'
+  };
+
+  function findPreset(id) { return BG_PRESETS.find((p) => p.id === id) || null; }
+
+  // 'hourly'/'daily' are pure functions of the clock, so every call this
+  // session naturally agrees — no caching needed, and it self-updates once
+  // the hour/day rolls over. 'newtab' is genuinely random, so it's resolved
+  // once per page load and cached, or the image and its theme colors (each
+  // resolved from a separate call) would disagree with each other.
+  let newtabShuffleChoiceIdx = null;
+  function resolveShufflePreset(interval) {
+    if (!BG_PRESETS.length) return null;
+    if (interval === 'hourly') return BG_PRESETS[Math.floor(Date.now() / 3600000) % BG_PRESETS.length];
+    if (interval === 'newtab') {
+      if (newtabShuffleChoiceIdx === null) newtabShuffleChoiceIdx = Math.floor(Math.random() * BG_PRESETS.length);
+      return BG_PRESETS[newtabShuffleChoiceIdx];
+    }
+    return BG_PRESETS[Math.floor(Date.now() / 86400000) % BG_PRESETS.length];
+  }
+
+  function effectivePreset(state) {
+    if (state.mode === 'preset') return findPreset(state.presetId);
+    if (state.mode === 'shuffle') return resolveShufflePreset(state.shuffleInterval || 'daily');
+    return null;
+  }
+
+  function backgroundHasImage(state) {
+    return !!effectivePreset(state) || (state.mode === 'url' && !!state.url);
+  }
+
+  function defaultBackground() {
+    // Fresh installs land on shuffle + a new wallpaper every new tab; the
+    // user can switch to None/Themes/Link/a different interval any time —
+    // this only applies until they save any background choice of their own.
+    return { mode: 'shuffle', url: '', presetId: '', shuffleInterval: 'newtab', textColor: '' };
+  }
+  async function loadBackground() {
+    const r = await chrome.storage.local.get(BG_KEY);
+    return Object.assign(defaultBackground(), r[BG_KEY] || {});
+  }
+  async function saveBackground(state) {
+    await chrome.storage.local.set({ [BG_KEY]: state });
+  }
+
+  // Re-derives every theme-driven CSS var for the current background state:
+  // start from the user's chosen app theme, layer a preset's coordinated
+  // palette on top when one is active, then let a manual font-color pick
+  // (works on presets and plain photo links, but not shuffle — a fixed
+  // color would fight a different photo every rotation) win over ink/soft.
+  async function applyBackgroundTheme(state, hasImage, resolvedPreset) {
+    const themeRes = await chrome.storage.local.get(THEME_KEY);
+    applyTheme(themeRes[THEME_KEY] || 'cream');
+
+    const root = document.documentElement;
+    const preset = resolvedPreset !== undefined ? resolvedPreset : effectivePreset(state);
+    root.style.setProperty('--gpap-bg-overlay', (preset && preset.theme.overlay) || 'rgba(0, 0, 0, 0.32)');
+    if (preset) {
+      Object.keys(NT_BG_OVERRIDE_VARS).forEach((key) => {
+        root.style.setProperty(NT_BG_OVERRIDE_VARS[key], preset.theme[key]);
+      });
+      root.style.setProperty('--gpap-ink-soft', `color-mix(in srgb, ${preset.theme.ink} 68%, transparent)`);
+    }
+
+    if (hasImage && state.textColor && state.mode !== 'shuffle') {
+      root.style.setProperty('--gpap-ink', state.textColor);
+      root.style.setProperty('--gpap-ink-soft', `color-mix(in srgb, ${state.textColor} 72%, transparent)`);
+    }
+  }
+
+  function applyBackground(state) {
+    const body = document.body;
+    const preset = effectivePreset(state);
+    const imgUrl = preset ? preset.url : (state.mode === 'url' ? state.url : null);
+
+    if (imgUrl) {
+      body.style.setProperty('background-image', `url(${JSON.stringify(imgUrl)})`);
+      body.classList.add('nt-has-bg-image');
+    } else {
+      body.style.removeProperty('background-image');
+      body.classList.remove('nt-has-bg-image');
+    }
+
+    applyBackgroundTheme(state, !!imgUrl, preset);
+  }
+
+  async function initBackground() {
+    applyBackground(await loadBackground());
+  }
+
+  // Hourly/daily shuffle can roll over while the new tab stays open; recheck
+  // periodically and reapply (cheap — just CSS var writes) so it doesn't
+  // wait for the next tab to pick up the rotation. "newtab" never re-rolls
+  // mid-session by design, so it's skipped here.
+  function tickBackgroundShuffle() {
+    loadBackground().then((state) => {
+      if (state.mode === 'shuffle' && state.shuffleInterval !== 'newtab') applyBackground(state);
+    });
+  }
+
+  function updateBgModeButtons(mode) {
+    document.querySelectorAll('.nt-bg-mode-btn').forEach((btn) => {
+      btn.classList.toggle('nt-bg-mode-active', btn.dataset.mode === mode);
+    });
+    const presetSub = document.getElementById('nt-bg-sub-preset');
+    const shuffleSub = document.getElementById('nt-bg-sub-shuffle');
+    const urlSub = document.getElementById('nt-bg-sub-url');
+    const colorSub = document.getElementById('nt-bg-sub-color');
+    if (presetSub) presetSub.hidden = mode !== 'preset';
+    if (shuffleSub) shuffleSub.hidden = mode !== 'shuffle';
+    if (urlSub) urlSub.hidden = mode !== 'url';
+    if (colorSub) colorSub.hidden = mode === 'none' || mode === 'shuffle';
+  }
+
+  const BG_PRESETS_COLLAPSED_COUNT = 4;
+  let bgPresetsExpanded = false;
+
+  function renderBgPresets(activePresetId) {
+    const wrap = document.getElementById('nt-bg-presets');
+    const moreBtn = document.getElementById('nt-bg-presets-more');
+    if (!wrap) return;
+
+    const expanded = bgPresetsExpanded;
+    const visible = expanded ? BG_PRESETS : BG_PRESETS.slice(0, BG_PRESETS_COLLAPSED_COUNT);
+
+    wrap.replaceChildren(...visible.map((preset) => el('button', {
+      type: 'button',
+      class: `nt-bg-preset${preset.id === activePresetId ? ' nt-bg-preset-active' : ''}`,
+      style: `background-image: url(${JSON.stringify(preset.thumb)})`,
+      'data-preset': preset.id
+    }, [el('span', { class: 'nt-bg-preset-name', text: preset.name })])));
+
+    if (moreBtn) {
+      moreBtn.hidden = BG_PRESETS.length <= BG_PRESETS_COLLAPSED_COUNT;
+      moreBtn.textContent = expanded ? 'Show less' : `See more (${BG_PRESETS.length - BG_PRESETS_COLLAPSED_COUNT})`;
+    }
+  }
+
+  async function renderShuffleStatus() {
+    const statusEl = document.getElementById('nt-bg-shuffle-status');
+    if (!statusEl) return;
+    const state = await loadBackground();
+    if (state.mode !== 'shuffle') { statusEl.textContent = ''; return; }
+    const preset = resolveShufflePreset(state.shuffleInterval || 'daily');
+    statusEl.textContent = preset ? `Showing: ${preset.name}` : '';
+  }
+
+  function updateShuffleButtons(interval) {
+    document.querySelectorAll('.nt-bg-shuffle-btn').forEach((btn) => {
+      btn.classList.toggle('nt-bg-shuffle-btn-active', btn.dataset.shuffle === interval);
+    });
+  }
+
+  async function initBackgroundPanel() {
+    const modeButtons = document.querySelectorAll('.nt-bg-mode-btn');
+    const shuffleButtons = document.querySelectorAll('.nt-bg-shuffle-btn');
+    const urlForm = document.getElementById('nt-bg-url-form');
+    const urlInput = document.getElementById('nt-bg-url-input');
+    const presetWrap = document.getElementById('nt-bg-presets');
+    const presetsMoreBtn = document.getElementById('nt-bg-presets-more');
+    const statusEl = document.getElementById('nt-bg-status');
+    const colorInput = document.getElementById('nt-bg-color-input');
+    const colorResetBtn = document.getElementById('nt-bg-color-reset');
+    if (!modeButtons.length) return;
+
+    const state = await loadBackground();
+    updateBgModeButtons(state.mode);
+    updateShuffleButtons(state.shuffleInterval || 'daily');
+    renderShuffleStatus();
+    if (urlInput) urlInput.value = state.url;
+    // Auto-expand once on load if the already-saved theme would otherwise
+    // be hidden behind "See more" — a one-time default, not a standing
+    // override, so the toggle itself keeps working afterward.
+    const activeIdx = BG_PRESETS.findIndex((p) => p.id === state.presetId);
+    if (activeIdx >= BG_PRESETS_COLLAPSED_COUNT) bgPresetsExpanded = true;
+    renderBgPresets(state.presetId);
+    if (colorInput) {
+      const preset = effectivePreset(state);
+      colorInput.value = state.textColor || (preset ? preset.theme.ink : '#ffffff');
+    }
+
+    modeButtons.forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const mode = btn.dataset.mode;
+        const current = await loadBackground();
+        current.mode = mode;
+        await saveBackground(current);
+        updateBgModeButtons(mode);
+        if (statusEl) statusEl.textContent = '';
+        applyBackground(current);
+        renderShuffleStatus();
+        track('newtab_bg_mode_change', { mode });
+      });
+    });
+
+    shuffleButtons.forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const interval = btn.dataset.shuffle;
+        const current = await loadBackground();
+        current.shuffleInterval = interval;
+        await saveBackground(current);
+        updateShuffleButtons(interval);
+        applyBackground(current);
+        renderShuffleStatus();
+        track('newtab_bg_shuffle_interval_change', { interval });
+      });
+    });
+
+    if (presetsMoreBtn) {
+      presetsMoreBtn.addEventListener('click', async () => {
+        bgPresetsExpanded = !bgPresetsExpanded;
+        const current = await loadBackground();
+        renderBgPresets(current.presetId);
+      });
+    }
+
+    if (presetWrap) {
+      presetWrap.addEventListener('click', async (ev) => {
+        const btn = ev.target.closest('.nt-bg-preset');
+        if (!btn) return;
+        const current = await loadBackground();
+        current.mode = 'preset';
+        current.presetId = btn.dataset.preset;
+        current.textColor = '';
+        await saveBackground(current);
+        renderBgPresets(current.presetId);
+        applyBackground(current);
+        if (colorInput) colorInput.value = findPreset(current.presetId).theme.ink;
+        track('newtab_bg_preset_change', { preset: current.presetId });
+      });
+    }
+
+    if (colorInput) {
+      colorInput.addEventListener('input', async () => {
+        const current = await loadBackground();
+        current.textColor = colorInput.value;
+        await saveBackground(current);
+        applyBackground(current);
+        track('newtab_bg_textcolor_change');
+      });
+    }
+
+    if (colorResetBtn) {
+      colorResetBtn.addEventListener('click', async () => {
+        const current = await loadBackground();
+        current.textColor = '';
+        await saveBackground(current);
+        const preset = current.mode === 'preset' ? findPreset(current.presetId) : null;
+        if (colorInput) colorInput.value = preset ? preset.theme.ink : '#ffffff';
+        applyBackground(current);
+        track('newtab_bg_textcolor_reset');
+      });
+    }
+
+    if (urlForm) {
+      urlForm.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        let href = urlInput.value.trim();
+        if (!href) return;
+        try { new URL(href); } catch (e) { if (statusEl) statusEl.textContent = 'Invalid URL'; return; }
+        const current = await loadBackground();
+        current.url = href;
+        current.mode = 'url';
+        await saveBackground(current);
+        updateBgModeButtons('url');
+        applyBackground(current);
+        if (statusEl) statusEl.textContent = '';
+        track('newtab_bg_url_set');
+      });
+    }
+  }
+
   // ---- Section visibility ----
+  // Every section defaults to visible (only an explicit `false` hides it),
+  // except the ones listed here, which default to hidden until the user
+  // opts in (only an explicit `true` shows them).
+  const SECTIONS_DEFAULT_OFF = ['search'];
+  function isSectionEnabled(key, state) {
+    return SECTIONS_DEFAULT_OFF.includes(key) ? state[key] === true : state[key] !== false;
+  }
   function applySectionVisibility(state) {
     Object.keys(SECTION_IDS).forEach((section) => {
       const node = document.getElementById(SECTION_IDS[section]);
-      if (node) node.hidden = state[section] === false;
+      if (node) node.hidden = !isSectionEnabled(section, state);
     });
   }
 
   async function initSectionVisibility() {
     const result = await chrome.storage.local.get(SECTIONS_KEY);
     applySectionVisibility(result[SECTIONS_KEY] || {});
+  }
+
+  // ---- New Tab Dashboard master toggle ----
+  // "full" (default) is today's whole dashboard. "minimal" strips it down to
+  // just the clock, date, search bar, and Favorite Links (plus the footer's
+  // version tag / review link, always pinned to the bottom) — Mini RDS3 and
+  // What if (the popup + content scripts on the RDS3 portal) are untouched
+  // either way, since they don't depend on this new-tab page at all.
+  const MASTER_MODE_KEY = 'gpap_newtab_master_mode_v1';
+  const MASTER_MODE_MINIMAL_HIDE = ['nt-section-cgpa', 'nt-section-weekly', 'nt-section-links'];
+  const MASTER_MODE_MINIMAL_SHOW = ['nt-section-search', 'nt-section-favorites'];
+  let currentMasterMode = 'full';
+
+  function applyMasterMode(mode) {
+    currentMasterMode = mode === 'minimal' ? 'minimal' : 'full';
+    const minimal = currentMasterMode === 'minimal';
+    document.body.classList.toggle('nt-minimal-mode', minimal);
+
+    const mainGrid = document.getElementById('nt-main-grid');
+    if (mainGrid) mainGrid.hidden = minimal;
+
+    if (minimal) {
+      const loginPrompt = document.getElementById('nt-login-prompt');
+      if (loginPrompt) loginPrompt.hidden = true;
+      MASTER_MODE_MINIMAL_HIDE.forEach((id) => {
+        const node = document.getElementById(id);
+        if (node) node.hidden = true;
+      });
+      MASTER_MODE_MINIMAL_SHOW.forEach((id) => {
+        const node = document.getElementById(id);
+        if (node) node.hidden = false;
+      });
+    } else {
+      // Leaving minimal mode — hand visibility back to the normal rules.
+      applyPortalDataState();
+      chrome.storage.local.get(SECTIONS_KEY).then((r) => applySectionVisibility(r[SECTIONS_KEY] || {}));
+    }
+  }
+
+  async function initMasterMode() {
+    const result = await chrome.storage.local.get(MASTER_MODE_KEY);
+    applyMasterMode(result[MASTER_MODE_KEY] || 'full');
+  }
+
+  async function syncMasterModeToggle() {
+    const checkbox = document.getElementById('nt-master-mode-toggle');
+    if (!checkbox) return;
+    const result = await chrome.storage.local.get(MASTER_MODE_KEY);
+    checkbox.checked = (result[MASTER_MODE_KEY] || 'full') !== 'minimal';
+  }
+
+  function initMasterModeToggle() {
+    const checkbox = document.getElementById('nt-master-mode-toggle');
+    if (!checkbox) return;
+    checkbox.addEventListener('change', async () => {
+      const mode = checkbox.checked ? 'full' : 'minimal';
+      await chrome.storage.local.set({ [MASTER_MODE_KEY]: mode });
+      applyMasterMode(mode);
+      track('newtab_fab_master_mode_change', { mode });
+    });
   }
 
   // ---- Card order (grid cards only — the CGPA and Weekly To-do hero
@@ -692,6 +1456,7 @@
   const PORTAL_SECTION_KEYS = ['cgpa', 'today', 'attendance', 'routine'];
 
   async function applyPortalDataState() {
+    if (currentMasterMode === 'minimal') return;
     const promptEl = document.getElementById('nt-login-prompt');
     const [gradesRes, mrdsRes] = await Promise.all([
       chrome.storage.local.get(GRADES_KEY),
@@ -710,6 +1475,17 @@
       const result = await chrome.storage.local.get(SECTIONS_KEY);
       applySectionVisibility(result[SECTIONS_KEY] || {});
     }
+  }
+
+  // ---- Google Search bar (hidden by default, opt-in via Customize) ----
+  function initSearchForm() {
+    const form = document.getElementById('nt-search-form');
+    const input = document.getElementById('nt-search-input');
+    if (!form || !input) return;
+    form.addEventListener('submit', (ev) => {
+      if (!input.value.trim()) { ev.preventDefault(); return; }
+      track('newtab_search_submit');
+    });
   }
 
   // ---- Quick Links card (static) ----
@@ -848,7 +1624,7 @@
   // ---- Floating customize button (mirrors the popup's theme + section controls) ----
   const SECTION_LABELS = {
     cgpa: 'CGPA', today: "Today's Classes", attendance: 'Attendance', routine: 'Routine',
-    todo: 'To-do', pomodoro: 'Focus Timer', links: 'Quick Links', favorites: 'Favorite Links', weekly: 'Weekly To-do'
+    todo: 'To-do', pomodoro: 'Focus Timer', search: 'Google Search', links: 'Quick Links', favorites: 'Favorite Links', weekly: 'Weekly To-do'
   };
 
   function renderSettingsSwatches(activeTheme) {
@@ -893,6 +1669,65 @@
     }));
   }
 
+  function renderSettingsSizes(activeSize) {
+    const wrap = document.getElementById('nt-settings-sizes');
+    if (!wrap) return;
+    wrap.replaceChildren(...Object.keys(CLOCK_SIZES).map((id) => {
+      const size = CLOCK_SIZES[id];
+      const btn = el('button', {
+        class: `nt-set-size${id === activeSize ? ' nt-set-size-active' : ''}`,
+        type: 'button',
+        text: size.label
+      });
+      btn.addEventListener('click', async () => {
+        await chrome.storage.local.set({ [CLOCK_SIZE_KEY]: id });
+        track('newtab_fab_clock_size_change', { size: id });
+        renderSettingsSizes(id);
+      });
+      return btn;
+    }));
+  }
+
+  function renderSettingsSearchStyles(activeStyle) {
+    const wrap = document.getElementById('nt-settings-searchstyles');
+    if (!wrap) return;
+    wrap.replaceChildren(...Object.keys(SEARCH_STYLES).map((id) => {
+      const style = SEARCH_STYLES[id];
+      const btn = el('button', {
+        class: `nt-set-searchstyle${id === activeStyle ? ' nt-set-searchstyle-active' : ''}`,
+        type: 'button',
+        text: style.label
+      });
+      btn.addEventListener('click', async () => {
+        await chrome.storage.local.set({ [SEARCH_STYLE_KEY]: id });
+        applySearchStyle(id);
+        track('newtab_fab_search_style_change', { style: id });
+        renderSettingsSearchStyles(id);
+      });
+      return btn;
+    }));
+  }
+
+  function renderSettingsSearchWidths(activeWidth) {
+    const wrap = document.getElementById('nt-settings-searchwidths');
+    if (!wrap) return;
+    wrap.replaceChildren(...Object.keys(SEARCH_WIDTHS).map((id) => {
+      const width = SEARCH_WIDTHS[id];
+      const btn = el('button', {
+        class: `nt-set-searchstyle${id === activeWidth ? ' nt-set-searchstyle-active' : ''}`,
+        type: 'button',
+        text: width.label
+      });
+      btn.addEventListener('click', async () => {
+        await chrome.storage.local.set({ [SEARCH_WIDTH_KEY]: id });
+        applySearchWidth(id);
+        track('newtab_fab_search_width_change', { width: id });
+        renderSettingsSearchWidths(id);
+      });
+      return btn;
+    }));
+  }
+
   async function renderSettingsSections() {
     const wrap = document.getElementById('nt-settings-sections');
     if (!wrap) return;
@@ -900,7 +1735,7 @@
     const state = result[SECTIONS_KEY] || {};
     wrap.replaceChildren(...Object.keys(SECTION_IDS).map((key) => {
       const checkbox = el('input', { type: 'checkbox' });
-      checkbox.checked = state[key] !== false;
+      checkbox.checked = isSectionEnabled(key, state);
       checkbox.addEventListener('change', async () => {
         const current = await chrome.storage.local.get(SECTIONS_KEY);
         const next = Object.assign({}, current[SECTIONS_KEY] || {}, { [key]: checkbox.checked });
@@ -960,6 +1795,13 @@
       renderSettingsSwatches(themeRes[THEME_KEY] || 'cream');
       const fontRes = await chrome.storage.local.get(CLOCK_FONT_KEY);
       renderSettingsFonts(fontRes[CLOCK_FONT_KEY] || 'default');
+      const sizeRes = await chrome.storage.local.get(CLOCK_SIZE_KEY);
+      renderSettingsSizes(sizeRes[CLOCK_SIZE_KEY] || 'small');
+      const searchStyleRes = await chrome.storage.local.get(SEARCH_STYLE_KEY);
+      renderSettingsSearchStyles(searchStyleRes[SEARCH_STYLE_KEY] || 'pill');
+      const searchWidthRes = await chrome.storage.local.get(SEARCH_WIDTH_KEY);
+      renderSettingsSearchWidths(searchWidthRes[SEARCH_WIDTH_KEY] || 'default');
+      await syncMasterModeToggle();
       await renderSettingsSections();
       await renderSettingsOrder();
       panel.hidden = false;
@@ -981,6 +1823,13 @@
     if (link) link.addEventListener('click', () => track('newtab_click_review_link'));
   }
 
+  function initVersionTag() {
+    const tag = document.getElementById('nt-beta-tag');
+    if (!tag) return;
+    const version = chrome.runtime.getManifest().version;
+    tag.textContent = `v${version}`;
+  }
+
   function initLoginPromptLink() {
     const link = document.getElementById('nt-login-prompt-link');
     if (link) link.addEventListener('click', () => track('newtab_click_login_prompt'));
@@ -990,6 +1839,11 @@
   track('newtab_page_view');
   initTheme();
   initClockFont();
+  initClockSize();
+  initSearchStyle();
+  initSearchWidth();
+  initBackground();
+  setInterval(tickBackgroundShuffle, 60000);
   tickClock();
   setInterval(tickClock, 15000);
   renderGrades();
@@ -1000,15 +1854,26 @@
   renderWeeklyTodos();
   renderQuickLinks();
   renderFavorites();
+  initSearchForm();
   initReviewLink();
+  initVersionTag();
   initLoginPromptLink();
   initTodoForm();
   initFavoritesForm();
   initPomodoro();
-  initSectionVisibility();
   initCardOrder();
   initSettingsPanel();
-  applyPortalDataState();
+  initMasterModeToggle();
+  initBackgroundPanel();
+
+  // These three all set .hidden on overlapping sections (cgpa/weekly/links/
+  // favorites/login-prompt), so they must resolve in this order — master
+  // mode last — instead of racing as independent unawaited calls.
+  (async () => {
+    await initSectionVisibility();
+    await applyPortalDataState();
+    await initMasterMode();
+  })();
 
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area !== 'local') return;
@@ -1017,9 +1882,23 @@
     if (changes[TODO_KEY]) renderTodos();
     if (changes[WEEKLY_TODO_KEY]) renderWeeklyTodos();
     if (changes[FAV_KEY]) renderFavorites();
-    if (changes[SECTIONS_KEY]) { applySectionVisibility(changes[SECTIONS_KEY].newValue || {}); applyPortalDataState(); }
+    if (changes[SECTIONS_KEY] && currentMasterMode !== 'minimal') { applySectionVisibility(changes[SECTIONS_KEY].newValue || {}); applyPortalDataState(); }
+    if (changes[MASTER_MODE_KEY]) applyMasterMode(changes[MASTER_MODE_KEY].newValue || 'full');
     if (changes[CARD_ORDER_KEY]) applyCardOrder(changes[CARD_ORDER_KEY].newValue || []);
-    if (changes[THEME_KEY]) { applyTheme(changes[THEME_KEY].newValue || 'cream'); renderGrades(); }
+    if (changes[THEME_KEY]) {
+      renderGrades();
+      loadBackground().then((s) => applyBackgroundTheme(s, backgroundHasImage(s)));
+    }
     if (changes[CLOCK_FONT_KEY]) applyClockFont(changes[CLOCK_FONT_KEY].newValue || 'default');
+    if (changes[CLOCK_SIZE_KEY]) applyClockSize(changes[CLOCK_SIZE_KEY].newValue || 'small');
+    if (changes[SEARCH_STYLE_KEY]) applySearchStyle(changes[SEARCH_STYLE_KEY].newValue || 'pill');
+    if (changes[SEARCH_WIDTH_KEY]) applySearchWidth(changes[SEARCH_WIDTH_KEY].newValue || 'default');
+    if (changes[BG_KEY]) {
+      const state = Object.assign(defaultBackground(), changes[BG_KEY].newValue || {});
+      applyBackground(state);
+      updateBgModeButtons(state.mode);
+      updateShuffleButtons(state.shuffleInterval || 'daily');
+      renderShuffleStatus();
+    }
   });
 })();
