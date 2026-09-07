@@ -1477,14 +1477,21 @@
     }
   }
 
-  // ---- Google Search bar (hidden by default, opt-in via Customize) ----
+  // ---- Search bar (hidden by default, opt-in via Customize) ----
+  // Uses the Chrome Search API so queries go through the user's own default
+  // search engine instead of a hardcoded provider.
   function initSearchForm() {
     const form = document.getElementById('nt-search-form');
     const input = document.getElementById('nt-search-input');
     if (!form || !input) return;
     form.addEventListener('submit', (ev) => {
-      if (!input.value.trim()) { ev.preventDefault(); return; }
+      ev.preventDefault();
+      const query = input.value.trim();
+      if (!query) return;
       track('newtab_search_submit');
+      if (chrome.search && chrome.search.query) {
+        chrome.search.query({ text: query, disposition: 'CURRENT_TAB' });
+      }
     });
   }
 
