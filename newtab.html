@@ -158,85 +158,116 @@
         <h2>Customize</h2>
         <button type="button" id="nt-settings-close" class="nt-settings-close" aria-label="Close">×</button>
       </div>
-      <div class="nt-settings-section">
-        <h3>Theme</h3>
-        <div class="nt-settings-swatches" id="nt-settings-swatches"></div>
-      </div>
-      <div class="nt-settings-section">
-        <h3>Clock Font</h3>
-        <div class="nt-settings-fonts" id="nt-settings-fonts"></div>
-      </div>
-      <div class="nt-settings-section">
-        <h3>Clock Size</h3>
-        <div class="nt-settings-sizes" id="nt-settings-sizes"></div>
-      </div>
-      <div class="nt-settings-section">
-        <h3>Background</h3>
-        <div class="nt-bg-modes" id="nt-bg-modes">
-          <button type="button" class="nt-bg-mode-btn" data-mode="none">None</button>
-          <button type="button" class="nt-bg-mode-btn" data-mode="preset">Themes</button>
-          <button type="button" class="nt-bg-mode-btn" data-mode="shuffle">Shuffle</button>
-          <button type="button" class="nt-bg-mode-btn" data-mode="url">Link</button>
-        </div>
-        <p class="nt-bg-status" id="nt-bg-status"></p>
-
-        <div class="nt-bg-sub" id="nt-bg-sub-preset" hidden>
-          <div class="nt-bg-presets" id="nt-bg-presets"></div>
-          <button type="button" class="nt-bg-presets-more" id="nt-bg-presets-more"></button>
-        </div>
-
-        <div class="nt-bg-sub" id="nt-bg-sub-shuffle" hidden>
-          <div class="nt-bg-modes" id="nt-bg-shuffle-modes">
-            <button type="button" class="nt-bg-shuffle-btn" data-shuffle="newtab">Every new tab</button>
-            <button type="button" class="nt-bg-shuffle-btn" data-shuffle="hourly">Hourly</button>
-            <button type="button" class="nt-bg-shuffle-btn" data-shuffle="daily">Daily</button>
+      <details class="nt-settings-group" open>
+        <summary class="nt-settings-group-summary">
+          <span>Appearance</span>
+          <span class="nt-settings-group-chevron">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+          </span>
+        </summary>
+        <div class="nt-settings-group-body">
+          <div class="nt-settings-section">
+            <h3>Theme</h3>
+            <div class="nt-settings-swatches" id="nt-settings-swatches"></div>
           </div>
-          <p class="nt-bg-hint" id="nt-bg-shuffle-status"></p>
-        </div>
-
-        <div class="nt-bg-sub" id="nt-bg-sub-url" hidden>
-          <form id="nt-bg-url-form" class="nt-bg-url-form">
-            <input id="nt-bg-url-input" type="url" placeholder="https://…/image.jpg" autocomplete="off" />
-            <button type="submit" class="nt-btn nt-btn-small">Apply</button>
-          </form>
-        </div>
-
-        <div class="nt-bg-sub" id="nt-bg-sub-color" hidden>
-          <div class="nt-bg-color-row">
-            <input id="nt-bg-color-input" type="color" value="#ffffff" />
-            <span class="nt-bg-color-label">Font color</span>
-            <button type="button" class="nt-btn nt-btn-small" id="nt-bg-color-reset">Auto</button>
+          <div class="nt-settings-section">
+            <h3>Clock Font</h3>
+            <div class="nt-settings-fonts" id="nt-settings-fonts"></div>
           </div>
-          <p class="nt-bg-hint">Pick a text color that stays readable over your photo.</p>
+          <div class="nt-settings-section">
+            <h3>Clock Size</h3>
+            <div class="nt-settings-sizes" id="nt-settings-sizes"></div>
+          </div>
+          <div class="nt-settings-section">
+            <h3>Background</h3>
+            <div class="nt-bg-modes" id="nt-bg-modes">
+              <button type="button" class="nt-bg-mode-btn" data-mode="none">None</button>
+              <button type="button" class="nt-bg-mode-btn" data-mode="preset">Themes</button>
+              <button type="button" class="nt-bg-mode-btn" data-mode="shuffle">Shuffle</button>
+              <button type="button" class="nt-bg-mode-btn" data-mode="url">Link</button>
+            </div>
+            <p class="nt-bg-status" id="nt-bg-status"></p>
+
+            <div class="nt-bg-sub" id="nt-bg-sub-preset" hidden>
+              <div class="nt-bg-presets" id="nt-bg-presets"></div>
+              <button type="button" class="nt-bg-presets-more" id="nt-bg-presets-more"></button>
+            </div>
+
+            <div class="nt-bg-sub" id="nt-bg-sub-shuffle" hidden>
+              <div class="nt-bg-modes" id="nt-bg-shuffle-modes">
+                <button type="button" class="nt-bg-shuffle-btn" data-shuffle="newtab">Every new tab</button>
+                <button type="button" class="nt-bg-shuffle-btn" data-shuffle="hourly">Hourly</button>
+                <button type="button" class="nt-bg-shuffle-btn" data-shuffle="daily">Daily</button>
+              </div>
+              <p class="nt-bg-hint" id="nt-bg-shuffle-status"></p>
+            </div>
+
+            <div class="nt-bg-sub" id="nt-bg-sub-url" hidden>
+              <form id="nt-bg-url-form" class="nt-bg-url-form">
+                <input id="nt-bg-url-input" type="url" placeholder="https://…/image.jpg" autocomplete="off" />
+                <button type="submit" class="nt-btn nt-btn-small">Apply</button>
+              </form>
+            </div>
+
+            <div class="nt-bg-sub" id="nt-bg-sub-color" hidden>
+              <div class="nt-bg-color-row">
+                <input id="nt-bg-color-input" type="color" value="#ffffff" />
+                <span class="nt-bg-color-label">Font color</span>
+                <button type="button" class="nt-btn nt-btn-small" id="nt-bg-color-reset">Auto</button>
+              </div>
+              <p class="nt-bg-hint">Pick a text color that stays readable over your photo.</p>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="nt-settings-section">
-        <h3>New Tab Dashboard</h3>
-        <div class="nt-settings-row">
-          <span class="nt-settings-row-label">Full dashboard</span>
-          <label class="nt-switch">
-            <input type="checkbox" id="nt-master-mode-toggle" />
-            <span class="nt-switch-track"></span>
-          </label>
+      </details>
+
+      <details class="nt-settings-group">
+        <summary class="nt-settings-group-summary">
+          <span>Search Bar</span>
+          <span class="nt-settings-group-chevron">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+          </span>
+        </summary>
+        <div class="nt-settings-group-body">
+          <div class="nt-settings-section">
+            <h3>Style</h3>
+            <div class="nt-settings-searchstyles" id="nt-settings-searchstyles"></div>
+          </div>
+          <div class="nt-settings-section">
+            <h3>Width</h3>
+            <div class="nt-settings-searchstyles" id="nt-settings-searchwidths"></div>
+          </div>
         </div>
-        <p class="nt-bg-hint">Off keeps just the clock, search bar, and Quick Links on new tabs. Mini RDS3 and What if keep working either way.</p>
-      </div>
-      <div class="nt-settings-section">
-        <h3>New Tab Sections</h3>
-        <div class="nt-settings-list" id="nt-settings-sections"></div>
-      </div>
-      <div class="nt-settings-section">
-        <h3>Search Bar Style</h3>
-        <div class="nt-settings-searchstyles" id="nt-settings-searchstyles"></div>
-      </div>
-      <div class="nt-settings-section">
-        <h3>Search Bar Width</h3>
-        <div class="nt-settings-searchstyles" id="nt-settings-searchwidths"></div>
-      </div>
-      <div class="nt-settings-section">
-        <h3>Reorder Cards</h3>
-        <div class="nt-settings-list" id="nt-settings-order"></div>
-      </div>
+      </details>
+
+      <details class="nt-settings-group">
+        <summary class="nt-settings-group-summary">
+          <span>Dashboard</span>
+          <span class="nt-settings-group-chevron">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+          </span>
+        </summary>
+        <div class="nt-settings-group-body">
+          <div class="nt-settings-section">
+            <div class="nt-settings-row">
+              <span class="nt-settings-row-label">Full dashboard</span>
+              <label class="nt-switch">
+                <input type="checkbox" id="nt-master-mode-toggle" />
+                <span class="nt-switch-track"></span>
+              </label>
+            </div>
+            <p class="nt-bg-hint">Off keeps just the clock, search bar, and Quick Links on new tabs. Mini RDS3 and What if keep working either way.</p>
+          </div>
+          <div class="nt-settings-section">
+            <h3>Sections</h3>
+            <div class="nt-settings-list" id="nt-settings-sections"></div>
+          </div>
+          <div class="nt-settings-section">
+            <h3>Reorder Cards</h3>
+            <div class="nt-settings-list" id="nt-settings-order"></div>
+          </div>
+        </div>
+      </details>
     </div>
 
     <div id="nt-confirm-overlay" class="nt-confirm-overlay" hidden></div>
