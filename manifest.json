@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "What if CGPA Planner",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "description": "Edit, analyze, and plan your semesters, plus a quick-glance widget for today's routine and attendance on the NSU RDS portal.",
-  "permissions": ["storage", "unlimitedStorage"],
+  "permissions": ["storage"],
   "background": {
     "service_worker": "background.js"
   },

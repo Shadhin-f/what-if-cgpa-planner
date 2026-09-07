@@ -661,7 +661,32 @@ body.nt-has-bg-image .nt-fav-add { color: var(--gpap-ink); border-color: var(--g
   border-radius: 999px;
 }
 .nt-settings-close:hover { background: var(--gpap-rust-soft); color: var(--gpap-rust); }
-.nt-settings-section { margin-top: 16px; }
+.nt-settings-group {
+  margin-top: 10px;
+  border: 1px solid var(--gpap-border);
+  border-radius: var(--gpap-radius-md);
+  overflow: hidden;
+}
+.nt-settings-group + .nt-settings-group { margin-top: 8px; }
+.nt-settings-group-summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 11px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--gpap-ink);
+  background: var(--gpap-surface-2);
+}
+.nt-settings-group-summary::-webkit-details-marker { display: none; }
+.nt-settings-group-chevron { display: flex; flex-shrink: 0; transition: transform 0.2s ease; color: var(--gpap-ink-soft); }
+.nt-settings-group-chevron svg { width: 14px; height: 14px; }
+.nt-settings-group[open] .nt-settings-group-chevron { transform: rotate(90deg); }
+.nt-settings-group-body { padding: 4px 12px 12px; }
+.nt-settings-section { margin-top: 14px; }
+.nt-settings-group-body .nt-settings-section:first-child { margin-top: 12px; }
 .nt-settings-section h3 {
   font-size: 11px;
   text-transform: uppercase;
