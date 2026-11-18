@@ -324,6 +324,37 @@ details.gpap-sem[open] .gpap-chevron { transform: rotate(90deg); }
   font-weight: 600;
 }
 .gpap-grade-select.gpap-overridden { border-color: var(--gpap-gold); background: var(--gpap-gold-soft); color: #8a6a26; }
+.gpap-grade-select:disabled { cursor: not-allowed; }
+
+/* Exclude / re-add a course */
+.gpap-exclude-btn {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--gpap-border);
+  border-radius: 999px;
+  background: var(--gpap-surface);
+  color: var(--gpap-ink-soft);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.gpap-exclude-btn:hover { background: var(--gpap-rust-soft); color: var(--gpap-rust); border-color: var(--gpap-rust); }
+.gpap-exclude-btn.gpap-readd { color: var(--gpap-sage); border-color: var(--gpap-sage); background: var(--gpap-sage-soft); }
+.gpap-exclude-btn.gpap-readd:hover { background: var(--gpap-sage); color: var(--gpap-surface); }
+
+.gpap-course-row.gpap-course-excluded { background: var(--gpap-surface-2); }
+.gpap-course-row.gpap-course-excluded .gpap-course-info,
+.gpap-course-row.gpap-course-excluded .gpap-grade-field { opacity: 0.45; filter: grayscale(1); }
+.gpap-course-row.gpap-course-excluded .gpap-course-code { text-decoration: line-through; }
+.gpap-planned-course-row.gpap-course-excluded { opacity: 0.5; }
+.gpap-retake-badge.gpap-unlisted-badge { background: var(--gpap-surface-2); color: var(--gpap-ink-soft); border: 1px solid var(--gpap-border); text-decoration: none; }
 
 /* ---------- Plan Ahead tab ---------- */
 .gpap-planned-sem { background: var(--gpap-surface); border: 1px solid var(--gpap-border); border-radius: var(--gpap-radius-md); margin-bottom: 12px; padding: 12px; }

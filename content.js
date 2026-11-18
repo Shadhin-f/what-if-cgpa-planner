@@ -219,11 +219,22 @@
 
   // Groups every real+planned course attempt by course code and picks the
   // highest-grade-point attempt as the one that counts toward CGPA (retake handling).
-  function computeProjection(semesters, overrides, planned) {
+  // Exclusions are keyed by course code, so excluding a course drops every
+  // attempt of it (original + retakes, real + planned). Code-less rows fall
+  // back to their own row key.
+  function exclusionId(code, key) {
+    return normCode(code) || key;
+  }
+
+  // Excluded courses are left out entirely: no credits, no grade points, and
+  // no part in retake (best-attempt) selection.
+  function computeProjection(semesters, overrides, planned, excluded) {
+    excluded = excluded || {};
     const flat = [];
     semesters.forEach((sem, si) => {
       sem.courses.forEach((c, ci) => {
         const key = `r:${si}:${ci}`;
+        if (excluded[exclusionId(c.code, key)]) return;
         const grade = Object.prototype.hasOwnProperty.call(overrides, key) ? overrides[key] : c.grade;
         flat.push({ key, code: normCode(c.code), credit: c.crCount || c.credit, grade });
       });
@@ -231,6 +242,7 @@
     planned.forEach((psem, pi) => {
       (psem.courses || []).forEach((pc, ci) => {
         const key = `p:${pi}:${ci}`;
+        if (excluded[exclusionId(pc.code, key)]) return;
         flat.push({ key, code: normCode(pc.code), credit: parseFloat(pc.credit) || 0, grade: pc.grade });
       });
     });
@@ -264,6 +276,7 @@
         const grade = Object.prototype.hasOwnProperty.call(overrides, key) ? overrides[key] : c.grade;
         const code = normCode(c.code);
         const grp = groups[code];
+        if (excluded[exclusionId(c.code, key)]) { retakeInfo[key] = { isRetake: false, isPrimary: false, excluded: true }; return; }
         const isPrimary = primaryKeys.has(key);
         retakeInfo[key] = { isRetake: !!(grp && grp.length > 1), isPrimary };
         const pts = pointsFor(grade);
@@ -287,6 +300,7 @@
       let semCredit = 0, semQP = 0;
       (psem.courses || []).forEach((pc, ci) => {
         const key = `p:${pi}:${ci}`;
+        if (excluded[exclusionId(pc.code, key)]) { retakeInfo[key] = { isRetake: false, isPrimary: false, excluded: true }; return; }
         const code = normCode(pc.code);
         const grp = groups[code];
         const isPrimary = primaryKeys.has(key);
@@ -585,11 +599,20 @@
     const studentId = idMatch ? idMatch[1] : 'default';
     const storageKey = `gpap_${studentId}`;
 
-    let state = { overrides: {}, planned: [], chartCollapsed: false };
+    let state = { overrides: {}, excluded: {}, planned: [], chartCollapsed: false };
     try {
       const stored = await chrome.storage.local.get([storageKey]);
       if (stored[storageKey]) state = Object.assign(state, stored[storageKey]);
     } catch (e) { /* storage unavailable, continue with defaults */ }
+    if (!state.excluded || typeof state.excluded !== 'object') state.excluded = {};
+    // Older saves keyed exclusions by row; convert those to course codes.
+    Object.keys(state.excluded).forEach((k) => {
+      const m = /^r:(\d+):(\d+)$/.exec(k);
+      if (!m) return;
+      const c = semesters[+m[1]] && semesters[+m[1]].courses[+m[2]];
+      delete state.excluded[k];
+      if (c) state.excluded[exclusionId(c.code, k)] = true;
+    });
 
     let saveTimer = null;
     function persist() {
@@ -765,6 +788,7 @@
     const resetBtn = el('button', { class: 'gpap-btn gpap-btn-secondary gpap-btn-small', text: 'Reset all what-ifs' });
     resetBtn.addEventListener('click', () => {
       state.overrides = {};
+      state.excluded = {};
       state.planned = [];
       persist();
       renderAll();
@@ -813,7 +837,7 @@
     }
 
     function renderStats() {
-      const proj = computeProjection(semesters, state.overrides, state.planned);
+      const proj = computeProjection(semesters, state.overrides, state.planned, state.excluded);
       lastProj = proj;
 
       pillCurrent.querySelector('.gpap-stat-value').textContent = actualCGPA !== null ? actualCGPA.toFixed(2) : '—';
@@ -865,7 +889,7 @@
     }
 
     function renderChart(proj) {
-      const showEdited = Object.keys(state.overrides).length > 0 || state.planned.length > 0;
+      const showEdited = Object.keys(state.overrides).length > 0 || Object.keys(state.excluded).length > 0 || state.planned.length > 0;
       updateChartLegend(proj);
       requestAnimationFrame(() => {
         if (chartType === 'trend') {
@@ -955,11 +979,15 @@
         sem.courses.forEach((c, ci) => {
           const key = `r:${si}:${ci}`;
           const info = lastProj ? lastProj.retakeInfo[key] : null;
+          const exId = exclusionId(c.code, key);
+          const isExcluded = !!state.excluded[exId];
 
           const infoBlock = el('div', { class: 'gpap-course-info' }, [
             el('div', {}, [
               el('span', { class: 'gpap-course-code', text: c.code }),
-              retakeBadge(info)
+              isExcluded
+                ? el('span', { class: 'gpap-retake-badge gpap-unlisted-badge', text: 'Not counted' })
+                : retakeBadge(info)
             ].filter(Boolean)),
             el('div', { class: 'gpap-course-title', text: c.title }),
             el('div', { class: 'gpap-course-credit', text: `${c.credit.toFixed(1)} credit` })
@@ -976,6 +1004,7 @@
           GRADE_OPTIONS.forEach((g) => whatIfSelect.appendChild(el('option', { value: g, text: g })));
           whatIfSelect.value = state.overrides[key] || '';
           if (state.overrides[key]) whatIfSelect.classList.add('gpap-overridden');
+          whatIfSelect.disabled = isExcluded;
           whatIfSelect.addEventListener('change', () => {
             if (whatIfSelect.value) state.overrides[key] = whatIfSelect.value; else delete state.overrides[key];
             persist();
@@ -987,7 +1016,20 @@
             whatIfSelect
           ]);
 
-          const row = el('div', { class: 'gpap-course-row' }, [infoBlock, currentField, whatIfField]);
+          const toggleBtn = el('button', {
+            class: 'gpap-exclude-btn' + (isExcluded ? ' gpap-readd' : ''),
+            text: isExcluded ? '+' : '×',
+            title: isExcluded ? 'Re-add this course (all attempts) to the CGPA calculation' : 'Exclude this course and all its retakes from the CGPA calculation'
+          });
+          toggleBtn.setAttribute('aria-label', toggleBtn.title);
+          toggleBtn.addEventListener('click', () => {
+            if (isExcluded) delete state.excluded[exId]; else state.excluded[exId] = true;
+            persist();
+            rerenderKeepingScroll(renderAll);
+            track(isExcluded ? 'readd_course' : 'exclude_course');
+          });
+
+          const row = el('div', { class: 'gpap-course-row' + (isExcluded ? ' gpap-course-excluded' : '') }, [infoBlock, currentField, whatIfField, toggleBtn]);
           det.appendChild(row);
         });
         viewEdit.appendChild(det);
@@ -1011,7 +1053,7 @@
         box.appendChild(headerRow);
 
         (psem.courses || []).forEach((pc, ci) => {
-          const row = el('div', { class: 'gpap-planned-course-row' });
+          const row = el('div', { class: 'gpap-planned-course-row' + (state.excluded[exclusionId(pc.code, `p:${pi}:${ci}`)] ? ' gpap-course-excluded' : '') });
           const codeInput = el('input', { type: 'text', value: pc.code || '', placeholder: 'Course code e.g. CSE499', title: 'Course code — fill in if retaking a course to apply best-grade handling' });
           codeInput.addEventListener('input', () => { pc.code = codeInput.value; persist(); renderStatsAndChart(); });
           const creditInput = el('input', { type: 'number', value: pc.credit || 3, step: '0.5', min: '0' });
