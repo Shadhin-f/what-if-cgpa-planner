@@ -2,10 +2,11 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>What if CGPA Planner</title>
+<title>What if CGPA for NSUers</title>
 <style>
   :root {
     --gpap-bg: #faf5ee;
+    --gpap-surface: #fffbf6;
     --gpap-surface-2: #f6efe4;
     --gpap-border: #e7dbc7;
     --gpap-ink: #3d362f;
@@ -13,179 +14,266 @@
     --gpap-accent: #c1774c;
     --gpap-accent-dark: #a6613b;
     --gpap-accent-soft: #f3e2d0;
+    --gpap-accent-ink: #fffbf6;
     --gpap-radius-md: 14px;
     --gpap-radius-sm: 10px;
     --gpap-font: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
   body {
-    margin: 0;
-    width: 280px;
+    width: 360px;
+    max-height: 580px;
+    display: flex;
+    flex-direction: column;
     font-family: var(--gpap-font);
+    font-size: 12px;
+    line-height: 1.5;
     background: var(--gpap-bg);
     color: var(--gpap-ink);
-    transition: background 0.15s ease, color 0.15s ease;
   }
-  .gpap-pop { padding: 16px; }
-  .gpap-section + .gpap-section { margin-top: 18px; }
-  .gpap-pop h1 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--gpap-ink-soft); margin: 0 0 4px; }
-  .gpap-pop p.gpap-sub { font-size: 11px; color: var(--gpap-ink-soft); margin: 0 0 10px; }
-  .gpap-list { display: flex; flex-direction: column; gap: 8px; }
-  .gpap-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--gpap-surface-2);
-    border: 1px solid var(--gpap-border);
-    border-radius: var(--gpap-radius-md);
-    padding: 9px 12px;
-  }
-  .gpap-row-label { font-size: 12.5px; font-weight: 600; }
-  .gpap-switch { position: relative; width: 36px; height: 20px; flex: none; }
-  .gpap-switch input { opacity: 0; width: 0; height: 0; }
-  .gpap-switch-track {
-    position: absolute;
-    inset: 0;
-    background: transparent;
-    border: 1px solid var(--gpap-border);
-    border-radius: 999px;
-    cursor: pointer;
-    transition: border-color 0.15s ease;
-  }
-  .gpap-switch-track::before {
-    content: "";
-    position: absolute;
-    width: 14px;
-    height: 14px;
-    left: 2px;
-    top: 2px;
-    background: var(--gpap-ink-soft);
-    border-radius: 50%;
-    transition: transform 0.15s ease, background 0.15s ease;
-  }
-  .gpap-switch input:checked + .gpap-switch-track { border-color: var(--gpap-accent); }
-  .gpap-switch input:checked + .gpap-switch-track::before { transform: translateX(16px); background: var(--gpap-accent); }
-  .gpap-note { font-size: 10.5px; color: var(--gpap-ink-soft); margin-top: 12px; line-height: 1.4; }
+  a { color: var(--gpap-accent-dark); }
 
-  .gpap-swatches { display: flex; gap: 8px; flex-wrap: wrap; }
-  .gpap-swatch {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    border: 2px solid transparent;
-    background: linear-gradient(135deg, var(--sw-a) 50%, var(--sw-b) 50%);
-    cursor: pointer;
-    padding: 0;
-    flex: none;
+  /* Header */
+  .pop-head { padding: 14px 16px 10px; display: flex; align-items: center; gap: 10px; }
+  .pop-logo { width: 34px; height: 34px; flex: none; display: block; }
+  .pop-title { flex: 1; min-width: 0; }
+  .pop-title h1 { font-size: 14px; margin: 0; line-height: 1.2; }
+  .pop-title p { margin: 1px 0 0; font-size: 11px; color: var(--gpap-ink-soft); }
+  .pop-version { font-size: 10px; font-weight: 700; color: var(--gpap-ink-soft); background: var(--gpap-surface-2); border: 1px solid var(--gpap-border); padding: 1px 7px; border-radius: 999px; }
+
+  /* Tabs */
+  .pop-tabs { display: flex; gap: 3px; margin: 0 16px; padding: 3px; background: var(--gpap-surface-2); border: 1px solid var(--gpap-border); border-radius: 999px; }
+  .pop-tab {
+    flex: 1; border: none; background: transparent; color: var(--gpap-ink-soft);
+    font: 600 11.5px var(--gpap-font); padding: 6px 4px; border-radius: 999px; cursor: pointer;
   }
-  .gpap-swatch-active { border-color: var(--gpap-ink); box-shadow: 0 0 0 2px var(--gpap-bg); }
+  .pop-tab:hover { color: var(--gpap-ink); }
+  .pop-tab[aria-selected="true"] { background: var(--gpap-accent); color: var(--gpap-accent-ink); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15); }
+
+  .pop-body { flex: 1; min-height: 0; overflow-y: auto; padding: 12px 16px 14px; }
+  .pop-panel[hidden] { display: none; }
+  h2 { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gpap-ink-soft); margin: 14px 0 8px; }
+  .pop-panel > h2:first-child { margin-top: 2px; }
+  p { margin: 0 0 8px; }
+
+  /* Quick start steps */
+  .pop-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .pop-steps li { display: flex; gap: 10px; align-items: flex-start; background: var(--gpap-surface); border: 1px solid var(--gpap-border); border-radius: var(--gpap-radius-sm); padding: 9px 10px; }
+  .pop-step-num { flex: none; width: 20px; height: 20px; border-radius: 50%; background: var(--gpap-accent-soft); color: var(--gpap-accent-dark); font-weight: 800; font-size: 11px; display: flex; align-items: center; justify-content: center; }
+  .pop-steps li > div > b { display: block; font-size: 12px; }
+  .pop-steps li > div > span { color: var(--gpap-ink-soft); font-size: 11px; }
+  .pop-steps li > div > span b { color: var(--gpap-ink); }
+
+  .pop-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .pop-btn {
+    flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 8px 10px; border-radius: var(--gpap-radius-sm); border: 1px solid var(--gpap-accent);
+    background: var(--gpap-accent); color: var(--gpap-accent-ink);
+    font: 700 11.5px var(--gpap-font); text-decoration: none; cursor: pointer;
+  }
+  .pop-btn:hover { background: var(--gpap-accent-dark); border-color: var(--gpap-accent-dark); }
+  .pop-btn-secondary { background: transparent; color: var(--gpap-ink); border-color: var(--gpap-border); }
+  .pop-btn-secondary:hover { background: var(--gpap-accent-soft); border-color: var(--gpap-accent); color: var(--gpap-accent-dark); }
+
+  .pop-tip { margin-top: 12px; padding: 8px 10px; border-radius: var(--gpap-radius-sm); background: var(--gpap-accent-soft); color: var(--gpap-accent-dark); font-size: 11px; }
+
+  /* Feature cards + Q&A use the same collapsible style */
+  details.pop-item { background: var(--gpap-surface); border: 1px solid var(--gpap-border); border-radius: var(--gpap-radius-sm); }
+  details.pop-item + details.pop-item { margin-top: 6px; }
+  details.pop-item summary {
+    list-style: none; cursor: pointer; padding: 9px 10px;
+    display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 12px;
+  }
+  details.pop-item summary::-webkit-details-marker { display: none; }
+  details.pop-item summary::after { content: "+"; margin-left: auto; color: var(--gpap-ink-soft); font-weight: 700; font-size: 14px; line-height: 1; }
+  details.pop-item[open] summary::after { content: "–"; }
+  details.pop-item summary:hover { color: var(--gpap-accent-dark); }
+  .pop-item-icon { flex: none; width: 22px; height: 22px; border-radius: 7px; background: var(--gpap-accent-soft); color: var(--gpap-accent-dark); display: flex; align-items: center; justify-content: center; }
+  .pop-item-icon svg { width: 13px; height: 13px; }
+  .pop-item-where { font-weight: 500; font-size: 10.5px; color: var(--gpap-ink-soft); }
+  .pop-item-body { padding: 0 10px 10px 40px; color: var(--gpap-ink); font-size: 11.5px; }
+  .pop-qa .pop-item-body { padding-left: 10px; }
+  .pop-item-body ul { margin: 0; padding-left: 15px; }
+  .pop-item-body li + li { margin-top: 3px; }
+  .pop-item-body b { font-weight: 700; }
+  .pop-inline-icon { display: inline-block; width: 12px; height: 12px; vertical-align: -2px; color: var(--gpap-accent-dark); }
+  kbd { font: 600 10.5px var(--gpap-font); padding: 0 5px; border: 1px solid var(--gpap-border); border-bottom-width: 2px; border-radius: 5px; background: var(--gpap-surface-2); }
+
+  /* Credit footer */
+  .pop-foot {
+    flex: none; padding: 10px 16px 12px; border-top: 1px solid var(--gpap-border);
+    background: var(--gpap-surface-2); text-align: center; font-size: 11px; color: var(--gpap-ink-soft);
+  }
+  .pop-foot a { color: var(--gpap-ink); font-weight: 700; text-decoration: none; }
+  .pop-foot a:hover { color: var(--gpap-accent-dark); text-decoration: underline; }
+  .pop-foot-links { display: flex; justify-content: center; gap: 8px; margin-top: 7px; }
+  .pop-pill {
+    display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px;
+    border: 1px solid var(--gpap-border); background: var(--gpap-surface); font-size: 10.5px;
+  }
+  .pop-pill svg { width: 12px; height: 12px; }
 </style>
 </head>
 <body>
-  <div class="gpap-pop">
-    <div class="gpap-section">
-      <h1>Theme</h1>
-      <p class="gpap-sub">Applies to the CGPA panel, Mini-RDS3, and your new tab.</p>
-      <div class="gpap-swatches" id="gpap-swatches">
-        <button class="gpap-swatch" data-theme="cream" title="Cream" style="--sw-a:#faf5ee;--sw-b:#c1774c"></button>
-        <button class="gpap-swatch" data-theme="midnight" title="Midnight" style="--sw-a:#1e1b18;--sw-b:#e2905f"></button>
-        <button class="gpap-swatch" data-theme="ocean" title="Ocean" style="--sw-a:#f2f7f8;--sw-b:#2f7f8c"></button>
-        <button class="gpap-swatch" data-theme="forest" title="Forest" style="--sw-a:#f5f7ee;--sw-b:#6b8f3f"></button>
-        <button class="gpap-swatch" data-theme="plum" title="Plum" style="--sw-a:#f8f3f6;--sw-b:#9a5b84"></button>
-        <button class="gpap-swatch" data-theme="white" title="White" style="--sw-a:#ffffff;--sw-b:#111111"></button>
-        <button class="gpap-swatch" data-theme="dark" title="Dark" style="--sw-a:#000000;--sw-b:#efefef"></button>
-        <button class="gpap-swatch" data-theme="rose" title="Rose" style="--sw-a:#fbf3f2;--sw-b:#c76b6f"></button>
-        <button class="gpap-swatch" data-theme="slate" title="Slate" style="--sw-a:#f3f5f7;--sw-b:#52708c"></button>
-        <button class="gpap-swatch" data-theme="sand" title="Sand" style="--sw-a:#faf1e6;--sw-b:#c17840"></button>
-        <button class="gpap-swatch" data-theme="sage" title="Sage" style="--sw-a:#f4f6f0;--sw-b:#7a9169"></button>
-        <button class="gpap-swatch" data-theme="neon" title="Neon" style="--sw-a:#0a0a0c;--sw-b:#39e07a"></button>
-        <button class="gpap-swatch" data-theme="crimson" title="Crimson" style="--sw-a:#0c0808;--sw-b:#e0333f"></button>
-        <button class="gpap-swatch" data-theme="signal" title="Signal" style="--sw-a:#ffffff;--sw-b:#e8590c"></button>
-      </div>
+  <header class="pop-head">
+    <img class="pop-logo" src="icons/icon48.png" alt="" width="34" height="34" />
+    <div class="pop-title">
+      <h1>What if CGPA for NSUers</h1>
+      <p>Plan your CGPA, track classes, and own your new tab.</p>
     </div>
+    <span class="pop-version" id="pop-version"></span>
+  </header>
 
-    <div class="gpap-section">
-      <h1>New Tab Dashboard</h1>
-      <p class="gpap-sub">Off keeps just the clock, search bar, and Quick Links on new tabs. Mini RDS3 and What if keep working either way.</p>
-      <div class="gpap-row">
-        <span class="gpap-row-label">Full dashboard</span>
-        <label class="gpap-switch">
-          <input type="checkbox" id="gpap-toggle-master-mode" />
-          <span class="gpap-switch-track"></span>
-        </label>
-      </div>
-    </div>
+  <nav class="pop-tabs" role="tablist" aria-label="Help sections">
+    <button class="pop-tab" role="tab" id="tab-start" aria-controls="panel-start" aria-selected="true">Get started</button>
+    <button class="pop-tab" role="tab" id="tab-features" aria-controls="panel-features" aria-selected="false">Features</button>
+    <button class="pop-tab" role="tab" id="tab-qa" aria-controls="panel-qa" aria-selected="false">Q&amp;A</button>
+  </nav>
 
-    <div class="gpap-section">
-      <h1>New Tab Sections</h1>
-      <p class="gpap-sub">Choose what shows on your new tab page.</p>
-      <div class="gpap-list">
-        <div class="gpap-row">
-          <span class="gpap-row-label">CGPA</span>
-          <label class="gpap-switch">
-            <input type="checkbox" id="gpap-toggle-cgpa" />
-            <span class="gpap-switch-track"></span>
-          </label>
-        </div>
-        <div class="gpap-row">
-          <span class="gpap-row-label">Today's Classes</span>
-          <label class="gpap-switch">
-            <input type="checkbox" id="gpap-toggle-today" />
-            <span class="gpap-switch-track"></span>
-          </label>
-        </div>
-        <div class="gpap-row">
-          <span class="gpap-row-label">Attendance</span>
-          <label class="gpap-switch">
-            <input type="checkbox" id="gpap-toggle-attendance" />
-            <span class="gpap-switch-track"></span>
-          </label>
-        </div>
-        <div class="gpap-row">
-          <span class="gpap-row-label">Routine</span>
-          <label class="gpap-switch">
-            <input type="checkbox" id="gpap-toggle-routine" />
-            <span class="gpap-switch-track"></span>
-          </label>
-        </div>
-        <div class="gpap-row">
-          <span class="gpap-row-label">To-do</span>
-          <label class="gpap-switch">
-            <input type="checkbox" id="gpap-toggle-todo" />
-            <span class="gpap-switch-track"></span>
-          </label>
-        </div>
-        <div class="gpap-row">
-          <span class="gpap-row-label">Focus Timer</span>
-          <label class="gpap-switch">
-            <input type="checkbox" id="gpap-toggle-pomodoro" />
-            <span class="gpap-switch-track"></span>
-          </label>
-        </div>
-        <div class="gpap-row">
-          <span class="gpap-row-label">Quick Links</span>
-          <label class="gpap-switch">
-            <input type="checkbox" id="gpap-toggle-links" />
-            <span class="gpap-switch-track"></span>
-          </label>
-        </div>
-        <div class="gpap-row">
-          <span class="gpap-row-label">Favorite Links</span>
-          <label class="gpap-switch">
-            <input type="checkbox" id="gpap-toggle-favorites" />
-            <span class="gpap-switch-track"></span>
-          </label>
-        </div>
-        <div class="gpap-row">
-          <span class="gpap-row-label">Weekly To-do</span>
-          <label class="gpap-switch">
-            <input type="checkbox" id="gpap-toggle-weekly" />
-            <span class="gpap-switch-track"></span>
-          </label>
-        </div>
+  <main class="pop-body">
+    <!-- ===== Get started ===== -->
+    <section class="pop-panel" id="panel-start" role="tabpanel" aria-labelledby="tab-start">
+      <h2>How to use it</h2>
+      <ol class="pop-steps">
+        <li><span class="pop-step-num">1</span><div><b>Log in to RDS3</b><span>Use your normal NSU student portal login. The extension never sees your password.</span></div></li>
+        <li><span class="pop-step-num">2</span><div><b>Open your Grade History</b><span>Click <b>Analyze CGPA</b> at the bottom-right to open the planner.</span></div></li>
+        <li><span class="pop-step-num">3</span><div><b>Check today's classes</b><span>On the RDS3 home or Grade History page, click <b>Mini-RDS3</b> for your routine and attendance.</span></div></li>
+        <li><span class="pop-step-num">4</span><div><b>Open a new tab</b><span>Your CGPA, classes, attendance and to-dos appear there. Click the <svg class="pop-inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> button to customize it.</span></div></li>
+      </ol>
+      <div class="pop-actions">
+        <a class="pop-btn" id="pop-open-grades" href="https://rds3.northsouth.edu/students/grade_history" target="_blank" rel="noopener noreferrer">Open Grade History</a>
+        <button class="pop-btn pop-btn-secondary" id="pop-open-newtab" type="button">Open new tab</button>
       </div>
+      <p class="pop-tip">Tip: your new tab fills in after you visit RDS3 once while logged in. Visit again any time to refresh it.</p>
+    </section>
+
+    <!-- ===== Features ===== -->
+    <section class="pop-panel" id="panel-features" role="tabpanel" aria-labelledby="tab-features" hidden>
+      <h2>CGPA planner <span class="pop-item-where">· Grade History page</span></h2>
+      <details class="pop-item">
+        <summary><span class="pop-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16l4-5 3 3 5-7"/></svg></span>Charts &amp; insights</summary>
+        <div class="pop-item-body"><ul>
+          <li><b>Trend</b>: your CGPA over time, plus a what-if line when you edit.</li>
+          <li><b>Grades</b>, <b>Sem GPA</b> and <b>Credits</b> charts. Hover any point or bar for details.</li>
+          <li>Friendly tips under each chart, like your best semester and how many A credits you need for honors.</li>
+        </ul></div>
+      </details>
+      <details class="pop-item">
+        <summary><span class="pop-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="1.5"/><path d="M8 3v4M16 3v4M4 10h16"/></svg></span>Semesters</summary>
+        <div class="pop-item-body">Every semester's TGPA, CGPA and credits at a glance, updated live as you try what-ifs.</div>
+      </details>
+      <details class="pop-item">
+        <summary><span class="pop-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>Edit Grades</summary>
+        <div class="pop-item-body"><ul>
+          <li>Pick a <b>What-if</b> grade for any course and watch TGPA and CGPA recalculate.</li>
+          <li>Press <b>×</b> beside a course to leave it (and all its retakes) out of the CGPA. Press <b>+</b> to add it back.</li>
+          <li>Retakes are handled for you: only the best attempt counts.</li>
+        </ul></div>
+      </details>
+      <details class="pop-item">
+        <summary><span class="pop-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>Plan Ahead</summary>
+        <div class="pop-item-body">Add future semesters with courses, credits and expected grades to see where your CGPA is heading. Enter a course code to plan a retake.</div>
+      </details>
+      <details class="pop-item">
+        <summary><span class="pop-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span>Target CGPA</summary>
+        <div class="pop-item-body">Type a target CGPA and see whether retakes can get you there, and which courses to retake first. Only courses below B+ can be retaken.</div>
+      </details>
+      <details class="pop-item">
+        <summary><span class="pop-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6 6.5.9-4.7 4.6 1.1 6.5L12 17l-5.9 3 1.1-6.5L2.5 8.9 9 8z"/></svg></span>Honors tracking</summary>
+        <div class="pop-item-body">Shows when your current or projected CGPA reaches Cum Laude (3.50), Magna Cum Laude (3.65) or Summa Cum Laude (3.80). Reach a new level with a what-if for a little celebration.</div>
+      </details>
+
+      <h2>Mini-RDS3 <span class="pop-item-where">· RDS3 home &amp; Grade History</span></h2>
+      <details class="pop-item">
+        <summary><span class="pop-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="1.5"/><path d="M9 13l2 2 4-4"/></svg></span>Routine &amp; attendance</summary>
+        <div class="pop-item-body"><ul>
+          <li><b>Today</b>: the classes you have today, with times and rooms.</li>
+          <li><b>Full Routine</b>: your whole weekly schedule.</li>
+          <li>Whether you were marked present in each course's last class. Use <svg class="pop-inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 4v5h-5"/></svg> to refresh.</li>
+        </ul></div>
+      </details>
+
+      <h2>New tab dashboard <span class="pop-item-where">· any new tab</span></h2>
+      <details class="pop-item">
+        <summary><span class="pop-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span>Your dashboard</summary>
+        <div class="pop-item-body"><ul>
+          <li>CGPA journey chart, today's classes, attendance and routine.</li>
+          <li>To-do list, weekly to-do planner and a focus timer.</li>
+          <li>Quick links to RDS3, Canvas and NSU notices, plus your own favorite links.</li>
+          <li>Optional search bar that uses your default search engine.</li>
+        </ul></div>
+      </details>
+      <details class="pop-item">
+        <summary><span class="pop-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg></span>Customize (<svg class="pop-inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> button)</summary>
+        <div class="pop-item-body"><ul>
+          <li><b>Wallpaper</b>: choose from the gallery, or shuffle from the categories you like, including Bangladesh. You can also use your own image link.</li>
+          <li><b>Colors</b>: 14 light and dark themes, also used by the CGPA planner and Mini-RDS3.</li>
+          <li><b>Clock</b> font and size, <b>Search bar</b> style and width.</li>
+          <li><b>Dashboard</b>: show or hide sections, reorder cards, or switch to a minimal new tab.</li>
+        </ul></div>
+      </details>
+    </section>
+
+    <!-- ===== Q&A ===== -->
+    <section class="pop-panel pop-qa" id="panel-qa" role="tabpanel" aria-labelledby="tab-qa" hidden>
+      <h2>Questions &amp; answers</h2>
+      <details class="pop-item">
+        <summary>Does editing grades change my real result?</summary>
+        <div class="pop-item-body">No. What-ifs, excluded courses and planned semesters are only saved in your browser. Nothing is ever sent to RDS3.</div>
+      </details>
+      <details class="pop-item">
+        <summary>Is my data safe?</summary>
+        <div class="pop-item-body">Yes. There's no account and no server. Your grades and plans stay in your own browser, and the extension only talks to RDS3 using your own login. Anonymous usage counts (like "a tab was opened") help improve it, and never include grades or personal details.</div>
+      </details>
+      <details class="pop-item">
+        <summary>Why is my new tab empty or asking me to log in?</summary>
+        <div class="pop-item-body">It fills in from RDS3. Log in and open your Grade History (for CGPA) and the RDS3 home page (for classes and attendance) once, then open a new tab.</div>
+      </details>
+      <details class="pop-item">
+        <summary>I don't see the Analyze CGPA button.</summary>
+        <div class="pop-item-body">It only appears on <a href="https://rds3.northsouth.edu/students/grade_history" target="_blank" rel="noopener noreferrer">rds3.northsouth.edu/students/grade_history</a>. Make sure you're logged in, then reload the page.</div>
+      </details>
+      <details class="pop-item">
+        <summary>How are retakes counted?</summary>
+        <div class="pop-item-body">When a course appears more than once, only the attempt with the best grade counts toward CGPA and credits. The others are marked "Excluded (retake)".</div>
+      </details>
+      <details class="pop-item">
+        <summary>What does the × button in Edit Grades do?</summary>
+        <div class="pop-item-body">It leaves that course out of your projected CGPA, along with every retake of it and its credits. The row turns gray. Press + to bring it back. "Reset all what-ifs" clears these too.</div>
+      </details>
+      <details class="pop-item">
+        <summary>Do W and I grades count?</summary>
+        <div class="pop-item-body">No. Like the official calculation, W and I don't count toward GPA or credits.</div>
+      </details>
+      <details class="pop-item">
+        <summary>How do I change the theme or wallpaper?</summary>
+        <div class="pop-item-body">Open a new tab and click the <svg class="pop-inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> button at the bottom-right. Wallpaper and Colors are the first two groups.</div>
+      </details>
+      <details class="pop-item">
+        <summary>Can I make the new tab simpler?</summary>
+        <div class="pop-item-body">Yes. In Customize → Dashboard, turn off <b>Full dashboard</b> to keep just the clock, search bar and links, or hide individual sections.</div>
+      </details>
+      <details class="pop-item">
+        <summary>My CGPA here doesn't match RDS3.</summary>
+        <div class="pop-item-body">First check for what-ifs or excluded courses: the <b>Current</b> CGPA always uses your real grades, and <b>Projected</b> includes your edits. If Current still differs, please report it through the community so it can be fixed.</div>
+      </details>
+    </section>
+  </main>
+
+  <footer class="pop-foot">
+    Made for NSUers by <a id="pop-credit" href="https://www.linkedin.com/in/tahshan-jamil-shadhin/" target="_blank" rel="noopener noreferrer">Tahshan Jamil Shadhin</a>
+    <div class="pop-foot-links">
+      <a class="pop-pill" id="pop-linkedin" href="https://www.linkedin.com/in/tahshan-jamil-shadhin/" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9.5h4V21H3V9.5Zm7 0h3.8v1.6h.06c.53-1 1.83-2.06 3.77-2.06 4.03 0 4.77 2.65 4.77 6.1V21h-4v-5.1c0-1.22-.02-2.78-1.7-2.78-1.7 0-1.96 1.33-1.96 2.7V21h-4V9.5Z"/></svg>
+        LinkedIn
+      </a>
+      <a class="pop-pill" id="pop-nsumate" href="https://nsumate.com" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18Z"/></svg>
+        nsumate.com
+      </a>
     </div>
-    <p class="gpap-note">Changes apply immediately to any open new tab.</p>
-  </div>
+  </footer>
   <script src="popup.js"></script>
 </body>
 </html>

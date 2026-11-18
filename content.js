@@ -338,83 +338,54 @@
     'F': '#b0574b', 'W': '#8c8072', 'I': '#ab9f8f'
   };
 
+  // `key` points into the theme-aware chart palette so bars follow the theme.
   const GPA_TIERS = [
-    { min: 3.5, color: '#74915f', label: 'Great (3.5+)' },
-    { min: 3.0, color: '#5f6c85', label: 'Good (3.0–3.49)' },
-    { min: 2.5, color: '#c1953f', label: 'Fair (2.5–2.99)' },
-    { min: -Infinity, color: '#b0574b', label: 'Needs work (<2.5)' }
+    { min: 3.5, key: 'sage', fallback: '#74915f', label: 'Great (3.5+)', mood: 'Great' },
+    { min: 3.0, key: 'actual', fallback: '#5f6c85', label: 'Good (3.0–3.49)', mood: 'Good' },
+    { min: 2.5, key: 'whatif', fallback: '#c1953f', label: 'Fair (2.5–2.99)', mood: 'Fair' },
+    { min: -Infinity, key: 'rust', fallback: '#b0574b', label: 'Needs work (<2.5)', mood: 'Needs work' }
   ];
   function tierFor(gpa) { return GPA_TIERS.find((t) => gpa >= t.min); }
+  function tierColor(tier, pal) { return (pal && pal[tier.key]) || tier.fallback; }
 
-  function drawTrendChart(canvas, actualTimeline, editedTimeline, showEdited) {
-    const ctx = canvas.getContext('2d');
-    const dpr = window.devicePixelRatio || 1;
-    const w = canvas.clientWidth || canvas.parentElement.clientWidth || 360;
-    const h = canvas.clientHeight || 150;
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, w, h);
+  // Charts read colors from the panel's theme variables so they look right on
+  // dark themes too, instead of hard-coded light-theme greys.
+  function chartPalette(node) {
+    const cs = getComputedStyle(node);
+    const v = (name, fallback) => cs.getPropertyValue(name).trim() || fallback;
+    return {
+      grid: v('--gpap-border', '#e7dbc7'),
+      label: v('--gpap-ink-soft', '#8c8072'),
+      ink: v('--gpap-ink', '#3d362f'),
+      surface: v('--gpap-surface', '#fffbf6'),
+      honor: v('--gpap-gold-soft', '#f5ead2'),
+      actual: v('--gpap-indigo', COLOR_ACTUAL),
+      whatif: v('--gpap-gold', COLOR_WHATIF),
+      sage: v('--gpap-sage', '#74915f'),
+      rust: v('--gpap-rust', '#b0574b')
+    };
+  }
 
-    const actualPoints = actualTimeline.filter((t) => t.cgpa !== null);
-    const editedPoints = showEdited ? editedTimeline.filter((t) => t.cgpa !== null) : [];
-    const totalCount = Math.max(actualPoints.length, editedPoints.length);
-    if (totalCount < 1) {
-      ctx.fillStyle = '#8c8072';
-      ctx.font = '12px sans-serif';
-      ctx.fillText('No graded semesters yet', 10, h / 2);
-      return;
-    }
+  const CHART_FONT = '-apple-system, "Segoe UI", Roboto, Arial, sans-serif';
+  function chartFont(size, weight) { return `${weight || 500} ${size}px ${CHART_FONT}`; }
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+  function prefersReducedMotion() {
+    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
 
-    const padL = 30, padR = 10, padT = 10, padB = 20;
-    const plotW = w - padL - padR, plotH = h - padT - padB;
-    const minY = 2.0, maxY = 4.0;
-    const yFor = (v) => padT + plotH * (1 - (Math.max(minY, Math.min(maxY, v)) - minY) / (maxY - minY));
-    const xFor = (i) => padL + (totalCount === 1 ? plotW / 2 : (plotW * i) / (totalCount - 1));
-
-    ctx.strokeStyle = '#e7dbc7';
-    ctx.fillStyle = '#8c8072';
-    ctx.font = '9px sans-serif';
-    ctx.lineWidth = 1;
-    for (let g = 2.0; g <= 4.0; g += 0.5) {
-      const y = yFor(g);
-      ctx.beginPath();
-      ctx.moveTo(padL, y);
-      ctx.lineTo(w - padR, y);
-      ctx.stroke();
-      ctx.fillText(g.toFixed(1), 2, y + 3);
-    }
-
-    function drawSeries(points, color) {
-      ctx.lineWidth = 2.2;
-      for (let i = 1; i < points.length; i++) {
-        ctx.beginPath();
-        ctx.strokeStyle = color;
-        if (points[i].projected) ctx.setLineDash([4, 3]); else ctx.setLineDash([]);
-        ctx.moveTo(xFor(i - 1), yFor(points[i - 1].cgpa));
-        ctx.lineTo(xFor(i), yFor(points[i].cgpa));
-        ctx.stroke();
-      }
-      ctx.setLineDash([]);
-      points.forEach((p, i) => {
-        ctx.beginPath();
-        ctx.fillStyle = color;
-        ctx.arc(xFor(i), yFor(p.cgpa), 3, 0, Math.PI * 2);
-        ctx.fill();
-      });
-    }
-
-    // Actual line is drawn from the untouched real grades and never moves.
-    drawSeries(actualPoints, COLOR_ACTUAL);
-    // What-if line reflects current overrides + planned semesters, only shown once something is edited.
-    if (showEdited && editedPoints.length) drawSeries(editedPoints, COLOR_WHATIF);
+  // "Spring 2024" -> "Sp'24"; anything else (planned names) is trimmed.
+  function shortSemLabel(label, i) {
+    const m = /^\s*([A-Za-z]+)\s+(\d{4})\s*$/.exec(label || '');
+    if (m) return `${m[1].slice(0, 2)}'${m[2].slice(2)}`;
+    const s = (label || '').trim();
+    return s ? s.slice(0, 5) : `P${i + 1}`;
   }
 
   function setupCanvas(canvas) {
     const ctx = canvas.getContext('2d');
     const dpr = window.devicePixelRatio || 1;
     const w = canvas.clientWidth || canvas.parentElement.clientWidth || 360;
-    const h = canvas.clientHeight || 150;
+    const h = canvas.clientHeight || 160;
     canvas.width = w * dpr;
     canvas.height = h * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -422,96 +393,441 @@
     return { ctx, w, h };
   }
 
-  function drawEmptyMessage(ctx, h, text) {
-    ctx.fillStyle = '#8c8072';
-    ctx.font = '12px sans-serif';
-    ctx.fillText(text, 10, h / 2);
+  function drawEmptyMessage(ctx, w, h, text, pal) {
+    ctx.fillStyle = pal.label;
+    ctx.font = chartFont(12, 600);
+    ctx.textAlign = 'center';
+    ctx.fillText(text, w / 2, h / 2);
+    ctx.textAlign = 'left';
   }
 
-  function drawPieChart(canvas, dist) {
-    const { ctx, w, h } = setupCanvas(canvas);
-    const total = dist.reduce((s, d) => s + d.count, 0);
-    if (!total) { drawEmptyMessage(ctx, h, 'No graded courses yet'); return; }
-
-    const cx = w / 2, cy = h / 2 + 4, r = Math.min(cx, h / 2) - 12;
-    let start = -Math.PI / 2;
-    dist.forEach((d) => {
-      const angle = (d.count / total) * Math.PI * 2;
+  function drawYGrid(ctx, pal, ticks, yFor, x0, x1, fmt) {
+    ctx.strokeStyle = pal.grid;
+    ctx.fillStyle = pal.label;
+    ctx.font = chartFont(9);
+    ctx.lineWidth = 1;
+    ctx.textAlign = 'left';
+    ticks.forEach((g) => {
+      const y = Math.round(yFor(g)) + 0.5;
       ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.arc(cx, cy, r, start, start + angle);
-      ctx.closePath();
-      ctx.fillStyle = d.color;
-      ctx.fill();
-      start += angle;
+      ctx.moveTo(x0, y);
+      ctx.lineTo(x1, y);
+      ctx.stroke();
+      ctx.fillText(fmt(g), 2, y + 3);
     });
   }
 
-  function drawSemesterBarChart(canvas, bars) {
-    const { ctx, w, h } = setupCanvas(canvas);
-    const points = bars.filter((b) => b.value !== null);
-    if (!points.length) { drawEmptyMessage(ctx, h, 'No graded semesters yet'); return; }
+  // Thins labels out when they would collide; always keeps the latest one.
+  function drawXLabels(ctx, pal, labels, xFor, y, plotW, hover) {
+    const n = labels.length;
+    const step = Math.max(1, Math.ceil((n * 30) / Math.max(plotW, 1)));
+    ctx.textAlign = 'center';
+    labels.forEach((l, i) => {
+      const isHover = hover === i;
+      if (!isHover && (n - 1 - i) % step !== 0) return;
+      ctx.font = chartFont(8.5, isHover ? 800 : 600);
+      ctx.fillStyle = isHover ? pal.ink : pal.label;
+      ctx.fillText(l, xFor(i), y);
+    });
+    ctx.textAlign = 'left';
+  }
 
-    const padL = 30, padR = 10, padT = 10, padB = 20;
+  function roundedTopRect(ctx, x, y, w, h, r) {
+    r = Math.max(0, Math.min(r, w / 2, h));
+    ctx.beginPath();
+    ctx.moveTo(x, y + h);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h);
+    ctx.closePath();
+  }
+
+  function drawValuePill(ctx, pal, text, x, y, color) {
+    ctx.font = chartFont(9.5, 800);
+    const tw = ctx.measureText(text).width;
+    const pw = tw + 10, ph = 15;
+    const px = Math.max(2, x - pw / 2), py = y - ph - 6;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(px, py, pw, ph, 7); else ctx.rect(px, py, pw, ph);
+    ctx.fill();
+    ctx.fillStyle = pal.surface;
+    ctx.textAlign = 'center';
+    ctx.fillText(text, px + pw / 2, py + 11);
+    ctx.textAlign = 'left';
+  }
+
+  // Every draw function takes a progress `t` (0..1, for the draw-in animation)
+  // and the hovered index, and returns hit regions used for tooltips.
+  // Hit kinds: 'col' (vertical band around x) and 'arc' (donut slice).
+
+  function drawTrendChart(canvas, d, t, hover) {
+    const { ctx, w, h } = setupCanvas(canvas);
+    const pal = d.pal;
+    const actual = d.actual;
+    const edited = d.showEdited ? d.edited : [];
+    const n = Math.max(actual.length, edited.length);
+    const values = actual.concat(edited).filter((p) => p && p.cgpa !== null).map((p) => p.cgpa);
+    if (!values.length) { drawEmptyMessage(ctx, w, h, 'No graded semesters yet', pal); return []; }
+
+    const padL = 28, padR = 14, padT = 22, padB = 20;
     const plotW = w - padL - padR, plotH = h - padT - padB;
-    const minY = 0, maxY = 4.0;
+    const minY = Math.max(0, Math.min(2.0, Math.floor(Math.min(...values) * 2) / 2)), maxY = 4.0;
     const yFor = (v) => padT + plotH * (1 - (Math.max(minY, Math.min(maxY, v)) - minY) / (maxY - minY));
+    const xFor = (i) => padL + (n === 1 ? plotW / 2 : (plotW * i) / (n - 1));
 
-    ctx.strokeStyle = '#e7dbc7';
-    ctx.fillStyle = '#8c8072';
-    ctx.font = '9px sans-serif';
-    ctx.lineWidth = 1;
-    for (let g = 0; g <= 4.0; g += 1.0) {
-      const y = yFor(g);
+    // Honors zone (3.50+) as a soft band behind everything.
+    const bandTop = yFor(maxY), bandBot = yFor(3.5);
+    ctx.fillStyle = pal.honor;
+    ctx.fillRect(padL, bandTop, plotW, bandBot - bandTop);
+
+    const ticks = [];
+    for (let g = minY; g <= maxY + 1e-9; g += 0.5) ticks.push(g);
+    drawYGrid(ctx, pal, ticks, yFor, padL, w - padR, (g) => g.toFixed(1));
+
+    if (hover !== null && hover !== undefined) {
+      ctx.strokeStyle = pal.label;
+      ctx.setLineDash([2, 3]);
+      ctx.beginPath();
+      ctx.moveTo(xFor(hover) + 0.5, padT);
+      ctx.lineTo(xFor(hover) + 0.5, padT + plotH);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // Reveal left-to-right while animating.
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, padL + (plotW + padR) * t, h);
+    ctx.clip();
+
+    function series(points, color, fill) {
+      const pts = points.map((p, i) => (p && p.cgpa !== null ? { x: xFor(i), y: yFor(p.cgpa), p, i } : null));
+      const real = pts.filter(Boolean);
+      if (fill && real.length > 1) {
+        ctx.beginPath();
+        ctx.moveTo(real[0].x, padT + plotH);
+        real.forEach((q) => ctx.lineTo(q.x, q.y));
+        ctx.lineTo(real[real.length - 1].x, padT + plotH);
+        ctx.closePath();
+        ctx.globalAlpha = 0.12;
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+      ctx.lineWidth = 2.4;
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = color;
+      for (let i = 1; i < pts.length; i++) {
+        if (!pts[i] || !pts[i - 1]) continue;
+        ctx.setLineDash(pts[i].p.projected ? [5, 4] : []);
+        ctx.beginPath();
+        ctx.moveTo(pts[i - 1].x, pts[i - 1].y);
+        ctx.lineTo(pts[i].x, pts[i].y);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      real.forEach((q, k) => {
+        const isLast = k === real.length - 1;
+        const r = q.i === hover ? 5 : isLast ? 4.5 : 3;
+        ctx.beginPath();
+        ctx.arc(q.x, q.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = isLast || q.i === hover ? color : pal.surface;
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = color;
+        ctx.stroke();
+      });
+      return real;
+    }
+
+    const actualPts = series(actual, pal.actual, true);
+    const editedPts = edited.length ? series(edited, pal.whatif, false) : [];
+    ctx.restore();
+
+    // Value pill on the latest point of each line, once the line has arrived.
+    if (t >= 1) {
+      const lastA = actualPts[actualPts.length - 1];
+      const lastE = editedPts[editedPts.length - 1];
+      if (lastE && (!lastA || Math.abs(lastE.p.cgpa - lastA.p.cgpa) > 0.004 || lastE.i !== lastA.i)) {
+        drawValuePill(ctx, pal, lastE.p.cgpa.toFixed(2), lastE.x, lastE.y, pal.whatif);
+        if (lastA && Math.abs(lastE.y - lastA.y) > 20) drawValuePill(ctx, pal, lastA.p.cgpa.toFixed(2), lastA.x, lastA.y, pal.actual);
+      } else if (lastA) {
+        drawValuePill(ctx, pal, lastA.p.cgpa.toFixed(2), lastA.x, lastA.y, pal.actual);
+      }
+    }
+
+    const labels = [];
+    for (let i = 0; i < n; i++) labels.push(shortSemLabel((actual[i] || edited[i] || {}).label, i - actual.length));
+    drawXLabels(ctx, pal, labels, xFor, h - 5, plotW, hover);
+
+    const hits = [];
+    const half = n === 1 ? plotW / 2 : plotW / (n - 1) / 2;
+    let prevA = null;
+    for (let i = 0; i < n; i++) {
+      const a = actual[i], e = edited[i];
+      const lines = [];
+      const label = (a || e || {}).label || `Planned ${i - actual.length + 1}`;
+      let anchorY = padT + plotH;
+      if (a && a.cgpa !== null) {
+        let delta = '';
+        if (prevA !== null) {
+          const dv = a.cgpa - prevA;
+          delta = Math.abs(dv) < 0.005 ? '  · steady' : dv > 0 ? `  ▲ ${dv.toFixed(2)}` : `  ▼ ${Math.abs(dv).toFixed(2)}`;
+        }
+        lines.push(`CGPA ${a.cgpa.toFixed(2)}${delta}`);
+        anchorY = Math.min(anchorY, yFor(a.cgpa));
+        prevA = a.cgpa;
+      }
+      if (e && e.cgpa !== null && (!a || a.cgpa === null || Math.abs(e.cgpa - a.cgpa) > 0.004)) {
+        lines.push(`${e.projected ? 'Planned' : 'What-if'} CGPA ${e.cgpa.toFixed(2)}`);
+        anchorY = Math.min(anchorY, yFor(e.cgpa));
+      }
+      const tg = (e && d.showEdited ? e : a) || {};
+      if (tg.tgpa !== null && tg.tgpa !== undefined) lines.push(`Semester GPA ${tg.tgpa.toFixed(2)}`);
+      hits.push({ kind: 'col', x: xFor(i), half, anchorY, title: label, lines, skip: !lines.length });
+    }
+    return hits;
+  }
+
+  function drawDonutChart(canvas, d, t, hover) {
+    const { ctx, w, h } = setupCanvas(canvas);
+    const pal = d.pal;
+    const dist = d.dist;
+    const total = dist.reduce((s, x) => s + x.count, 0);
+    if (!total) { drawEmptyMessage(ctx, w, h, 'No graded courses yet', pal); return []; }
+
+    const cx = w / 2, cy = h / 2, rOut = Math.min(w / 2, h / 2) - 8, rIn = rOut * 0.62;
+    const sweep = t * Math.PI * 2;
+    const hits = [];
+    let acc = 0;
+    dist.forEach((s, i) => {
+      const f0 = acc / total, f1 = (acc + s.count) / total;
+      acc += s.count;
+      hits.push({ kind: 'arc', cx, cy, r0: rIn, r1: rOut + 6, f0, f1, title: s.grade, lines: [], skip: false });
+      const a0 = -Math.PI / 2 + f0 * Math.PI * 2;
+      const a1 = -Math.PI / 2 + Math.min(f1 * Math.PI * 2, sweep);
+      if (a1 <= a0) return;
+      const pop = hover === i ? 5 : 0;
+      const mid = (a0 + a1) / 2;
+      const ox = Math.cos(mid) * pop, oy = Math.sin(mid) * pop;
+      ctx.beginPath();
+      ctx.arc(cx + ox, cy + oy, rOut + (hover === i ? 2 : 0), a0, a1);
+      ctx.arc(cx + ox, cy + oy, rIn, a1, a0, true);
+      ctx.closePath();
+      ctx.globalAlpha = hover === null || hover === undefined || hover === i ? 1 : 0.45;
+      ctx.fillStyle = s.color;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = pal.surface;
+      ctx.stroke();
+    });
+
+    // Center label: total courses, or the hovered grade's share.
+    ctx.textAlign = 'center';
+    if (hover !== null && hover !== undefined && dist[hover]) {
+      const s = dist[hover];
+      ctx.fillStyle = pal.ink;
+      ctx.font = chartFont(20, 800);
+      ctx.fillText(s.grade, cx, cy + 2);
+      ctx.fillStyle = pal.label;
+      ctx.font = chartFont(9.5, 600);
+      ctx.fillText(`${s.count} course${s.count === 1 ? '' : 's'} · ${Math.round((s.count / total) * 100)}%`, cx, cy + 16);
+    } else {
+      ctx.fillStyle = pal.ink;
+      ctx.font = chartFont(20, 800);
+      ctx.fillText(String(total), cx, cy + 2);
+      ctx.fillStyle = pal.label;
+      ctx.font = chartFont(9.5, 600);
+      ctx.fillText('courses', cx, cy + 16);
+    }
+    ctx.textAlign = 'left';
+    return hits;
+  }
+
+  function drawBarChart(canvas, d, t, hover, opts) {
+    const { ctx, w, h } = setupCanvas(canvas);
+    const pal = d.pal;
+    const bars = d.bars;
+    if (!bars.length || !bars.some((b) => b.value !== null && b.value > 0)) {
+      drawEmptyMessage(ctx, w, h, opts.empty, pal);
+      return [];
+    }
+
+    const padL = 26, padR = 10, padT = 24, padB = 20;
+    const plotW = w - padL - padR, plotH = h - padT - padB;
+    const maxY = opts.maxY(bars);
+    const yFor = (v) => padT + plotH * (1 - Math.max(0, Math.min(maxY, v)) / maxY);
+    drawYGrid(ctx, pal, opts.ticks(maxY), yFor, padL, w - padR, opts.tickFmt);
+
+    const n = bars.length;
+    const gap = n > 12 ? 3 : 6;
+    const barW = Math.max(3, (plotW - gap * (n - 1)) / n);
+    const xCenter = (i) => padL + i * (barW + gap) + barW / 2;
+    const bottom = padT + plotH;
+
+    // Reference line (e.g. overall CGPA) behind the bars.
+    if (opts.refLine !== null && opts.refLine !== undefined) {
+      const y = Math.round(yFor(opts.refLine.value)) + 0.5;
+      ctx.strokeStyle = opts.refLine.color;
+      ctx.setLineDash([4, 3]);
+      ctx.lineWidth = 1.2;
       ctx.beginPath();
       ctx.moveTo(padL, y);
       ctx.lineTo(w - padR, y);
       ctx.stroke();
-      ctx.fillText(g.toFixed(1), 2, y + 3);
+      ctx.setLineDash([]);
     }
 
-    const gap = 6;
-    const barW = Math.max(4, (plotW - gap * (points.length - 1)) / points.length);
-    points.forEach((p, i) => {
-      const x = padL + i * (barW + gap);
-      const y = yFor(p.value);
-      ctx.globalAlpha = p.projected ? 0.55 : 1;
-      ctx.fillStyle = tierFor(p.value).color;
-      ctx.fillRect(x, y, barW, (padT + plotH) - y);
+    const best = opts.bestIndex ? opts.bestIndex(bars) : -1;
+    const showValues = barW >= 16;
+    const hits = [];
+    bars.forEach((b, i) => {
+      const x = xCenter(i) - barW / 2;
+      const hit = { kind: 'col', x: xCenter(i), half: (barW + gap) / 2, anchorY: bottom, title: b.label, lines: opts.tip(b, i), skip: b.value === null };
+      hits.push(hit);
+      if (b.value === null) return;
+      // Stagger bars slightly so they pop up one after another.
+      const local = Math.max(0, Math.min(1, t * 1.4 - (i / Math.max(n, 1)) * 0.4));
+      const top = yFor(b.value);
+      const bh = (bottom - top) * easeOutCubic(local);
+      hit.anchorY = top;
+      ctx.globalAlpha = (b.projected ? 0.55 : 1) * (hover === null || hover === undefined || hover === i ? 1 : 0.45);
+      ctx.fillStyle = opts.color(b);
+      roundedTopRect(ctx, x, bottom - bh, barW, bh, Math.min(5, barW / 2));
+      ctx.fill();
       ctx.globalAlpha = 1;
+      if (t >= 1 && (showValues || hover === i)) {
+        ctx.font = chartFont(8.5, 800);
+        ctx.fillStyle = pal.ink;
+        ctx.textAlign = 'center';
+        ctx.fillText(opts.valueFmt(b.value), xCenter(i), top - 4);
+        ctx.textAlign = 'left';
+      }
+      if (t >= 1 && i === best) {
+        drawStar(ctx, xCenter(i), top - (showValues ? 19 : 8), 5, pal.whatif);
+      }
+    });
+
+    drawXLabels(ctx, pal, bars.map((b, i) => shortSemLabel(b.label, i)), xCenter, h - 5, plotW, hover);
+    return hits;
+  }
+
+  function drawSemesterBarChart(canvas, d, t, hover) {
+    const pal = d.pal;
+    return drawBarChart(canvas, d, t, hover, {
+      empty: 'No graded semesters yet',
+      maxY: () => 4.0,
+      ticks: () => [0, 1, 2, 3, 4],
+      tickFmt: (g) => g.toFixed(1),
+      color: (b) => tierColor(tierFor(b.value), pal),
+      valueFmt: (v) => v.toFixed(2),
+      refLine: d.cgpa !== null ? { value: d.cgpa, color: pal.label } : null,
+      bestIndex: (bars) => {
+        let best = -1;
+        bars.forEach((b, i) => { if (!b.projected && b.value !== null && (best < 0 || b.value > bars[best].value)) best = i; });
+        return bars.filter((b) => !b.projected && b.value !== null).length > 1 ? best : -1;
+      },
+      tip: (b) => {
+        if (b.value === null) return [];
+        const lines = [`Semester GPA ${b.value.toFixed(2)} · ${tierFor(b.value).mood}`, `${b.credit.toFixed(1)} credits`];
+        if (b.projected) lines.push('Planned semester');
+        return lines;
+      }
     });
   }
 
-  function drawCreditBarChart(canvas, bars) {
-    const { ctx, w, h } = setupCanvas(canvas);
-    if (!bars.length) { drawEmptyMessage(ctx, h, 'No semesters yet'); return; }
-
-    const padL = 24, padR = 10, padT = 10, padB = 20;
-    const plotW = w - padL - padR, plotH = h - padT - padB;
-    const maxCredit = Math.max(4, ...bars.map((b) => b.value));
-    const yFor = (v) => padT + plotH * (1 - v / maxCredit);
-
-    ctx.strokeStyle = '#e7dbc7';
-    ctx.fillStyle = '#8c8072';
-    ctx.font = '9px sans-serif';
-    ctx.lineWidth = 1;
-    for (let g = 0; g <= maxCredit; g += Math.ceil(maxCredit / 4)) {
-      const y = yFor(g);
-      ctx.beginPath();
-      ctx.moveTo(padL, y);
-      ctx.lineTo(w - padR, y);
-      ctx.stroke();
-      ctx.fillText(String(g), 2, y + 3);
-    }
-
-    const gap = 6;
-    const barW = Math.max(4, (plotW - gap * (bars.length - 1)) / bars.length);
-    bars.forEach((p, i) => {
-      const x = padL + i * (barW + gap);
-      const y = yFor(p.value);
-      ctx.fillStyle = p.projected ? COLOR_WHATIF : COLOR_ACTUAL;
-      ctx.fillRect(x, y, barW, (padT + plotH) - y);
+  function drawCreditBarChart(canvas, d, t, hover) {
+    const pal = d.pal;
+    let running = 0;
+    const totals = d.bars.map((b) => (running += b.value || 0));
+    return drawBarChart(canvas, d, t, hover, {
+      empty: 'No semesters yet',
+      maxY: (bars) => Math.max(4, Math.ceil(Math.max(...bars.map((b) => b.value || 0)) / 3) * 3),
+      ticks: (maxY) => {
+        const step = Math.max(1, Math.ceil(maxY / 4));
+        const out = [];
+        for (let g = 0; g <= maxY; g += step) out.push(g);
+        return out;
+      },
+      tickFmt: (g) => String(g),
+      color: (b) => (b.projected ? pal.whatif : pal.actual),
+      valueFmt: (v) => (Number.isInteger(v) ? String(v) : v.toFixed(1)),
+      refLine: null,
+      bestIndex: null,
+      tip: (b, i) => [`${b.value.toFixed(1)} credits${b.projected ? ' (planned)' : ''}`, `Running total ${totals[i].toFixed(1)}`]
     });
+  }
+
+  function chartHitTest(hit, mx, my) {
+    if (hit.skip) return false;
+    if (hit.kind === 'col') return Math.abs(mx - hit.x) <= hit.half;
+    if (hit.kind === 'arc') {
+      const dx = mx - hit.cx, dy = my - hit.cy;
+      const r = Math.sqrt(dx * dx + dy * dy);
+      if (r < hit.r0 || r > hit.r1) return false;
+      const f = ((Math.atan2(dy, dx) + Math.PI / 2 + Math.PI * 2) % (Math.PI * 2)) / (Math.PI * 2);
+      return f >= hit.f0 && f < hit.f1;
+    }
+    return false;
+  }
+
+  // Small line-icon set (24x24, stroke-based) used instead of emoji so the
+  // UI looks the same on every OS. Strings are <path d>, objects are circles.
+  const ICONS = {
+    sparkles: ['M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z', 'M19 3v4', 'M17 5h4'],
+    equal: ['M5 9h14', 'M5 15h14'],
+    alert: ['M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h16.9a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z', 'M12 9v4', 'M12 17h.01'],
+    flame: ['M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2.1-.2-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.3 1-3.3.4 1.2 1.3 2.3 2.5 2.8z'],
+    trendUp: ['M22 7l-8.5 8.5-5-5L2 17', 'M16 7h6v6'],
+    trendDown: ['M22 17l-8.5-8.5-5 5L2 7', 'M16 17h6v-6'],
+    steady: ['M3 12h18', 'M17 8l4 4-4 4'],
+    trophy: ['M6 9H4.5a2.5 2.5 0 0 1 0-5H6', 'M18 9h1.5a2.5 2.5 0 0 0 0-5H18', 'M4 22h16', 'M10 14.7V17c0 .6-.5 1-1 1.2C7.9 18.8 7 20.2 7 22', 'M14 14.7V17c0 .6.5 1 1 1.2 1.1.6 2 2 2 3.8', 'M18 2H6v7a6 6 0 0 0 12 0V2z'],
+    target: [{ cx: 12, cy: 12, r: 10 }, { cx: 12, cy: 12, r: 6 }, { cx: 12, cy: 12, r: 2 }],
+    star: ['M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.9-6.2-3.3-6.2 3.3 1.2-6.9-5-4.9 6.9-1z'],
+    sprout: ['M7 20h10', 'M10 20c5.5-2.5.8-6.4 3-10', 'M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z', 'M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z'],
+    award: [{ cx: 12, cy: 8, r: 6 }, 'M15.5 12.9L17 22l-5-3-5 3 1.5-9.1'],
+    cap: ['M22 10L12 5 2 10l10 5 10-5z', 'M6 12v5c3 3 9 3 12 0v-5', 'M22 10v6'],
+    chart: ['M3 3v18h18', 'M18 17V9', 'M13 17V5', 'M8 17v-3'],
+    book: ['M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z', 'M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'],
+    gauge: ['M12 14l4-4', 'M3.3 19a10 10 0 1 1 17.4 0']
+  };
+
+  function icon(name, cls) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('stroke-width', '2');
+    svg.setAttribute('stroke-linecap', 'round');
+    svg.setAttribute('stroke-linejoin', 'round');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('class', cls || 'gpap-icon');
+    (ICONS[name] || []).forEach((part) => {
+      const node = document.createElementNS(ns, typeof part === 'string' ? 'path' : 'circle');
+      if (typeof part === 'string') node.setAttribute('d', part);
+      else Object.keys(part).forEach((k) => node.setAttribute(k, part[k]));
+      svg.appendChild(node);
+    });
+    return svg;
+  }
+
+  // Five-point star drawn on a canvas (the "best semester" marker).
+  function drawStar(ctx, cx, cy, r, fill) {
+    ctx.beginPath();
+    for (let i = 0; i < 10; i++) {
+      const rad = i % 2 === 0 ? r : r * 0.48;
+      const a = -Math.PI / 2 + (i * Math.PI) / 5;
+      ctx[i === 0 ? 'moveTo' : 'lineTo'](cx + rad * Math.cos(a), cy + rad * Math.sin(a));
+    }
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
   }
 
   function el(tag, props, children) {
@@ -646,7 +962,7 @@
       updatedAt: Date.now()
     });
 
-    const fab = el('div', { id: 'gpap-fab', title: 'What if CGPA Planner' }, [
+    const fab = el('div', { id: 'gpap-fab', title: 'What if CGPA for NSUers' }, [
       (() => {
         const ns = 'http://www.w3.org/2000/svg';
         const svg = document.createElementNS(ns, 'svg');
@@ -665,7 +981,7 @@
 
     const panel = el('div', { id: 'gpap-panel' });
     const header = el('div', { class: 'gpap-header' }, [
-      el('h1', { text: 'What if CGPA Planner' }),
+      el('h1', { text: 'What if CGPA for NSUers' }),
       el('button', { class: 'gpap-close', text: '×' })
     ]);
     header.querySelector('.gpap-close').addEventListener('click', () => panel.classList.remove('gpap-open'));
@@ -730,7 +1046,7 @@
         Object.values(chartTypeButtons).forEach((b) => b.classList.remove('gpap-active'));
         btn.classList.add('gpap-active');
         track('switch_chart', { chart_type: ct.id });
-        renderStatsAndChart();
+        renderStatsAndChart(true);
       });
       chartTypeButtons[ct.id] = btn;
       chartSwitcher.appendChild(btn);
@@ -740,6 +1056,10 @@
     const canvas = document.createElement('canvas');
     canvas.id = 'gpap-chart';
     chartContent.appendChild(canvas);
+    const chartTip = el('div', { class: 'gpap-chart-tip', role: 'tooltip' });
+    chartContent.appendChild(chartTip);
+    const insightBox = el('div', { class: 'gpap-chart-insight' });
+    chartContent.appendChild(insightBox);
     chartContent.appendChild(legendBox);
     chartBox.appendChild(chartContent);
     hero.appendChild(heroStats);
@@ -754,7 +1074,7 @@
       setChartCollapsed(collapsed);
       persist();
       track('toggle_chart', { collapsed });
-      if (!collapsed) requestAnimationFrame(() => renderChart(lastProj));
+      if (!collapsed) requestAnimationFrame(() => renderChart(lastProj, true));
     });
     setChartCollapsed(!!state.chartCollapsed);
 
@@ -798,9 +1118,9 @@
 
     const communityLink = el('a', { href: 'https://t.me/nsu_advising_helper_bot_channel', target: '_blank', rel: 'noopener noreferrer', class: 'gpap-pill-link', text: 'Join Community' });
     communityLink.addEventListener('click', () => track('click_community_link'));
-    const rds2Link = el('a', { href: 'https://rds2-bff.vercel.app/', target: '_blank', rel: 'noopener noreferrer', class: 'gpap-pill-link', text: 'Visit RDS2, from the future' });
-    rds2Link.addEventListener('click', () => track('click_rds2_link'));
-    const linksRow = el('div', { class: 'gpap-links-row' }, [communityLink, rds2Link]);
+    const nsumateLink = el('a', { href: 'https://nsumate.com/', target: '_blank', rel: 'noopener noreferrer', class: 'gpap-pill-link', text: 'Visit NSUmate' });
+    nsumateLink.addEventListener('click', () => track('click_nsumate_link'));
+    const linksRow = el('div', { class: 'gpap-links-row' }, [communityLink, nsumateLink]);
 
     const creditLink = el('a', { href: 'https://www.facebook.com/tahshanjamil.shadhin', target: '_blank', rel: 'noopener noreferrer', text: 'Tahshan Jamil Shadhin' });
     const credit = el('div', { class: 'gpap-credit' }, [
@@ -818,7 +1138,7 @@
 
     fab.addEventListener('click', () => {
       panel.classList.add('gpap-open');
-      renderStatsAndChart();
+      renderStatsAndChart(true);
       track('open_panel');
     });
 
@@ -861,6 +1181,18 @@
       projectedHonorEl.textContent = projectedHonor ? projectedHonor.name : '';
       projectedHonorEl.className = `gpap-stat-honor ${projectedHonor ? projectedHonor.cls : ''}`;
 
+      // Playful feedback: the projected number bounces when it changes, and
+      // reaching a higher honor tier through a what-if earns a confetti pop.
+      const projectedText = pillProjected.querySelector('.gpap-stat-value').textContent;
+      if (lastProjectedText !== null && projectedText !== lastProjectedText) bump(pillProjected.querySelector('.gpap-stat-value'));
+      lastProjectedText = projectedText;
+      const rank = projectedHonor ? HONOR_TIERS.length - HONOR_TIERS.indexOf(projectedHonor) : 0;
+      if (lastHonorRank !== null && rank > lastHonorRank && panel.classList.contains('gpap-open')) {
+        celebrate(pillProjected, `${projectedHonor.name} unlocked!`);
+        track('honor_unlocked', { honor: projectedHonor.name });
+      }
+      lastHonorRank = rank;
+
       return proj;
     }
 
@@ -868,43 +1200,252 @@
       trend: 'CGPA trend', pie: 'Grade distribution', semester: 'Semester GPA', credits: 'Credits per semester'
     };
 
-    function updateChartLegend(proj) {
-      chartTitleLabel.textContent = CHART_TITLES[chartType];
-      legendBox.innerHTML = '';
+    let lastProjectedText = null;
+    let lastHonorRank = null;
+
+    function bump(node) {
+      if (prefersReducedMotion()) return;
+      node.classList.remove('gpap-bump');
+      void node.offsetWidth; // restart the animation
+      node.classList.add('gpap-bump');
+    }
+
+    function celebrate(anchor, message) {
+      if (prefersReducedMotion()) return;
+      const pr = panel.getBoundingClientRect(), ar = anchor.getBoundingClientRect();
+      const host = el('div', { class: 'gpap-confetti' });
+      host.style.left = `${ar.left - pr.left + ar.width / 2}px`;
+      host.style.top = `${ar.top - pr.top + ar.height / 2}px`;
+      const colors = ['--gpap-gold', '--gpap-sage', '--gpap-accent', '--gpap-indigo', '--gpap-rust'];
+      for (let i = 0; i < 24; i++) {
+        const angle = (Math.PI * 2 * i) / 24 + Math.random() * 0.4;
+        const dist = 40 + Math.random() * 45;
+        const bit = el('i');
+        bit.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
+        bit.style.setProperty('--dy', `${Math.sin(angle) * dist - 20}px`);
+        bit.style.setProperty('--rot', `${Math.round(Math.random() * 540 - 270)}deg`);
+        bit.style.setProperty('--d', `${Math.random() * 0.12}s`);
+        bit.style.background = `var(${colors[i % colors.length]})`;
+        host.appendChild(bit);
+      }
+      host.appendChild(el('span', {}, [icon('cap', 'gpap-icon gpap-toast-icon'), document.createTextNode(message)]));
+      panel.appendChild(host);
+      setTimeout(() => host.remove(), 1900);
+    }
+
+    function hasEdits() {
+      return Object.keys(state.overrides).length > 0 || Object.keys(state.excluded).length > 0 || state.planned.length > 0;
+    }
+
+    // Credits of straight-A coursework needed to lift (qp, credit) to `target`.
+    function creditsOfAToReach(target, qp, credit) {
+      if (credit && qp / credit >= target - 1e-9) return 0;
+      return Math.max(0, (target * credit - qp) / (4 - target));
+    }
+
+    // One or two short, friendly, data-backed lines under the chart.
+    function chartInsights(proj) {
+      const lines = [];
       if (chartType === 'trend') {
-        legendBox.appendChild(el('span', {}, [el('i', { style: `background:${COLOR_ACTUAL}` }), document.createTextNode(' Actual')]));
-        legendBox.appendChild(el('span', {}, [el('i', { style: `background:${COLOR_WHATIF}` }), document.createTextNode(' What-if')]));
+        if (hasEdits() && proj.finalCGPA !== null && actualCGPA !== null) {
+          const dv = proj.finalCGPA - actualCGPA;
+          lines.push(Math.abs(dv) < 0.005
+            ? { icon: 'equal', text: 'Your what-ifs keep CGPA right where it is' }
+            : dv > 0 ? { icon: 'sparkles', tone: 'pos', text: `Your what-ifs lift CGPA to ${proj.finalCGPA.toFixed(2)} (+${dv.toFixed(2)})` }
+              : { icon: 'alert', tone: 'neg', text: `Your what-ifs drop CGPA to ${proj.finalCGPA.toFixed(2)} (${dv.toFixed(2)})` });
+        } else {
+          const pts = actualProjection.timeline.filter((p) => p.cgpa !== null);
+          let streak = 0;
+          for (let i = pts.length - 1; i > 0 && pts[i].cgpa > pts[i - 1].cgpa + 1e-9; i--) streak++;
+          if (streak >= 2) lines.push({ icon: 'flame', tone: 'pos', text: `CGPA has climbed ${streak} semesters in a row!` });
+          else if (pts.length >= 2) {
+            const dv = pts[pts.length - 1].cgpa - pts[pts.length - 2].cgpa;
+            lines.push(dv > 0.005 ? { icon: 'trendUp', tone: 'pos', text: `Up ${dv.toFixed(2)} since last semester, keep it rolling!` }
+              : dv < -0.005 ? { icon: 'trendDown', tone: 'neg', text: `Dipped ${Math.abs(dv).toFixed(2)} last semester, one strong term turns it around` }
+                : { icon: 'steady', text: 'Holding steady since last semester' });
+          }
+        }
+        if (proj.finalCGPA !== null && proj.finalCredit) {
+          const goal = HONOR_TIERS.filter((t) => proj.finalCGPA < t.min).sort((x, y) => x.min - y.min)[0];
+          if (!goal) {
+            lines.push({ icon: 'trophy', tone: 'goal', text: 'Summa Cum Laude territory. Legendary!' });
+          } else {
+            let target = goal.min, name = goal.name;
+            let need = creditsOfAToReach(target, proj.finalQP, proj.finalCredit);
+            if (need > 45) {
+              // Honors is far off: show the next quarter-point milestone instead.
+              target = (Math.floor(proj.finalCGPA * 4 + 1e-9) + 1) / 4;
+              name = null;
+              need = creditsOfAToReach(target, proj.finalQP, proj.finalCredit);
+            }
+            const cr = Math.max(1, Math.ceil(need));
+            lines.push({
+              icon: 'target',
+              tone: 'goal',
+              text: name
+                ? `About ${cr} credits of A's to reach ${name} (${target.toFixed(2)})`
+                : `About ${cr} credits of A's lifts you to ${target.toFixed(2)}`
+            });
+          }
+        }
       } else if (chartType === 'pie') {
-        computeGradeDistribution(semesters, state.planned, proj, state.overrides).forEach((d) => {
-          legendBox.appendChild(el('span', {}, [el('i', { style: `background:${d.color}` }), document.createTextNode(` ${d.grade} (${d.count})`)]));
+        const dist = computeGradeDistribution(semesters, state.planned, proj, state.overrides);
+        const total = dist.reduce((s, x) => s + x.count, 0);
+        if (total) {
+          const aCount = dist.filter((x) => x.grade === 'A' || x.grade === 'A-').reduce((s, x) => s + x.count, 0);
+          const pct = Math.round((aCount / total) * 100);
+          lines.push(aCount
+            ? { icon: 'star', tone: 'goal', text: `${pct}% of your grades are A or A-` }
+            : { icon: 'sprout', tone: 'pos', text: 'Your first A is waiting to happen' });
+          const top = dist.slice().sort((x, y) => y.count - x.count)[0];
+          lines.push({ icon: 'award', text: `Signature grade: ${top.grade} (${top.count} time${top.count === 1 ? '' : 's'})` });
+        }
+      } else if (chartType === 'semester') {
+        const real = proj.timeline.filter((p) => !p.projected && p.tgpa !== null);
+        if (real.length) {
+          const best = real.reduce((x, y) => (y.tgpa > x.tgpa ? y : x));
+          lines.push({ icon: 'trophy', tone: 'goal', text: `Best semester: ${best.label} at ${best.tgpa.toFixed(2)}` });
+          const honors = real.filter((p) => p.tgpa >= 3.5).length;
+          lines.push(honors
+            ? { icon: 'cap', tone: 'pos', text: `${honors} of ${real.length} semester${real.length === 1 ? '' : 's'} at 3.50 or higher` }
+            : { icon: 'chart', text: `Average semester GPA: ${(real.reduce((sum, p) => sum + p.tgpa, 0) / real.length).toFixed(2)}` });
+        }
+      } else if (chartType === 'credits') {
+        const done = semesters.map((sem, si) => ({ label: sem.label, c: semesterCredit(sem, si, proj, state.overrides) }));
+        const total = done.reduce((s, x) => s + x.c, 0);
+        if (total) {
+          const active = done.filter((x) => x.c > 0);
+          const planned = state.planned.reduce((s, psem, pi) => s + plannedCredit(psem, pi, proj), 0);
+          lines.push({ icon: 'book', text: `${total.toFixed(1)} credits counted so far${planned ? `, +${planned.toFixed(1)} planned` : ''}` });
+          const heavy = active.reduce((x, y) => (y.c > x.c ? y : x));
+          const avg = `Average ${(total / active.length).toFixed(1)} per semester`;
+          lines.push({ icon: 'gauge', text: active.filter((x) => x.c === heavy.c).length === 1 ? `${avg} · heaviest: ${heavy.label} (${heavy.c.toFixed(1)})` : avg });
+        }
+      }
+      return lines;
+    }
+
+    function updateChartExtras(proj, pal) {
+      chartTitleLabel.textContent = CHART_TITLES[chartType];
+      insightBox.innerHTML = '';
+      chartInsights(proj).forEach((line) => insightBox.appendChild(el('div', { class: `gpap-insight gpap-tone-${line.tone || 'neutral'}` }, [
+        icon(line.icon, 'gpap-icon gpap-insight-icon'),
+        el('span', { text: line.text })
+      ])));
+      insightBox.style.display = insightBox.childNodes.length ? '' : 'none';
+
+      legendBox.innerHTML = '';
+      const dot = (color, text, cls) => el('span', {}, [el('i', { style: `background:${color}`, class: cls || '' }), document.createTextNode(` ${text}`)]);
+      if (chartType === 'trend') {
+        legendBox.appendChild(dot(pal.actual, 'Actual'));
+        if (hasEdits()) legendBox.appendChild(dot(pal.whatif, 'What-if'));
+        legendBox.appendChild(dot(pal.honor, 'Honors zone (3.50+)', 'gpap-legend-square'));
+      } else if (chartType === 'pie') {
+        computeGradeDistribution(semesters, state.planned, proj, state.overrides).forEach((x) => {
+          legendBox.appendChild(dot(x.color, `${x.grade} (${x.count})`));
         });
       } else if (chartType === 'semester') {
-        GPA_TIERS.forEach((t) => {
-          legendBox.appendChild(el('span', {}, [el('i', { style: `background:${t.color}` }), document.createTextNode(` ${t.label}`)]));
-        });
+        GPA_TIERS.forEach((t) => legendBox.appendChild(dot(tierColor(t, pal), t.label)));
+        legendBox.appendChild(el('span', {}, [el('i', { class: 'gpap-legend-dash' }), document.createTextNode(' Overall CGPA')]));
       } else if (chartType === 'credits') {
-        legendBox.appendChild(el('span', {}, [el('i', { style: `background:${COLOR_ACTUAL}` }), document.createTextNode(' Completed')]));
-        legendBox.appendChild(el('span', {}, [el('i', { style: `background:${COLOR_WHATIF}` }), document.createTextNode(' Planned')]));
+        legendBox.appendChild(dot(pal.actual, 'Completed'));
+        if (state.planned.length) legendBox.appendChild(dot(pal.whatif, 'Planned'));
       }
     }
 
-    function renderChart(proj) {
-      const showEdited = Object.keys(state.overrides).length > 0 || Object.keys(state.excluded).length > 0 || state.planned.length > 0;
-      updateChartLegend(proj);
-      requestAnimationFrame(() => {
-        if (chartType === 'trend') {
-          drawTrendChart(canvas, actualProjection.timeline, proj.timeline, showEdited);
-        } else if (chartType === 'pie') {
-          drawPieChart(canvas, computeGradeDistribution(semesters, state.planned, proj, state.overrides));
-        } else if (chartType === 'semester') {
-          const bars = proj.timeline.map((t) => ({ value: t.tgpa, projected: t.projected }));
-          drawSemesterBarChart(canvas, bars);
-        } else if (chartType === 'credits') {
-          const bars = semesters.map((sem, si) => ({ value: semesterCredit(sem, si, proj, state.overrides), projected: false }))
-            .concat(state.planned.map((psem, pi) => ({ value: plannedCredit(psem, pi, proj), projected: true })));
-          drawCreditBarChart(canvas, bars);
-        }
-      });
+    // ---- Chart drawing, animation and hover tooltips ----
+    let chartPaint = null;   // (t, hover) => hit regions
+    let chartHits = [];
+    let chartHover = null;
+    let chartAnimFrame = 0;
+    let chartAnimating = false;
+
+    function paintChart(t) {
+      if (!chartPaint) return;
+      chartHits = chartPaint(t, chartHover) || [];
+    }
+
+    function hideChartTip() {
+      chartTip.classList.remove('gpap-show');
+    }
+
+    function showChartTip(hit) {
+      chartTip.innerHTML = '';
+      chartTip.appendChild(el('b', { text: hit.title }));
+      hit.lines.forEach((line) => chartTip.appendChild(el('div', { text: line })));
+      chartTip.classList.add('gpap-show');
+      const cw = chartContent.clientWidth;
+      const tw = chartTip.offsetWidth;
+      const left = Math.max(tw / 2 + 2, Math.min(cw - tw / 2 - 2, canvas.offsetLeft + hit.x));
+      chartTip.style.left = `${left}px`;
+      chartTip.style.top = `${canvas.offsetTop + hit.anchorY}px`;
+      // Near the top of the chart, show the tip below the point so it doesn't cover the switcher.
+      chartTip.classList.toggle('gpap-tip-below', hit.anchorY < chartTip.offsetHeight + 12);
+    }
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (chartAnimating || !chartHits.length) return;
+      const r = canvas.getBoundingClientRect();
+      const idx = chartHits.findIndex((hit) => chartHitTest(hit, e.clientX - r.left, e.clientY - r.top));
+      const next = idx < 0 ? null : idx;
+      if (next !== chartHover) {
+        chartHover = next;
+        paintChart(1);
+      }
+      // The donut shows details in its center, so it skips the floating tip.
+      if (next === null || chartHits[next].kind === 'arc') hideChartTip(); else showChartTip(chartHits[next]);
+    });
+    canvas.addEventListener('mouseleave', () => {
+      hideChartTip();
+      if (chartHover !== null) { chartHover = null; paintChart(1); }
+    });
+
+    function renderChart(proj, animate) {
+      const pal = chartPalette(canvas);
+      updateChartExtras(proj, pal);
+      const showEdited = hasEdits();
+      if (chartType === 'trend') {
+        const data = { pal, actual: actualProjection.timeline, edited: proj.timeline, showEdited };
+        chartPaint = (t, hover) => drawTrendChart(canvas, data, t, hover);
+      } else if (chartType === 'pie') {
+        const data = { pal, dist: computeGradeDistribution(semesters, state.planned, proj, state.overrides) };
+        chartPaint = (t, hover) => drawDonutChart(canvas, data, t, hover);
+      } else if (chartType === 'semester') {
+        const bars = proj.timeline.map((p, i) => ({
+          label: p.label,
+          value: p.tgpa,
+          projected: p.projected,
+          credit: i < semesters.length
+            ? semesterCredit(semesters[i], i, proj, state.overrides)
+            : plannedCredit(state.planned[i - semesters.length], i - semesters.length, proj)
+        }));
+        const data = { pal, bars, cgpa: proj.finalCGPA };
+        chartPaint = (t, hover) => drawSemesterBarChart(canvas, data, t, hover);
+      } else if (chartType === 'credits') {
+        const bars = semesters.map((sem, si) => ({ label: sem.label, value: semesterCredit(sem, si, proj, state.overrides), projected: false }))
+          .concat(state.planned.map((psem, pi) => ({ label: psem.label || `Planned ${pi + 1}`, value: plannedCredit(psem, pi, proj), projected: true })));
+        const data = { pal, bars };
+        chartPaint = (t, hover) => drawCreditBarChart(canvas, data, t, hover);
+      }
+
+      cancelAnimationFrame(chartAnimFrame);
+      chartHover = null;
+      hideChartTip();
+      if (!animate || prefersReducedMotion() || state.chartCollapsed) {
+        chartAnimating = false;
+        chartAnimFrame = requestAnimationFrame(() => paintChart(1));
+        return;
+      }
+      chartAnimating = true;
+      let start = null;
+      const step = (now) => {
+        if (start === null) start = now;
+        const t = Math.min(1, (now - start) / 700);
+        paintChart(easeOutCubic(t));
+        if (t < 1) chartAnimFrame = requestAnimationFrame(step);
+        else chartAnimating = false;
+      };
+      chartAnimFrame = requestAnimationFrame(step);
     }
 
     function renderSemesters(proj) {
@@ -1029,7 +1570,7 @@
             track(isExcluded ? 'readd_course' : 'exclude_course');
           });
 
-          const row = el('div', { class: 'gpap-course-row' + (isExcluded ? ' gpap-course-excluded' : '') }, [infoBlock, currentField, whatIfField, toggleBtn]);
+          const row = el('div', { class: 'gpap-course-row' + (isExcluded ? ' gpap-course-excluded' : '') }, [toggleBtn, infoBlock, currentField, whatIfField]);
           det.appendChild(row);
         });
         viewEdit.appendChild(det);
@@ -1197,9 +1738,9 @@
       renderResult();
     }
 
-    function renderStatsAndChart() {
+    function renderStatsAndChart(animate) {
       const proj = renderStats();
-      renderChart(proj);
+      renderChart(proj, animate);
       renderSemesters(proj);
     }
 

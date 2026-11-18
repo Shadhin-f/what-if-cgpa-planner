@@ -1,15 +1,25 @@
 {
   "manifest_version": 3,
-  "name": "What if CGPA Planner",
-  "version": "2.5.2",
+  "name": "What if CGPA for NSUers",
+  "version": "2.6.0",
   "description": "Edit, analyze, and plan your semesters, plus a quick-glance widget for today's routine and attendance on the NSU RDS portal.",
   "permissions": ["storage", "search"],
   "background": {
     "service_worker": "background.js"
   },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "What if CGPA Planner"
+    "default_title": "What if CGPA for NSUers",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
   },
   "chrome_url_overrides": {
     "newtab": "newtab.html"

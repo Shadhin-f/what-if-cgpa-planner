@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <title>New Tab</title>
+<link rel="icon" type="image/png" href="icons/icon32.png" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@600;700&family=Playfair+Display:wght@700&family=Space+Mono:wght@700&family=Caveat:wght@600&family=Poppins:wght@700&family=Oswald:wght@700&family=Righteous&family=Abril+Fatface&family=Pacifico&family=Press+Start+2P&display=swap" />
 <link rel="stylesheet" href="newtab.css" />
@@ -40,7 +41,7 @@
       </span>
       <h2>Looks like you haven't logged in yet</h2>
       <p>Log in to the NSU student portal and visit your dashboard — your CGPA, attendance, and routine will show up here automatically.</p>
-      <a class="nt-btn" id="nt-login-prompt-link" href="https://rds3.northsouth.edu/" target="_blank" rel="noopener noreferrer">Log in to RDS3</a>
+      <a class="nt-btn" id="nt-login-prompt-link" href="https://rds3.northsouth.edu/">Log in to RDS3</a>
     </section>
 
     <section class="nt-card nt-hero" id="nt-section-cgpa">
@@ -146,84 +147,141 @@
 
     <footer class="nt-footer" id="nt-footer">
       <span class="nt-beta-tag" id="nt-beta-tag"></span>
-      <a id="nt-review-link" class="nt-review-link" href="https://chromewebstore.google.com/detail/koekeocjmjcbinjpfpijockklageaknd?utm_source=item-share-cb" target="_blank" rel="noopener noreferrer">Enjoying it? Leave a review →</a>
+      <a id="nt-review-link" class="nt-review-link" href="https://chromewebstore.google.com/detail/koekeocjmjcbinjpfpijockklageaknd?utm_source=item-share-cb">Enjoying it? Leave a review →</a>
     </footer>
 
     <button id="nt-fab-settings" class="nt-fab" type="button" title="Customize" aria-label="Customize new tab">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
     </button>
     <div id="nt-settings-overlay" class="nt-settings-overlay" hidden></div>
-    <div id="nt-settings-panel" class="nt-settings-panel" hidden>
+    <div id="nt-settings-panel" class="nt-settings-panel" role="dialog" aria-label="Customize new tab" hidden>
       <div class="nt-settings-head">
         <h2>Customize</h2>
         <button type="button" id="nt-settings-close" class="nt-settings-close" aria-label="Close">×</button>
       </div>
-      <details class="nt-settings-group" open>
+
+      <!-- Groups share a name, so opening one closes the others. -->
+      <details class="nt-settings-group" name="nt-settings" open>
         <summary class="nt-settings-group-summary">
-          <span>Appearance</span>
+          <span class="nt-settings-group-title">
+            <span class="nt-settings-group-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg>
+            </span>
+            <span>Wallpaper</span>
+          </span>
+          <span class="nt-settings-group-value" id="nt-sum-wallpaper"></span>
           <span class="nt-settings-group-chevron">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
           </span>
         </summary>
         <div class="nt-settings-group-body">
           <div class="nt-settings-section">
-            <h3>Theme</h3>
-            <div class="nt-settings-swatches" id="nt-settings-swatches"></div>
-          </div>
-          <div class="nt-settings-section">
-            <h3>Clock Font</h3>
-            <div class="nt-settings-fonts" id="nt-settings-fonts"></div>
-          </div>
-          <div class="nt-settings-section">
-            <h3>Clock Size</h3>
-            <div class="nt-settings-sizes" id="nt-settings-sizes"></div>
-          </div>
-          <div class="nt-settings-section">
-            <h3>Background</h3>
-            <div class="nt-bg-modes" id="nt-bg-modes">
+            <div class="nt-segmented" id="nt-bg-modes" role="group" aria-label="Wallpaper mode">
               <button type="button" class="nt-bg-mode-btn" data-mode="none">None</button>
-              <button type="button" class="nt-bg-mode-btn" data-mode="preset">Themes</button>
+              <button type="button" class="nt-bg-mode-btn" data-mode="preset">Gallery</button>
               <button type="button" class="nt-bg-mode-btn" data-mode="shuffle">Shuffle</button>
               <button type="button" class="nt-bg-mode-btn" data-mode="url">Link</button>
             </div>
             <p class="nt-bg-status" id="nt-bg-status"></p>
+          </div>
 
-            <div class="nt-bg-sub" id="nt-bg-sub-preset" hidden>
-              <div class="nt-bg-presets" id="nt-bg-presets"></div>
-              <button type="button" class="nt-bg-presets-more" id="nt-bg-presets-more"></button>
+          <div class="nt-bg-sub" id="nt-bg-sub-preset" hidden>
+            <h3>Pick a wallpaper</h3>
+            <div class="nt-chips" id="nt-bg-cat-filter" role="group" aria-label="Wallpaper category"></div>
+            <div class="nt-bg-presets" id="nt-bg-presets"></div>
+            <button type="button" class="nt-bg-presets-more" id="nt-bg-presets-more"></button>
+          </div>
+
+          <div class="nt-bg-sub" id="nt-bg-sub-shuffle" hidden>
+            <h3>Shuffle from</h3>
+            <div class="nt-chips" id="nt-bg-shuffle-cats" role="group" aria-label="Categories to shuffle"></div>
+            <p class="nt-bg-hint">Pick one or more categories. "All" uses every wallpaper.</p>
+            <h3>Change wallpaper</h3>
+            <div class="nt-segmented" id="nt-bg-shuffle-modes" role="group" aria-label="Shuffle frequency">
+              <button type="button" class="nt-bg-shuffle-btn" data-shuffle="newtab">Every tab</button>
+              <button type="button" class="nt-bg-shuffle-btn" data-shuffle="hourly">Hourly</button>
+              <button type="button" class="nt-bg-shuffle-btn" data-shuffle="daily">Daily</button>
             </div>
-
-            <div class="nt-bg-sub" id="nt-bg-sub-shuffle" hidden>
-              <div class="nt-bg-modes" id="nt-bg-shuffle-modes">
-                <button type="button" class="nt-bg-shuffle-btn" data-shuffle="newtab">Every new tab</button>
-                <button type="button" class="nt-bg-shuffle-btn" data-shuffle="hourly">Hourly</button>
-                <button type="button" class="nt-bg-shuffle-btn" data-shuffle="daily">Daily</button>
-              </div>
+            <div class="nt-shuffle-now">
               <p class="nt-bg-hint" id="nt-bg-shuffle-status"></p>
+              <button type="button" class="nt-btn nt-btn-small nt-btn-secondary" id="nt-bg-shuffle-next" title="Show a different wallpaper now"><svg class="nt-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 4v5h-5"/></svg>Next</button>
             </div>
+          </div>
 
-            <div class="nt-bg-sub" id="nt-bg-sub-url" hidden>
-              <form id="nt-bg-url-form" class="nt-bg-url-form">
-                <input id="nt-bg-url-input" type="url" placeholder="https://…/image.jpg" autocomplete="off" />
-                <button type="submit" class="nt-btn nt-btn-small">Apply</button>
-              </form>
-            </div>
+          <div class="nt-bg-sub" id="nt-bg-sub-url" hidden>
+            <h3>Image link</h3>
+            <form id="nt-bg-url-form" class="nt-bg-url-form">
+              <input id="nt-bg-url-input" type="url" placeholder="https://…/image.jpg" autocomplete="off" />
+              <button type="submit" class="nt-btn nt-btn-small">Apply</button>
+            </form>
+          </div>
 
-            <div class="nt-bg-sub" id="nt-bg-sub-color" hidden>
-              <div class="nt-bg-color-row">
-                <input id="nt-bg-color-input" type="color" value="#ffffff" />
-                <span class="nt-bg-color-label">Font color</span>
-                <button type="button" class="nt-btn nt-btn-small" id="nt-bg-color-reset">Auto</button>
-              </div>
-              <p class="nt-bg-hint">Pick a text color that stays readable over your photo.</p>
+          <div class="nt-bg-sub" id="nt-bg-sub-color" hidden>
+            <h3>Text color</h3>
+            <div class="nt-bg-color-row">
+              <input id="nt-bg-color-input" type="color" value="#ffffff" aria-label="Text color" />
+              <span class="nt-bg-color-label">Pick a color that stays readable over the photo.</span>
+              <button type="button" class="nt-btn nt-btn-small nt-btn-secondary" id="nt-bg-color-reset">Auto</button>
             </div>
           </div>
         </div>
       </details>
 
-      <details class="nt-settings-group">
+      <details class="nt-settings-group" name="nt-settings">
         <summary class="nt-settings-group-summary">
-          <span>Search Bar</span>
+          <span class="nt-settings-group-title">
+            <span class="nt-settings-group-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.6-.9 1.2-1.8-.5-1.1.2-2.2 1.4-2.2H17a4 4 0 0 0 4-4c0-5-4-10-9-10Z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="10.5" cy="7" r="1.2"/><circle cx="15" cy="7.5" r="1.2"/></svg>
+            </span>
+            <span>Colors</span>
+          </span>
+          <span class="nt-settings-group-value" id="nt-sum-colors"></span>
+          <span class="nt-settings-group-chevron">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+          </span>
+        </summary>
+        <div class="nt-settings-group-body">
+          <div class="nt-settings-section">
+            <p class="nt-bg-hint" id="nt-colors-wallpaper-hint" hidden>A wallpaper is on, so cards here take their colors from the photo. Your color theme still applies to the What if planner and Mini RDS3.</p>
+            <div class="nt-settings-swatches" id="nt-settings-swatches"></div>
+          </div>
+        </div>
+      </details>
+
+      <details class="nt-settings-group" name="nt-settings">
+        <summary class="nt-settings-group-summary">
+          <span class="nt-settings-group-title">
+            <span class="nt-settings-group-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            </span>
+            <span>Clock</span>
+          </span>
+          <span class="nt-settings-group-value" id="nt-sum-clock"></span>
+          <span class="nt-settings-group-chevron">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+          </span>
+        </summary>
+        <div class="nt-settings-group-body">
+          <div class="nt-settings-section">
+            <h3>Font</h3>
+            <div class="nt-settings-fonts" id="nt-settings-fonts"></div>
+          </div>
+          <div class="nt-settings-section">
+            <h3>Size</h3>
+            <div class="nt-settings-sizes" id="nt-settings-sizes"></div>
+          </div>
+        </div>
+      </details>
+
+      <details class="nt-settings-group" name="nt-settings">
+        <summary class="nt-settings-group-summary">
+          <span class="nt-settings-group-title">
+            <span class="nt-settings-group-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            </span>
+            <span>Search Bar</span>
+          </span>
+          <span class="nt-settings-group-value" id="nt-sum-search"></span>
           <span class="nt-settings-group-chevron">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
           </span>
@@ -237,12 +295,19 @@
             <h3>Width</h3>
             <div class="nt-settings-searchstyles" id="nt-settings-searchwidths"></div>
           </div>
+          <p class="nt-bg-hint nt-settings-section">Turn the search bar on under Dashboard → Sections.</p>
         </div>
       </details>
 
-      <details class="nt-settings-group">
+      <details class="nt-settings-group" name="nt-settings">
         <summary class="nt-settings-group-summary">
-          <span>Dashboard</span>
+          <span class="nt-settings-group-title">
+            <span class="nt-settings-group-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+            </span>
+            <span>Dashboard</span>
+          </span>
+          <span class="nt-settings-group-value" id="nt-sum-dashboard"></span>
           <span class="nt-settings-group-chevron">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
           </span>

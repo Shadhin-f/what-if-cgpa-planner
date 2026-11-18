@@ -177,7 +177,108 @@
 .gpap-legend { display: flex; flex-wrap: wrap; gap: 6px 12px; font-weight: 500; text-transform: none; letter-spacing: 0; margin-top: 8px; color: var(--gpap-ink-soft); }
 .gpap-legend span { display: inline-flex; align-items: center; gap: 5px; }
 .gpap-legend i { width: 9px; height: 9px; border-radius: 999px; display: inline-block; }
-canvas#gpap-chart { width: 100%; height: 150px; display: block; }
+.gpap-legend i.gpap-legend-square { border-radius: 2px; border: 1px solid var(--gpap-gold); }
+.gpap-legend i.gpap-legend-dash { width: 12px; height: 0; border-radius: 0; border-top: 1.5px dashed var(--gpap-ink-soft); }
+.gpap-chart-content { position: relative; }
+canvas#gpap-chart { width: 100%; height: 160px; display: block; }
+
+/* Hover tooltip over the chart */
+.gpap-chart-tip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  pointer-events: none;
+  transform: translate(-50%, calc(-100% - 10px));
+  background: var(--gpap-ink);
+  color: var(--gpap-surface);
+  font-size: 10.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  padding: 6px 9px;
+  border-radius: 9px;
+  box-shadow: var(--gpap-shadow-md);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+.gpap-chart-tip.gpap-show { opacity: 1; }
+.gpap-chart-tip.gpap-tip-below { transform: translate(-50%, 12px); }
+.gpap-chart-tip b { display: block; font-size: 11px; font-weight: 800; margin-bottom: 1px; }
+
+/* Friendly one-liners under the chart */
+.gpap-chart-insight {
+  margin-top: 8px;
+  padding: 6px 9px;
+  background: var(--gpap-surface-2);
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--gpap-ink);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.gpap-insight { display: flex; align-items: flex-start; gap: 7px; }
+.gpap-insight-icon {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin-top: 2px;
+  color: var(--gpap-accent);
+}
+.gpap-tone-pos .gpap-insight-icon { color: var(--gpap-sage); }
+.gpap-tone-neg .gpap-insight-icon { color: var(--gpap-rust); }
+.gpap-tone-goal .gpap-insight-icon { color: var(--gpap-gold); }
+
+/* Projected value bounce + honor-unlock confetti */
+.gpap-bump { animation: gpap-bump 0.38s cubic-bezier(0.3, 1.6, 0.5, 1); }
+@keyframes gpap-bump { 0% { transform: scale(1); } 45% { transform: scale(1.22); } 100% { transform: scale(1); } }
+.gpap-confetti { position: absolute; width: 0; height: 0; pointer-events: none; z-index: 20; }
+.gpap-confetti i {
+  position: absolute;
+  left: -3px;
+  top: -4px;
+  width: 6px;
+  height: 8px;
+  border-radius: 2px;
+  opacity: 0;
+  animation: gpap-confetti 1.1s cubic-bezier(0.15, 0.7, 0.35, 1) var(--d, 0s) forwards;
+}
+@keyframes gpap-confetti {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; }
+}
+.gpap-confetti span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--gpap-ink);
+  background: var(--gpap-gold-soft);
+  border: 1px solid var(--gpap-gold);
+  padding: 3px 10px;
+  border-radius: 999px;
+  box-shadow: var(--gpap-shadow-md);
+  animation: gpap-toast 1.8s ease forwards;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.gpap-confetti .gpap-toast-icon { width: 13px; height: 13px; color: var(--gpap-gold); flex: none; }
+@keyframes gpap-toast {
+  0% { opacity: 0; transform: translate(-50%, 4px) scale(0.8); }
+  15% { opacity: 1; transform: translate(-50%, 26px) scale(1.06); }
+  80% { opacity: 1; transform: translate(-50%, 28px) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, 34px) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gpap-bump, .gpap-confetti i, .gpap-confetti span { animation: none; }
+}
 
 .gpap-chart-switcher { display: flex; gap: 3px; margin-bottom: 8px; background: var(--gpap-surface-2); padding: 3px; border-radius: 999px; }
 .gpap-chart-type-btn {

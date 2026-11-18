@@ -756,8 +756,98 @@
   // not just the picture behind it.
   const BG_PRESETS = [
     {
+      id: 'bd-hills',
+      name: 'Hill Tracts',
+      category: 'bangladesh',
+      url: 'https://images.unsplash.com/photo-1762380764356-0d7ad4e76918?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1762380764356-0d7ad4e76918?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#eef2ea', accent: '#86ad5c', accentDark: '#4f7330', accentInk: '#111c0a',
+        surface: '#121a13', surface2: '#1c251d', border: 'rgba(255,255,255,0.15)'
+      }
+    },
+    {
+      id: 'bd-paddy',
+      name: 'Paddy Fields',
+      category: 'bangladesh',
+      url: 'https://images.unsplash.com/photo-1672561924208-7762120e7077?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1672561924208-7762120e7077?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#f1f3e6', accent: '#a3c24a', accentDark: '#66801f', accentInk: '#161d05',
+        surface: '#151a10', surface2: '#20261a', border: 'rgba(255,255,255,0.15)'
+      }
+    },
+    {
+      id: 'bd-village',
+      name: 'Village Path',
+      category: 'bangladesh',
+      url: 'https://images.unsplash.com/photo-1731010228077-6aa0c7b69cb7?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1731010228077-6aa0c7b69cb7?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#edf3f4', accent: '#5aa6b5', accentDark: '#2f6e7a', accentInk: '#0a1c20',
+        surface: '#111a1c', surface2: '#1b2528', border: 'rgba(255,255,255,0.15)'
+      }
+    },
+    {
+      // Pale low-tide photo: dark ink on light glass.
+      id: 'bd-ghat',
+      name: 'Boat Ghat',
+      category: 'bangladesh',
+      url: 'https://images.unsplash.com/photo-1645383595754-4f829c74ef77?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1645383595754-4f829c74ef77?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#2a2c20', accent: '#77783a', accentDark: '#4f5020', accentInk: '#f8f8ee',
+        surface: '#eceee3', surface2: '#dcdfd0', border: 'rgba(0,0,0,0.10)', overlay: 'rgba(0,0,0,0.12)'
+      }
+    },
+    {
+      id: 'bd-godhuli',
+      name: 'Godhuli',
+      category: 'bangladesh',
+      url: 'https://images.unsplash.com/photo-1732808460864-b8e5eb489a52?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1732808460864-b8e5eb489a52?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#f5ecee', accent: '#d98890', accentDark: '#9a4f58', accentInk: '#2a0f13',
+        surface: '#1c1517', surface2: '#282022', border: 'rgba(255,255,255,0.15)'
+      }
+    },
+    {
+      id: 'bd-planting',
+      name: 'Rice Planting',
+      category: 'bangladesh',
+      url: 'https://images.unsplash.com/photo-1684691583342-0dfafc6942cf?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1684691583342-0dfafc6942cf?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#1f2d25', accent: '#3f8a5f', accentDark: '#245c3d', accentInk: '#eef7f1',
+        surface: '#e5eee7', surface2: '#d3dfd6', border: 'rgba(0,0,0,0.10)', overlay: 'rgba(0,0,0,0.12)'
+      }
+    },
+    {
+      id: 'bd-fog',
+      name: 'Winter Fog',
+      category: 'bangladesh',
+      url: 'https://images.unsplash.com/photo-1766859786366-5328c14d1921?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1766859786366-5328c14d1921?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#3a2d21', accent: '#9a7247', accentDark: '#6b4a27', accentInk: '#fdf6ec',
+        surface: '#f4e8da', surface2: '#e6d6c3', border: 'rgba(0,0,0,0.10)', overlay: 'rgba(0,0,0,0.10)'
+      }
+    },
+    {
+      id: 'bd-lonetree',
+      name: 'Lone Tree',
+      category: 'bangladesh',
+      url: 'https://images.unsplash.com/photo-1783255287634-7b96d83e0ca4?q=80&w=1600&auto=format&fit=crop',
+      thumb: 'https://images.unsplash.com/photo-1783255287634-7b96d83e0ca4?q=70&w=160&h=160&auto=format&fit=crop',
+      theme: {
+        ink: '#262b1d', accent: '#60792f', accentDark: '#3f521a', accentInk: '#f6f9ee',
+        surface: '#edf0e5', surface2: '#dde2d2', border: 'rgba(0,0,0,0.10)', overlay: 'rgba(0,0,0,0.12)'
+      }
+    },
+    {
       id: 'tidal',
       name: 'Tidal',
+      category: 'landscapes',
       url: 'https://images.unsplash.com/photo-1751220170218-e57d53bd4aa8?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1751220170218-e57d53bd4aa8?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -768,6 +858,7 @@
     {
       id: 'highland',
       name: 'Highland',
+      category: 'animals',
       url: 'https://images.unsplash.com/photo-1787238347813-480a7ae6e71b?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1787238347813-480a7ae6e71b?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -778,6 +869,7 @@
     {
       id: 'canopy',
       name: 'Canopy',
+      category: 'nature',
       url: 'https://images.unsplash.com/photo-1493673272479-a20888bcee10?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1493673272479-a20888bcee10?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -788,6 +880,7 @@
     {
       id: 'basalt',
       name: 'Basalt',
+      category: 'landscapes',
       url: 'https://images.unsplash.com/photo-1786708740641-ac9d56d008f9?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1786708740641-ac9d56d008f9?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -798,6 +891,7 @@
     {
       id: 'meadow',
       name: 'Meadow',
+      category: 'landscapes',
       url: 'https://images.unsplash.com/photo-1784231882494-5450ad619de9?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1784231882494-5450ad619de9?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -808,6 +902,7 @@
     {
       id: 'reverie',
       name: 'Reverie',
+      category: 'art',
       url: 'https://images.unsplash.com/photo-1758513207242-98d050b7eae4?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1758513207242-98d050b7eae4?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -820,6 +915,7 @@
       // than usual to keep the card blur legible over it.
       id: 'carnival',
       name: 'Carnival',
+      category: 'art',
       url: 'https://images.unsplash.com/photo-1786723221986-f8ae8410f6a1?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1786723221986-f8ae8410f6a1?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -832,6 +928,7 @@
       // preset, with a lighter overlay so it stays airy rather than muddy.
       id: 'prism',
       name: 'Prism',
+      category: 'art',
       url: 'https://images.unsplash.com/photo-1746796451267-4f83956bf84d?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1746796451267-4f83956bf84d?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -842,6 +939,7 @@
     {
       id: 'monochrome',
       name: 'Monochrome',
+      category: 'art',
       url: 'https://images.unsplash.com/photo-1786200319214-24cf1172bb4b?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1786200319214-24cf1172bb4b?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -852,6 +950,7 @@
     {
       id: 'ember',
       name: 'Ember',
+      category: 'nature',
       url: 'https://images.unsplash.com/photo-1786543691566-a69b03a4f06c?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1786543691566-a69b03a4f06c?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -862,6 +961,7 @@
     {
       id: 'moorland',
       name: 'Moorland',
+      category: 'animals',
       url: 'https://images.unsplash.com/photo-1786464765447-d177ccf45ea6?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1786464765447-d177ccf45ea6?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -872,6 +972,7 @@
     {
       id: 'nocturne',
       name: 'Nocturne',
+      category: 'animals',
       url: 'https://images.unsplash.com/photo-1785963671545-73bcd2ea8664?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1785963671545-73bcd2ea8664?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -882,6 +983,7 @@
     {
       id: 'nightflora',
       name: 'Nightflora',
+      category: 'nature',
       url: 'https://images.unsplash.com/photo-1786130987650-534fea40faf8?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1786130987650-534fea40faf8?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -893,6 +995,7 @@
       // Bright near-white photo — dark ink on light glass, minimal overlay.
       id: 'orchid',
       name: 'Orchid',
+      category: 'nature',
       url: 'https://images.unsplash.com/photo-1745570647583-08120794d68d?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1745570647583-08120794d68d?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -903,6 +1006,7 @@
     {
       id: 'raven',
       name: 'Raven',
+      category: 'animals',
       url: 'https://images.unsplash.com/photo-1780787175530-3cefaac55826?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1780787175530-3cefaac55826?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -913,6 +1017,7 @@
     {
       id: 'summit',
       name: 'Summit',
+      category: 'landscapes',
       url: 'https://images.unsplash.com/photo-1780498178879-4064b19e6517?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1780498178879-4064b19e6517?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -923,6 +1028,7 @@
     {
       id: 'verdant',
       name: 'Verdant',
+      category: 'nature',
       url: 'https://images.unsplash.com/photo-1780736941954-8d7b29ce3c10?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1780736941954-8d7b29ce3c10?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -933,6 +1039,7 @@
     {
       id: 'glimmer',
       name: 'Glimmer',
+      category: 'landscapes',
       url: 'https://images.unsplash.com/photo-1780583287735-8e4d680dd0ca?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1780583287735-8e4d680dd0ca?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -943,6 +1050,7 @@
     {
       id: 'chamomile',
       name: 'Chamomile',
+      category: 'nature',
       url: 'https://images.unsplash.com/photo-1779781238799-7194caec2b28?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1779781238799-7194caec2b28?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -953,6 +1061,7 @@
     {
       id: 'companion',
       name: 'Companion',
+      category: 'animals',
       url: 'https://images.unsplash.com/photo-1611250282006-4484dd3fba6b?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/photo-1611250282006-4484dd3fba6b?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -963,6 +1072,7 @@
     {
       id: 'cheers',
       name: 'Cheers',
+      category: 'illustrations',
       url: 'https://images.unsplash.com/vector-1787880218469-d3ab1581c0e2?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/vector-1787880218469-d3ab1581c0e2?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -973,6 +1083,7 @@
     {
       id: 'wildleaf',
       name: 'Wildleaf',
+      category: 'illustrations',
       url: 'https://images.unsplash.com/vector-1776323044727-0ac0e24f52e1?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/vector-1776323044727-0ac0e24f52e1?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -983,6 +1094,7 @@
     {
       id: 'blush',
       name: 'Blush',
+      category: 'illustrations',
       url: 'https://images.unsplash.com/vector-1738239254988-8cbcffd01abb?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/vector-1738239254988-8cbcffd01abb?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -993,6 +1105,7 @@
     {
       id: 'bluebell',
       name: 'Bluebell',
+      category: 'illustrations',
       url: 'https://images.unsplash.com/vector-1786138175242-db3bd9cf6c73?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/vector-1786138175242-db3bd9cf6c73?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -1003,6 +1116,7 @@
     {
       id: 'sherbet',
       name: 'Sherbet',
+      category: 'illustrations',
       url: 'https://images.unsplash.com/vector-1783428892437-0c7af1f43132?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/vector-1783428892437-0c7af1f43132?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -1013,6 +1127,7 @@
     {
       id: 'sunflower',
       name: 'Sunflower',
+      category: 'illustrations',
       url: 'https://images.unsplash.com/vector-1785676067269-9e97fe38357a?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/vector-1785676067269-9e97fe38357a?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -1023,6 +1138,7 @@
     {
       id: 'posy',
       name: 'Posy',
+      category: 'illustrations',
       url: 'https://images.unsplash.com/vector-1752297634103-efe9f8356bc2?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/vector-1752297634103-efe9f8356bc2?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -1033,6 +1149,7 @@
     {
       id: 'cherrypop',
       name: 'Cherrypop',
+      category: 'illustrations',
       url: 'https://images.unsplash.com/vector-1776547292902-bb38eaa3ebcd?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/vector-1776547292902-bb38eaa3ebcd?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -1043,6 +1160,7 @@
     {
       id: 'cabana',
       name: 'Cabana',
+      category: 'illustrations',
       url: 'https://images.unsplash.com/vector-1776882156106-3c402a478504?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/vector-1776882156106-3c402a478504?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -1053,6 +1171,7 @@
     {
       id: 'savanna',
       name: 'Savanna',
+      category: 'illustrations',
       url: 'https://images.unsplash.com/vector-1783428602319-8e6b589eefbe?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/vector-1783428602319-8e6b589eefbe?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -1063,6 +1182,7 @@
     {
       id: 'monarch',
       name: 'Monarch',
+      category: 'illustrations',
       url: 'https://images.unsplash.com/vector-1776441066617-28e6a5fecc8c?q=80&w=1600&auto=format&fit=crop',
       thumb: 'https://images.unsplash.com/vector-1776441066617-28e6a5fecc8c?q=70&w=160&h=160&auto=format&fit=crop',
       theme: {
@@ -1071,32 +1191,66 @@
       }
     }
   ];
+  // Wallpaper categories, in the order they appear in Customize. Every
+  // preset above names one of these ids in its `category`.
+  const BG_CATEGORIES = [
+    { id: 'bangladesh', name: 'Bangladesh' },
+    { id: 'landscapes', name: 'Landscapes' },
+    { id: 'nature', name: 'Plants & Flowers' },
+    { id: 'animals', name: 'Animals' },
+    { id: 'art', name: 'Art & Abstract' },
+    { id: 'illustrations', name: 'Illustrations' }
+  ];
   const NT_BG_OVERRIDE_VARS = {
     ink: '--gpap-ink', accent: '--gpap-accent', accentDark: '--gpap-accent-dark', accentInk: '--gpap-accent-ink',
     surface: '--gpap-surface', surface2: '--gpap-surface-2', border: '--gpap-border'
   };
 
   function findPreset(id) { return BG_PRESETS.find((p) => p.id === id) || null; }
+  function findCategory(id) { return BG_CATEGORIES.find((c) => c.id === id) || null; }
+  function presetsInCategory(catId) {
+    return catId === 'all' ? BG_PRESETS : BG_PRESETS.filter((p) => p.category === catId);
+  }
+
+  // Categories the user picked for shuffle; an empty list means "all".
+  function shuffleCategories(state) {
+    return (state.shuffleCategories || []).filter((id) => findCategory(id));
+  }
+  function shufflePool(state) {
+    const cats = shuffleCategories(state);
+    const pool = cats.length ? BG_PRESETS.filter((p) => cats.includes(p.category)) : BG_PRESETS;
+    return pool.length ? pool : BG_PRESETS;
+  }
 
   // 'hourly'/'daily' are pure functions of the clock, so every call this
   // session naturally agrees — no caching needed, and it self-updates once
   // the hour/day rolls over. 'newtab' is genuinely random, so it's resolved
-  // once per page load and cached, or the image and its theme colors (each
+  // once per page load and cached (by id, so it survives category changes
+  // that still include it), or the image and its theme colors (each
   // resolved from a separate call) would disagree with each other.
-  let newtabShuffleChoiceIdx = null;
-  function resolveShufflePreset(interval) {
-    if (!BG_PRESETS.length) return null;
-    if (interval === 'hourly') return BG_PRESETS[Math.floor(Date.now() / 3600000) % BG_PRESETS.length];
+  let newtabShuffleChoiceId = null;
+  function resolveShufflePreset(state) {
+    const pool = shufflePool(state);
+    if (!pool.length) return null;
+    const interval = state.shuffleInterval || 'daily';
+    if (interval === 'hourly') return pool[Math.floor(Date.now() / 3600000) % pool.length];
     if (interval === 'newtab') {
-      if (newtabShuffleChoiceIdx === null) newtabShuffleChoiceIdx = Math.floor(Math.random() * BG_PRESETS.length);
-      return BG_PRESETS[newtabShuffleChoiceIdx];
+      if (!pool.some((p) => p.id === newtabShuffleChoiceId)) {
+        newtabShuffleChoiceId = pool[Math.floor(Math.random() * pool.length)].id;
+      }
+      return findPreset(newtabShuffleChoiceId);
     }
-    return BG_PRESETS[Math.floor(Date.now() / 86400000) % BG_PRESETS.length];
+    return pool[Math.floor(Date.now() / 86400000) % pool.length];
+  }
+  // "Next" in the shuffle panel: pick a different photo from the same pool.
+  function rerollNewtabShuffle(state) {
+    const pool = shufflePool(state).filter((p) => p.id !== newtabShuffleChoiceId);
+    if (pool.length) newtabShuffleChoiceId = pool[Math.floor(Math.random() * pool.length)].id;
   }
 
   function effectivePreset(state) {
     if (state.mode === 'preset') return findPreset(state.presetId);
-    if (state.mode === 'shuffle') return resolveShufflePreset(state.shuffleInterval || 'daily');
+    if (state.mode === 'shuffle') return resolveShufflePreset(state);
     return null;
   }
 
@@ -1106,9 +1260,9 @@
 
   function defaultBackground() {
     // Fresh installs land on shuffle + a new wallpaper every new tab; the
-    // user can switch to None/Themes/Link/a different interval any time —
+    // user can switch to None/Gallery/Link/a different interval any time —
     // this only applies until they save any background choice of their own.
-    return { mode: 'shuffle', url: '', presetId: '', shuffleInterval: 'newtab', textColor: '' };
+    return { mode: 'shuffle', url: '', presetId: '', shuffleInterval: 'newtab', shuffleCategories: [], textColor: '' };
   }
   async function loadBackground() {
     const r = await chrome.storage.local.get(BG_KEY);
@@ -1173,9 +1327,26 @@
     });
   }
 
+  // One-line summary shown next to the "Wallpaper" group title.
+  function wallpaperSummary(state) {
+    if (state.mode === 'preset') {
+      const preset = findPreset(state.presetId);
+      return preset ? preset.name : 'Gallery';
+    }
+    if (state.mode === 'shuffle') {
+      const cats = shuffleCategories(state);
+      if (!cats.length) return 'Shuffle · All';
+      if (cats.length === 1) return `Shuffle · ${findCategory(cats[0]).name}`;
+      return `Shuffle · ${cats.length} categories`;
+    }
+    if (state.mode === 'url') return state.url ? 'Your link' : 'Link';
+    return 'None';
+  }
+
   function updateBgModeButtons(mode) {
     document.querySelectorAll('.nt-bg-mode-btn').forEach((btn) => {
       btn.classList.toggle('nt-bg-mode-active', btn.dataset.mode === mode);
+      btn.setAttribute('aria-pressed', String(btn.dataset.mode === mode));
     });
     const presetSub = document.getElementById('nt-bg-sub-preset');
     const shuffleSub = document.getElementById('nt-bg-sub-shuffle');
@@ -1187,48 +1358,108 @@
     if (colorSub) colorSub.hidden = mode === 'none' || mode === 'shuffle';
   }
 
-  const BG_PRESETS_COLLAPSED_COUNT = 4;
+  // Gallery: a category filter (not saved — it opens on the category of the
+  // wallpaper in use) above a grid of that category's photos.
+  const BG_PRESETS_COLLAPSED_COUNT = 9;
+  let bgGalleryCategory = null;
   let bgPresetsExpanded = false;
+
+  function renderGalleryFilter() {
+    const wrap = document.getElementById('nt-bg-cat-filter');
+    if (!wrap) return;
+    const chips = [{ id: 'all', name: 'All' }].concat(BG_CATEGORIES).map((cat) => el('button', {
+      type: 'button',
+      class: `nt-chip${cat.id === bgGalleryCategory ? ' nt-chip-active' : ''}`,
+      'data-cat': cat.id,
+      'aria-pressed': String(cat.id === bgGalleryCategory)
+    }, [document.createTextNode(cat.name), el('span', { class: 'nt-chip-count', text: String(presetsInCategory(cat.id).length) })]));
+    wrap.replaceChildren(...chips);
+  }
 
   function renderBgPresets(activePresetId) {
     const wrap = document.getElementById('nt-bg-presets');
     const moreBtn = document.getElementById('nt-bg-presets-more');
     if (!wrap) return;
 
-    const expanded = bgPresetsExpanded;
-    const visible = expanded ? BG_PRESETS : BG_PRESETS.slice(0, BG_PRESETS_COLLAPSED_COUNT);
+    const list = presetsInCategory(bgGalleryCategory || 'all');
+    const collapsible = bgGalleryCategory === 'all' && list.length > BG_PRESETS_COLLAPSED_COUNT;
+    const visible = collapsible && !bgPresetsExpanded ? list.slice(0, BG_PRESETS_COLLAPSED_COUNT) : list;
 
     wrap.replaceChildren(...visible.map((preset) => el('button', {
       type: 'button',
       class: `nt-bg-preset${preset.id === activePresetId ? ' nt-bg-preset-active' : ''}`,
       style: `background-image: url(${JSON.stringify(preset.thumb)})`,
+      title: preset.name,
       'data-preset': preset.id
-    }, [el('span', { class: 'nt-bg-preset-name', text: preset.name })])));
+    }, [
+      el('span', { class: 'nt-bg-preset-name', text: preset.name }),
+      preset.id === activePresetId ? el('span', { class: 'nt-bg-preset-check', 'aria-hidden': 'true' }) : null
+    ])));
 
     if (moreBtn) {
-      moreBtn.hidden = BG_PRESETS.length <= BG_PRESETS_COLLAPSED_COUNT;
-      moreBtn.textContent = expanded ? 'Show less' : `See more (${BG_PRESETS.length - BG_PRESETS_COLLAPSED_COUNT})`;
+      moreBtn.hidden = !collapsible;
+      moreBtn.textContent = bgPresetsExpanded ? 'Show less' : `Show all ${list.length}`;
     }
+  }
+
+  // Shuffle: multi-select category chips. "All" clears the selection.
+  function renderShuffleCategories(state) {
+    const wrap = document.getElementById('nt-bg-shuffle-cats');
+    if (!wrap) return;
+    const cats = shuffleCategories(state);
+    const chips = [{ id: 'all', name: 'All' }].concat(BG_CATEGORIES).map((cat) => {
+      const active = cat.id === 'all' ? !cats.length : cats.includes(cat.id);
+      return el('button', {
+        type: 'button',
+        class: `nt-chip${active ? ' nt-chip-active' : ''}`,
+        'data-cat': cat.id,
+        'aria-pressed': String(active)
+      }, [document.createTextNode(cat.name), el('span', { class: 'nt-chip-count', text: String(presetsInCategory(cat.id).length) })]);
+    });
+    wrap.replaceChildren(...chips);
   }
 
   async function renderShuffleStatus() {
     const statusEl = document.getElementById('nt-bg-shuffle-status');
-    if (!statusEl) return;
+    const nextBtn = document.getElementById('nt-bg-shuffle-next');
     const state = await loadBackground();
-    if (state.mode !== 'shuffle') { statusEl.textContent = ''; return; }
-    const preset = resolveShufflePreset(state.shuffleInterval || 'daily');
-    statusEl.textContent = preset ? `Showing: ${preset.name}` : '';
+    if (statusEl) {
+      if (state.mode !== 'shuffle') statusEl.textContent = '';
+      else {
+        const preset = resolveShufflePreset(state);
+        const poolSize = shufflePool(state).length;
+        statusEl.textContent = preset ? `Now showing ${preset.name} · ${poolSize} in rotation` : '';
+      }
+    }
+    // Only "every new tab" is random; hourly/daily follow the clock.
+    if (nextBtn) nextBtn.hidden = state.mode !== 'shuffle' || state.shuffleInterval !== 'newtab';
   }
 
   function updateShuffleButtons(interval) {
     document.querySelectorAll('.nt-bg-shuffle-btn').forEach((btn) => {
       btn.classList.toggle('nt-bg-shuffle-btn-active', btn.dataset.shuffle === interval);
+      btn.setAttribute('aria-pressed', String(btn.dataset.shuffle === interval));
     });
+  }
+
+  // Refreshes every wallpaper control from saved state (also used when the
+  // state changes from another tab).
+  function syncBackgroundPanel(state) {
+    updateBgModeButtons(state.mode);
+    updateShuffleButtons(state.shuffleInterval || 'daily');
+    renderShuffleCategories(state);
+    renderShuffleStatus();
+    renderGalleryFilter();
+    renderBgPresets(state.mode === 'preset' ? state.presetId : '');
+    renderSettingsSummaries();
   }
 
   async function initBackgroundPanel() {
     const modeButtons = document.querySelectorAll('.nt-bg-mode-btn');
     const shuffleButtons = document.querySelectorAll('.nt-bg-shuffle-btn');
+    const shuffleCatsWrap = document.getElementById('nt-bg-shuffle-cats');
+    const shuffleNextBtn = document.getElementById('nt-bg-shuffle-next');
+    const galleryFilter = document.getElementById('nt-bg-cat-filter');
     const urlForm = document.getElementById('nt-bg-url-form');
     const urlInput = document.getElementById('nt-bg-url-input');
     const presetWrap = document.getElementById('nt-bg-presets');
@@ -1239,31 +1470,35 @@
     if (!modeButtons.length) return;
 
     const state = await loadBackground();
-    updateBgModeButtons(state.mode);
-    updateShuffleButtons(state.shuffleInterval || 'daily');
-    renderShuffleStatus();
+    const active = findPreset(state.presetId);
+    bgGalleryCategory = active ? active.category : 'all';
     if (urlInput) urlInput.value = state.url;
-    // Auto-expand once on load if the already-saved theme would otherwise
-    // be hidden behind "See more" — a one-time default, not a standing
-    // override, so the toggle itself keeps working afterward.
-    const activeIdx = BG_PRESETS.findIndex((p) => p.id === state.presetId);
-    if (activeIdx >= BG_PRESETS_COLLAPSED_COUNT) bgPresetsExpanded = true;
-    renderBgPresets(state.presetId);
     if (colorInput) {
       const preset = effectivePreset(state);
       colorInput.value = state.textColor || (preset ? preset.theme.ink : '#ffffff');
     }
+    syncBackgroundPanel(state);
 
     modeButtons.forEach((btn) => {
       btn.addEventListener('click', async () => {
         const mode = btn.dataset.mode;
         const current = await loadBackground();
         current.mode = mode;
+        // Opening the gallery with nothing picked yet: show the first photo
+        // of the selected category right away instead of a blank page.
+        if (mode === 'preset' && !findPreset(current.presetId)) {
+          const first = presetsInCategory(bgGalleryCategory || 'all')[0];
+          if (first) current.presetId = first.id;
+        }
         await saveBackground(current);
-        updateBgModeButtons(mode);
         if (statusEl) statusEl.textContent = '';
         applyBackground(current);
-        renderShuffleStatus();
+        syncBackgroundPanel(current);
+        if (colorInput && !current.textColor) {
+          const shown = effectivePreset(current);
+          colorInput.value = shown ? shown.theme.ink : '#ffffff';
+        }
+        if (mode === 'url' && urlInput) urlInput.focus();
         track('newtab_bg_mode_change', { mode });
       });
     });
@@ -1274,18 +1509,60 @@
         const current = await loadBackground();
         current.shuffleInterval = interval;
         await saveBackground(current);
-        updateShuffleButtons(interval);
         applyBackground(current);
-        renderShuffleStatus();
+        syncBackgroundPanel(current);
         track('newtab_bg_shuffle_interval_change', { interval });
       });
     });
+
+    if (shuffleCatsWrap) {
+      shuffleCatsWrap.addEventListener('click', async (ev) => {
+        const chip = ev.target.closest('.nt-chip');
+        if (!chip) return;
+        const current = await loadBackground();
+        const catId = chip.dataset.cat;
+        let cats = shuffleCategories(current);
+        if (catId === 'all') cats = [];
+        else if (cats.includes(catId)) cats = cats.filter((c) => c !== catId);
+        else cats = cats.concat(catId);
+        // Picking every category is the same as "All".
+        if (cats.length === BG_CATEGORIES.length) cats = [];
+        current.shuffleCategories = cats;
+        current.mode = 'shuffle';
+        await saveBackground(current);
+        applyBackground(current);
+        syncBackgroundPanel(current);
+        track('newtab_bg_shuffle_categories_change', { categories: cats.length ? cats.join(',') : 'all' });
+      });
+    }
+
+    if (shuffleNextBtn) {
+      shuffleNextBtn.addEventListener('click', async () => {
+        const current = await loadBackground();
+        rerollNewtabShuffle(current);
+        applyBackground(current);
+        renderShuffleStatus();
+        track('newtab_bg_shuffle_next');
+      });
+    }
+
+    if (galleryFilter) {
+      galleryFilter.addEventListener('click', async (ev) => {
+        const chip = ev.target.closest('.nt-chip');
+        if (!chip) return;
+        bgGalleryCategory = chip.dataset.cat;
+        bgPresetsExpanded = false;
+        const current = await loadBackground();
+        renderGalleryFilter();
+        renderBgPresets(current.mode === 'preset' ? current.presetId : '');
+      });
+    }
 
     if (presetsMoreBtn) {
       presetsMoreBtn.addEventListener('click', async () => {
         bgPresetsExpanded = !bgPresetsExpanded;
         const current = await loadBackground();
-        renderBgPresets(current.presetId);
+        renderBgPresets(current.mode === 'preset' ? current.presetId : '');
       });
     }
 
@@ -1298,8 +1575,8 @@
         current.presetId = btn.dataset.preset;
         current.textColor = '';
         await saveBackground(current);
-        renderBgPresets(current.presetId);
         applyBackground(current);
+        syncBackgroundPanel(current);
         if (colorInput) colorInput.value = findPreset(current.presetId).theme.ink;
         track('newtab_bg_preset_change', { preset: current.presetId });
       });
@@ -1332,13 +1609,13 @@
         ev.preventDefault();
         let href = urlInput.value.trim();
         if (!href) return;
-        try { new URL(href); } catch (e) { if (statusEl) statusEl.textContent = 'Invalid URL'; return; }
+        try { new URL(href); } catch (e) { if (statusEl) statusEl.textContent = 'That doesn\'t look like a valid link.'; return; }
         const current = await loadBackground();
         current.url = href;
         current.mode = 'url';
         await saveBackground(current);
-        updateBgModeButtons('url');
         applyBackground(current);
+        syncBackgroundPanel(current);
         if (statusEl) statusEl.textContent = '';
         track('newtab_bg_url_set');
       });
@@ -1501,7 +1778,7 @@
     { label: 'Canvas', href: 'https://northsouth.instructure.com/' },
     { label: 'NSU Announcements', href: 'https://www.northsouth.edu/nsu-announcements/' },
     { label: 'NSU Notice Board', href: 'https://www.northsouth.edu/dept-notices/fao-noticebaord/' },
-    { label: 'RDS2, from the future', href: 'https://rds2-bff.vercel.app/' },
+    { label: 'NSUmate', href: 'https://nsumate.com/' },
     { label: 'Join Community', href: 'https://t.me/nsu_advising_helper_bot_channel' }
   ];
 
@@ -1513,8 +1790,6 @@
       const anchor = el('a', {
         class: 'nt-link-pill',
         href: link.href,
-        target: '_blank',
-        rel: 'noopener noreferrer',
         text: link.label
       });
       anchor.addEventListener('click', () => track('newtab_click_quick_link', { label: link.label }));
@@ -1569,9 +1844,7 @@
 
       const anchor = el('a', {
         class: 'nt-fav-link',
-        href: fav.href,
-        target: '_blank',
-        rel: 'noopener noreferrer'
+        href: fav.href
       }, [icon, el('span', { text: fav.title })]);
       anchor.addEventListener('click', () => track('newtab_click_favorite', { label: fav.title }));
 
@@ -1634,24 +1907,53 @@
     todo: 'To-do', pomodoro: 'Focus Timer', search: 'Google Search', links: 'Quick Links', favorites: 'Favorite Links', weekly: 'Weekly To-do'
   };
 
+  function themeLabel(id) { return id.charAt(0).toUpperCase() + id.slice(1); }
+
+  // Color themes, split into Light and Dark rows with a name under each.
   function renderSettingsSwatches(activeTheme) {
     const wrap = document.getElementById('nt-settings-swatches');
     if (!wrap) return;
-    wrap.replaceChildren(...Object.keys(GPAP_THEMES).map((id) => {
-      const theme = GPAP_THEMES[id];
-      const btn = el('button', {
-        class: `nt-set-swatch${id === activeTheme ? ' nt-set-swatch-active' : ''}`,
-        type: 'button',
-        title: id.charAt(0).toUpperCase() + id.slice(1),
-        style: `--sw-a:${theme.bg};--sw-b:${theme.accent}`
-      });
-      btn.addEventListener('click', async () => {
-        await chrome.storage.local.set({ [THEME_KEY]: id });
-        track('newtab_fab_theme_change', { theme: id });
-        renderSettingsSwatches(id);
-      });
-      return btn;
-    }));
+    const ids = Object.keys(GPAP_THEMES);
+    const groups = [
+      { label: 'Light', ids: ids.filter((id) => !DARK_THEMES.has(id)) },
+      { label: 'Dark', ids: ids.filter((id) => DARK_THEMES.has(id)) }
+    ];
+    wrap.replaceChildren(...groups.map((group) => el('div', { class: 'nt-swatch-group' }, [
+      el('div', { class: 'nt-swatch-group-label', text: group.label }),
+      el('div', { class: 'nt-swatch-grid' }, group.ids.map((id) => {
+        const theme = GPAP_THEMES[id];
+        const btn = el('button', {
+          class: `nt-set-swatch-tile${id === activeTheme ? ' nt-set-swatch-active' : ''}`,
+          type: 'button',
+          title: themeLabel(id),
+          'aria-pressed': String(id === activeTheme)
+        }, [
+          el('span', { class: 'nt-set-swatch', style: `--sw-a:${theme.bg};--sw-b:${theme.accent};--sw-c:${theme.surface}` }),
+          el('span', { class: 'nt-set-swatch-name', text: themeLabel(id) })
+        ]);
+        btn.addEventListener('click', async () => {
+          await chrome.storage.local.set({ [THEME_KEY]: id });
+          track('newtab_fab_theme_change', { theme: id });
+          renderSettingsSwatches(id);
+        });
+        return btn;
+      }))
+    ])));
+  }
+
+  // The short "current value" shown on each collapsed group header, so the
+  // panel reads at a glance without opening every section.
+  async function renderSettingsSummaries() {
+    const r = await chrome.storage.local.get([THEME_KEY, CLOCK_FONT_KEY, CLOCK_SIZE_KEY, SEARCH_STYLE_KEY, SEARCH_WIDTH_KEY, MASTER_MODE_KEY]);
+    const bg = await loadBackground();
+    const set = (id, text) => { const node = document.getElementById(id); if (node) node.textContent = text; };
+    set('nt-sum-wallpaper', wallpaperSummary(bg));
+    set('nt-sum-colors', themeLabel(r[THEME_KEY] || 'cream'));
+    set('nt-sum-clock', `${(CLOCK_FONTS[r[CLOCK_FONT_KEY]] || CLOCK_FONTS.default).label} · ${(CLOCK_SIZES[r[CLOCK_SIZE_KEY]] || CLOCK_SIZES.small).label}`);
+    set('nt-sum-search', `${(SEARCH_STYLES[r[SEARCH_STYLE_KEY]] || SEARCH_STYLES.pill).label} · ${(SEARCH_WIDTHS[r[SEARCH_WIDTH_KEY]] || SEARCH_WIDTHS.default).label}`);
+    set('nt-sum-dashboard', (r[MASTER_MODE_KEY] || 'full') === 'minimal' ? 'Minimal' : 'Full');
+    const hint = document.getElementById('nt-colors-wallpaper-hint');
+    if (hint) hint.hidden = !backgroundHasImage(bg);
   }
 
   function renderSettingsFonts(activeFont) {
@@ -1811,6 +2113,7 @@
       await syncMasterModeToggle();
       await renderSettingsSections();
       await renderSettingsOrder();
+      await renderSettingsSummaries();
       panel.hidden = false;
       overlay.hidden = false;
       track('newtab_fab_open');
@@ -1903,9 +2206,10 @@
     if (changes[BG_KEY]) {
       const state = Object.assign(defaultBackground(), changes[BG_KEY].newValue || {});
       applyBackground(state);
-      updateBgModeButtons(state.mode);
-      updateShuffleButtons(state.shuffleInterval || 'daily');
-      renderShuffleStatus();
+      syncBackgroundPanel(state);
+    }
+    if ([THEME_KEY, CLOCK_FONT_KEY, CLOCK_SIZE_KEY, SEARCH_STYLE_KEY, SEARCH_WIDTH_KEY, MASTER_MODE_KEY].some((k) => changes[k])) {
+      renderSettingsSummaries();
     }
   });
 })();
